@@ -80,9 +80,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 
 interface ModuleGridProps {
   onOpenStay?: () => void;
+  onOpenDestinations?: () => void;
 }
 
-export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay }) => {
+export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay, onOpenDestinations }) => {
   return (
     <div className="px-5 pb-4">
       <div className="grid grid-cols-2 gap-3.5">
@@ -113,6 +114,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay }) => {
           title="Destinations"
           description={"Beaches, forts,\nwaterfalls & more"}
           bgColor="#EAF4ED"
+          onClick={onOpenDestinations}
           illustration={<DestinationsIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#059669]">

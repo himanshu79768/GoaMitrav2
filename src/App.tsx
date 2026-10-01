@@ -11,6 +11,8 @@ import { HeroSection } from './components/HeroSection';
 import { ModuleGrid } from './components/ModuleGrid';
 import { GAIChatPage } from './components/GAIChatPage';
 import { StayPage } from './components/StayPage';
+import { DestinationsPage, DestinationItem, ALL_DESTINATIONS } from './components/DestinationsPage';
+import { TravelPage } from './components/TravelPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
 
@@ -20,7 +22,7 @@ const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 export default function App() {
   // Check localStorage: if onboarding completed once, show homepage directly on refresh
   const [currentScreen, setCurrentScreen] = useState<
-    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay'
+    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel'
   >(() => {
     try {
       const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
@@ -56,6 +58,9 @@ export default function App() {
 
   // Profile Modal state on Homepage
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Selected Destination for Travel Page
+  const [selectedDestinationForTravel, setSelectedDestinationForTravel] = useState<DestinationItem>(ALL_DESTINATIONS[0]);
 
   // Optional initial prompt when transitioning to GAI chat
   const [chatInitialPrompt, setChatInitialPrompt] = useState<string | undefined>();
@@ -95,6 +100,11 @@ export default function App() {
   const handleOpenChat = (prompt?: string) => {
     setChatInitialPrompt(prompt);
     setCurrentScreen('gai_chat');
+  };
+
+  const handleOpenTravelForDestination = (dest: DestinationItem) => {
+    setSelectedDestinationForTravel(dest);
+    setCurrentScreen('travel');
   };
 
   // Smooth right-to-left transition variant matching other screens
@@ -179,7 +189,10 @@ export default function App() {
               />
 
               {/* 2-Column Module Grid: Stay, Destinations, Food, Culture, Coupons, Emergency */}
-              <ModuleGrid onOpenStay={() => setCurrentScreen('stay')} />
+              <ModuleGrid
+                onOpenStay={() => setCurrentScreen('stay')}
+                onOpenDestinations={() => setCurrentScreen('destinations')}
+              />
 
               {/* Travel Profile Modal */}
               <UserProfileModal
@@ -214,7 +227,48 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* Step 5: GAI AI Travel Chatbot Page */}
+          {/* Step 5: Destinations Page (Heritage, Cultural, Nature, Forts & Hidden Gems) */}
+          {currentScreen === 'destinations' && (
+            <motion.div
+              key="destinations"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+              className="w-full min-h-screen"
+            >
+              <DestinationsPage
+                preferences={savedPreferences}
+                onBack={() => setCurrentScreen('homepage')}
+                onOpenProfile={() => setIsProfileOpen(true)}
+                onSelectDestination={handleOpenTravelForDestination}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 6: Travel Page for Selected Destination (Cab, Auto, Scooter, Bus) */}
+          {currentScreen === 'travel' && (
+            <motion.div
+              key="travel"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+              className="w-full min-h-screen"
+            >
+              <TravelPage
+                destination={selectedDestinationForTravel}
+                preferences={savedPreferences}
+                onBack={() => setCurrentScreen('destinations')}
+                onOpenProfile={() => setIsProfileOpen(true)}
+                onAskGAI={(prompt) => handleOpenChat(prompt)}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 7: GAI AI Travel Chatbot Page */}
           {currentScreen === 'gai_chat' && (
             <motion.div
               key="gai_chat"
