@@ -34,8 +34,9 @@ export default function App() {
   // Persistent user preferences
   const [savedPreferences, setSavedPreferences] = useState<UserPreferences>(() => {
     try {
+      const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
       const stored = localStorage.getItem(USER_PREFERENCES_KEY);
-      if (stored) {
+      if (isCompleted === 'true' && stored) {
         return JSON.parse(stored);
       }
     } catch {
@@ -44,11 +45,9 @@ export default function App() {
     return DEFAULT_PREFERENCES;
   });
 
-  // User input states for onboarding
-  const [name, setName] = useState<string>(() => savedPreferences.name !== 'User' ? savedPreferences.name : '');
-  const [selectedInterests, setSelectedInterests] = useState<string[]>(() =>
-    savedPreferences.tourismTypes.length > 0 ? savedPreferences.tourismTypes : []
-  );
+  // User input states for onboarding: default completely empty/unselected
+  const [name, setName] = useState<string>(() => savedPreferences.name || '');
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(() => savedPreferences.tourismTypes || []);
   const [selectedMonth, setSelectedMonth] = useState<string>(() => savedPreferences.travelMonth || '');
   const [memberCount, setMemberCount] = useState<number>(() => savedPreferences.memberCount || 2);
   const [travelType, setTravelType] = useState<string>(() => savedPreferences.travelType || 'Couple / Duo');

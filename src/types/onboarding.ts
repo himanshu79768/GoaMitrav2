@@ -7,9 +7,9 @@ export interface UserPreferences {
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  name: 'User',
-  tourismTypes: ['Cultural Tourism', 'Heritage Tourism'],
-  travelMonth: 'November',
+  name: '',
+  tourismTypes: [],
+  travelMonth: '',
   memberCount: 2,
   travelType: 'Couple / Duo',
 };
