@@ -3,7 +3,7 @@ import heroImage from '/src/assets/images/hero.png';
 
 export const HeroSection: React.FC = () => {
   return (
-    <div className="relative pt-2 pb-5 px-5 select-none">
+    <div className="relative isolate pt-2 pb-5 px-5 select-none">
       {/* Background Hero Photo Container */}
       <div className="absolute inset-0 top-[-60px] h-[480px] overflow-hidden pointer-events-none -z-10">
         <img
