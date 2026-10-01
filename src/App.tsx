@@ -9,6 +9,7 @@ import { OnboardingStepOne } from './components/OnboardingStepOne';
 import { OnboardingStepTwo } from './components/OnboardingStepTwo';
 import { HeroSection } from './components/HeroSection';
 import { ModuleGrid } from './components/ModuleGrid';
+import { GAIChatPage } from './components/GAIChatPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
 
@@ -18,7 +19,7 @@ const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 export default function App() {
   // Check localStorage: if onboarding completed once, show homepage directly on refresh
   const [currentScreen, setCurrentScreen] = useState<
-    'onboarding_step_1' | 'onboarding_step_2' | 'homepage'
+    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat'
   >(() => {
     try {
       const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
@@ -166,6 +167,7 @@ export default function App() {
               <HeroSection
                 preferences={savedPreferences}
                 onOpenProfile={() => setIsProfileOpen(true)}
+                onOpenChat={() => setCurrentScreen('gai_chat')}
               />
 
               {/* 2-Column Module Grid: Stay, Destinations, Food, Culture, Coupons, Emergency */}
@@ -180,6 +182,24 @@ export default function App() {
                   setIsProfileOpen(false);
                   setCurrentScreen('onboarding_step_1');
                 }}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 4: GAI AI Travel Chatbot Page */}
+          {currentScreen === 'gai_chat' && (
+            <motion.div
+              key="gai_chat"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+              className="w-full min-h-screen"
+            >
+              <GAIChatPage
+                preferences={savedPreferences}
+                onBack={() => setCurrentScreen('homepage')}
               />
             </motion.div>
           )}

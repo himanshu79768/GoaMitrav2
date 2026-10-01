@@ -5,11 +5,13 @@ import { UserPreferences } from '../types/onboarding';
 interface HeroSectionProps {
   preferences: UserPreferences;
   onOpenProfile: () => void;
+  onOpenChat: () => void;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   preferences,
   onOpenProfile,
+  onOpenChat,
 }) => {
   // Derive trip label from preferences
   const primaryInterest = preferences.tourismTypes[0] || 'Adventure';
@@ -147,12 +149,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </p>
       </div>
 
-      {/* AI Search / GAI Bar with Slow Soft Border & iOS Liquid Glass Effect (Hero clearly visible inside) */}
+      {/* AI Search / GAI Bar with Slow Soft Border & iOS Liquid Glass Effect (Redirects to GAI Chat) */}
       <div className="relative mt-6">
         {/* Soft, Slow Animated Non-Harsh Border (No colorful gradient) */}
         <div className="relative p-[1.5px] rounded-full gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
-          {/* Inner iOS Liquid Glassmorphism Pill: High backdrop-blur, Low Opacity for visible background hero */}
-          <div className="flex items-center justify-between p-2 pl-3 rounded-full backdrop-blur-2xl bg-white/20 sm:bg-white/25 border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85),0_8px_32px_rgba(0,0,0,0.04)] hover:bg-white/30 transition-all">
+          {/* Inner iOS Liquid Glassmorphism Pill: Click opens Chatbot */}
+          <div
+            onClick={onOpenChat}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') onOpenChat();
+            }}
+            className="flex items-center justify-between p-2 pl-3 rounded-full backdrop-blur-2xl bg-white/20 sm:bg-white/25 border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85),0_8px_32px_rgba(0,0,0,0.04)] hover:bg-white/35 active:scale-[0.99] transition-all cursor-pointer"
+          >
             {/* Left: Search Button */}
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <div className="w-10 h-10 rounded-full bg-white/65 backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-white/50 flex items-center justify-center text-[#222E3A] shrink-0">
@@ -183,10 +193,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
 
             {/* Right: Circular Arrow Action Button */}
-            <button
-              type="button"
-              className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-white/60 flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 ml-1"
-              aria-label="Submit search"
+            <div
+              className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-white/60 flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all shrink-0 ml-1"
+              aria-label="Open GAI Chat"
             >
               <svg
                 className="w-4 h-4 text-[#111111]"
@@ -200,7 +209,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               >
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
-            </button>
+            </div>
           </div>
         </div>
       </div>
