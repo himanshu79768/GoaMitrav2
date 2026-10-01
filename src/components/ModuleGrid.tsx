@@ -164,10 +164,10 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         <ModuleCard
           title="Culture"
           description={"Music, festivals,\nand events"}
-          bgColor="#EEF2FA"
+          bgColor="#F5F3FF"
           illustration={<CultureIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
-            <div className="w-9 h-9 flex items-center justify-start text-[#4361EE]">
+            <div className="w-9 h-9 flex items-center justify-start text-[#7C3AED]">
               {/* Goan Heritage Music / Mandovi Guitar & Feather Mask Icon */}
               <svg
                 className="w-7 h-7"
@@ -185,11 +185,11 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         <ModuleCard
           title="Coupons"
           description={"Exclusive \ndeals and discounts"}
-          bgColor="#F5F3FF"
+          bgColor="#FAF4ED"
           onClick={onOpenCoupons}
           illustration={<CouponsIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
-            <div className="w-9 h-9 flex items-center justify-start text-[#7C3AED]">
+            <div className="w-9 h-9 flex items-center justify-start text-[#A8531E]">
               {/* Discount Voucher Ticket Icon */}
               <svg
                 className="w-7 h-7"
