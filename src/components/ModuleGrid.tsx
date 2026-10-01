@@ -163,7 +163,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         {/* 4. Culture Card - Goan Carnival Mask */}
         <ModuleCard
           title="Culture"
-          description={"Heritage, music,\nfestivals & churches"}
+          description={"Music, festivals,\nand events"}
           bgColor="#EEF2FA"
           illustration={<CultureIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
@@ -184,7 +184,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         {/* 5. Coupons Card - Discount Tag / Vouchers */}
         <ModuleCard
           title="Coupons"
-          description={"Exclusive Goan\ndeals and discounts"}
+          description={"Exclusive \ndeals and discounts"}
           bgColor="#F5F3FF"
           onClick={onOpenCoupons}
           illustration={<CouponsIllustration className="w-full h-full object-cover object-bottom-right" />}
