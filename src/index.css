@@ -9,6 +9,18 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Universal scrollbar hiding across the entire app */
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  * {
+    -ms-overflow-style: none !important; /* IE and Edge */
+    scrollbar-width: none !important; /* Firefox */
+  }
+
   body {
     font-family: var(--font-ios);
     -webkit-font-smoothing: antialiased;

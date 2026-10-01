@@ -561,7 +561,8 @@ CRITICAL RULES:
    By Car/Auto/Scooter: <approximate time and km distance from user's location, route advice>
    By Bus/Ferry: <bus routes, stops or ferry crossing>
    Location: <Exact Place Name in Goa>
-5. MARKDOWN: Use **bold** for key names and *italics* for local food/terms.`;
+5. REAL-TIME GOOGLE SEARCH & FACT CHECK: You have live Google Search capability. Always give 100% accurate star ratings (distinguish 2-star budget lodges from 5-star luxury resorts like Taj or W Goa), accurate prices, and real locations.
+6. MARKDOWN: Use **bold** for key names and *italics* for local food/terms.`;
 
       const contents = [...messages, userMsg].map((m) => ({
         role: m.role === 'user' ? 'user' : 'model',
@@ -570,23 +571,37 @@ CRITICAL RULES:
 
       let response;
       try {
-        response = await ai.models.generateContent({
-          model: 'gemini-3.5-flash-lite',
-          contents,
-          config: {
-            systemInstruction,
-            temperature: 0.7,
-          },
-        });
-      } catch {
+        // Attempt with live Google Search Grounding for real-time accuracy
         response = await ai.models.generateContent({
           model: 'gemini-2.5-flash',
           contents,
           config: {
+            tools: [{ googleSearch: {} }],
             systemInstruction,
-            temperature: 0.7,
+            temperature: 0.6,
           },
         });
+      } catch (searchErr) {
+        console.warn('Fallback without search grounding', searchErr);
+        try {
+          response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents,
+            config: {
+              systemInstruction,
+              temperature: 0.7,
+            },
+          });
+        } catch {
+          response = await ai.models.generateContent({
+            model: 'gemini-3.5-flash-lite',
+            contents,
+            config: {
+              systemInstruction,
+              temperature: 0.7,
+            },
+          });
+        }
       }
 
       const content = response.text || 'I could not generate a response. Please try again.';
