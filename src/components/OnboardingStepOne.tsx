@@ -13,9 +13,6 @@ interface OnboardingStepOneProps {
 }
 
 const MONTHS = [
-  { name: 'October', tag: 'Post-Monsoon Greenery' },
-  { name: 'November', tag: 'Pleasant & Cool' },
-  { name: 'December', tag: 'Festivals & Peak Vibes' },
   { name: 'January', tag: 'Best Weather & Music' },
   { name: 'February', tag: 'Carnival Season' },
   { name: 'March', tag: 'Shigmo & Beach Sun' },
@@ -25,6 +22,9 @@ const MONTHS = [
   { name: 'July', tag: 'Lush Waterfalls' },
   { name: 'August', tag: 'Scenic Countryside' },
   { name: 'September', tag: 'Late Monsoon Charms' },
+  { name: 'October', tag: 'Post-Monsoon Greenery' },
+  { name: 'November', tag: 'Pleasant & Cool' },
+  { name: 'December', tag: 'Festivals & Peak Vibes' },
 ];
 
 export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({

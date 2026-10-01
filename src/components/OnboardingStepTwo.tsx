@@ -15,13 +15,13 @@ const PRESET_OPTIONS = [
     type: 'Solo Traveler',
     count: 1,
     icon: '👤',
-    subtitle: 'Exploring Goa at my own pace',
+    subtitle: 'Exploring Goa solo (locked to 1 member)',
   },
   {
     type: 'Couple / Duo',
     count: 2,
     icon: '👥',
-    subtitle: 'Romantic dining, sunsets & quiet beaches',
+    subtitle: 'Romantic trip for two (locked to 2 members)',
   },
   {
     type: 'Friends / Group',
@@ -52,10 +52,13 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
   onBack,
   onFinish,
 }) => {
+  // Solo is locked to 1, Couple is locked to 2
+  const isCountLocked = travelType === 'Solo Traveler' || travelType === 'Couple / Duo';
+
   return (
     <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-between px-6 pt-7 pb-8 max-w-[430px] mx-auto select-none">
       <div>
-        {/* Top Header: Back Button, Logo, 2-Segment Progress Bar (Skip removed) */}
+        {/* Top Header: Back Button, Logo, 2-Segment Progress Bar */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Back Button */}
@@ -108,12 +111,23 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
           </p>
         </section>
 
-        {/* Interactive Member Count Stepper */}
+        {/* Interactive Member Count Stepper (Locked for Solo & Couple) */}
         <section className="mt-6 p-4 rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
-            <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-              TOTAL MEMBERS
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                TOTAL MEMBERS
+              </span>
+              {isCountLocked && (
+                <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <svg className="w-2.5 h-2.5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
+                  </svg>
+                  Locked to {memberCount}
+                </span>
+              )}
             </div>
+
             <div className="flex items-baseline gap-1.5 mt-0.5">
               <span className="text-[34px] font-extrabold text-[#111111] tabular-nums">
                 {memberCount}
@@ -124,16 +138,20 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
             </div>
           </div>
 
-          {/* Minus & Plus Buttons */}
+          {/* Minus & Plus Buttons (Disabled when locked to Solo or Couple) */}
           <div className="flex items-center gap-3">
             <button
               type="button"
-              disabled={memberCount <= 1}
-              onClick={() => setMemberCount(Math.max(1, memberCount - 1))}
-              className={`w-11 h-11 rounded-full border flex items-center justify-center text-xl font-bold transition-all cursor-pointer active:scale-95 ${
-                memberCount <= 1
-                  ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed'
-                  : 'border-gray-300 text-gray-700 bg-white hover:border-[#FF6B4A] hover:text-[#FF6B4A]'
+              disabled={isCountLocked || memberCount <= 1}
+              onClick={() => {
+                if (!isCountLocked) {
+                  setMemberCount(Math.max(1, memberCount - 1));
+                }
+              }}
+              className={`w-11 h-11 rounded-full border flex items-center justify-center text-xl font-bold transition-all ${
+                isCountLocked || memberCount <= 1
+                  ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed opacity-60'
+                  : 'border-gray-300 text-gray-700 bg-white hover:border-[#FF6B4A] hover:text-[#FF6B4A] active:scale-95 cursor-pointer'
               }`}
               aria-label="Decrease members"
             >
@@ -142,8 +160,17 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
 
             <button
               type="button"
-              onClick={() => setMemberCount(memberCount + 1)}
-              className="w-11 h-11 rounded-full bg-[#FF6B4A] text-white flex items-center justify-center text-xl font-bold hover:bg-[#FF5436] active:scale-95 transition-all shadow-[0_4px_12px_rgba(255,107,74,0.3)] cursor-pointer"
+              disabled={isCountLocked}
+              onClick={() => {
+                if (!isCountLocked) {
+                  setMemberCount(memberCount + 1);
+                }
+              }}
+              className={`w-11 h-11 rounded-full flex items-center justify-center text-xl font-bold transition-all ${
+                isCountLocked
+                  ? 'border border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed opacity-60 shadow-none'
+                  : 'bg-[#FF6B4A] text-white hover:bg-[#FF5436] active:scale-95 shadow-[0_4px_12px_rgba(255,107,74,0.3)] cursor-pointer'
+              }`}
               aria-label="Increase members"
             >
               +
@@ -165,7 +192,16 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
                   key={item.type}
                   onClick={() => {
                     setTravelType(item.type);
-                    setMemberCount(item.count);
+                    if (item.type === 'Solo Traveler') {
+                      setMemberCount(1);
+                    } else if (item.type === 'Couple / Duo') {
+                      setMemberCount(2);
+                    } else {
+                      // If transitioning from Solo/Couple to a group preset, set default group count
+                      if (memberCount <= 2) {
+                        setMemberCount(item.count);
+                      }
+                    }
                   }}
                   className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                     isSelected
