@@ -73,7 +73,7 @@ export const StayIllustration: React.FC<{ className?: string }> = ({ className =
     </g>
 
     {/* Cozy garden planter beside home */}
-    <g transform="translate(42, 68)" opacity="0.4">
+    <g transform="translate(42, 68)" opacity="0">
       <path d="M4 14 L8 24 L0 24 Z" fill="#C2410C" />
       <circle cx="4" cy="11" r="5" fill="#EA580C" />
       <circle cx="8" cy="8" r="4" fill="#FB923C" />
@@ -238,7 +238,7 @@ export const FoodIllustration: React.FC<{ className?: string }> = ({ className =
     </g>
 
     {/* Cloche Dome in top left */}
-    <g transform="translate(36, 32)" opacity="0.3">
+    <g transform="translate(36, 32)" opacity="0">
       <path d="M4 22 C4 8, 26 8, 26 22 Z" fill="#B2321B" />
       <circle cx="15" cy="7" r="2.5" fill="#B2321B" />
       <line x1="2" y1="23" x2="28" y2="23" stroke="#B2321B" strokeWidth="1.5" strokeLinecap="round" />
@@ -325,12 +325,7 @@ export const CultureIllustration: React.FC<{ className?: string }> = ({ classNam
         fillOpacity="0.45"
       />
 
-      {/* Famous Jesuit Monogram Emblem ("IHS" Medallion) in Center of Gable */}
-      <circle cx="44" cy="13" r="5.5" fill="#FBBF24" fillOpacity="0.6" />
-      <circle cx="44" cy="13" r="4.5" fill="#4A044E" fillOpacity="0.7" />
-      <text x="44" y="15" textAnchor="middle" fontFamily="sans-serif" fontSize="4.2" fontWeight="bold" fill="#FBBF24">
-        IHS
-      </text>
+     
 
       {/* Historic Crowning Latin Cross on Apex */}
       <rect x="43" y="0" width="2" height="7.5" fill="#3B0764" fillOpacity="0.65" />
@@ -459,7 +454,7 @@ export const EmergencyIllustration: React.FC<{ className?: string }> = ({ classN
     </g>
 
     {/* Clean Heartbeat / Emergency Pulse Lifeline */}
-    <g opacity="0.4">
+    <g opacity="0">
       <path
         d="M6 78 L26 78 L31 71 L36 85 L42 66 L47 83 L52 78 L80 78"
         stroke="#DC2626"
