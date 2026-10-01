@@ -9,10 +9,11 @@ interface ChatMessage {
   timestamp: string;
 }
 
-interface LocationState {
-  coords: { lat: number; lng: number };
-  areaName: string;
-  status: 'prompt' | 'granted' | 'denied' | 'unavailable';
+interface LocationDetails {
+  lat: number;
+  lng: number;
+  placeName: string;
+  isInsideGoa: boolean;
 }
 
 interface GAIChatPageProps {
@@ -59,6 +60,29 @@ function renderItalic(text: string, parentKey: number | string): React.ReactNode
   });
 }
 
+/** Determines accurate Goan locality from coordinates */
+function getGoaLocality(lat: number, lng: number): { placeName: string; isInsideGoa: boolean } {
+  // Check Goa boundaries (approx lat 14.88 to 15.82, lng 73.65 to 74.35)
+  if (lat < 14.80 || lat > 15.85 || lng < 73.60 || lng > 74.40) {
+    return {
+      placeName: 'Outside Goa (Simulating North Goa stay)',
+      isInsideGoa: false,
+    };
+  }
+
+  // Accurate Goan micro-region mapping
+  if (lat >= 15.65) return { placeName: 'Morjim / Arambol / Mandrem (North Goa)', isInsideGoa: true };
+  if (lat >= 15.58 && lat < 15.65) return { placeName: 'Vagator / Anjuna / Assagao (North Goa)', isInsideGoa: true };
+  if (lat >= 15.53 && lat < 15.58) return { placeName: 'Calangute / Baga / Parra (North Goa)', isInsideGoa: true };
+  if (lat >= 15.48 && lat < 15.53) return { placeName: 'Candolim / Sinquerim / Nerul (North Goa)', isInsideGoa: true };
+  if (lat >= 15.44 && lat < 15.48) return { placeName: 'Panaji / Miramar / Dona Paula (Central Goa)', isInsideGoa: true };
+  if (lat >= 15.40 && lat < 15.44) return { placeName: 'Old Goa / Ribandar (Heritage Zone)', isInsideGoa: true };
+  if (lat >= 15.34 && lat < 15.40) return { placeName: 'Vasco / Bogmalo / Dabolim (Central Goa)', isInsideGoa: true };
+  if (lat >= 15.24 && lat < 15.34) return { placeName: 'Margao / Colva / Benaulim (South Goa)', isInsideGoa: true };
+  if (lat >= 15.15 && lat < 15.24) return { placeName: 'Cavelossim / Varca (South Goa)', isInsideGoa: true };
+  return { placeName: 'Palolem / Agonda / Canacona (Far South Goa)', isInsideGoa: true };
+}
+
 /** FormattedMessage: Renders crisp markdown and interactive action cards */
 const FormattedMessage: React.FC<{
   content: string;
@@ -91,7 +115,6 @@ const FormattedMessage: React.FC<{
   const hasTransportCard = Boolean(carInfo || busInfo || locationInfo);
   const targetPlace = locationInfo || 'Goa';
 
-  // Group non-transport lines into paragraphs and bullet lists
   const renderedElements: React.ReactNode[] = [];
   let currentBullets: string[] = [];
 
@@ -161,10 +184,9 @@ const FormattedMessage: React.FC<{
 
   return (
     <div className="space-y-1">
-      {/* Intro & text paragraphs */}
       {renderedElements}
 
-      {/* Styled Transport & Location Card */}
+      {/* Structured Transport & Location Card */}
       {hasTransportCard && (
         <div className="my-2.5 bg-white rounded-2xl p-3.5 border border-gray-200/90 shadow-xs space-y-2.5">
           {/* Car / Scooter Row */}
@@ -227,7 +249,6 @@ const FormattedMessage: React.FC<{
 
           {/* Interactive Action Buttons */}
           <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-gray-100">
-            {/* See on Map */}
             <a
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${targetPlace}, Goa`)}`}
               target="_blank"
@@ -238,7 +259,6 @@ const FormattedMessage: React.FC<{
               <span>↗</span>
             </a>
 
-            {/* Turn-by-Turn Directions */}
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${targetPlace}, Goa`)}${
                 userCoords ? `&origin=${userCoords.lat},${userCoords.lng}` : ''
@@ -251,7 +271,6 @@ const FormattedMessage: React.FC<{
               <span>↗</span>
             </a>
 
-            {/* Quick Action: Food Nearby */}
             {onQuickAction && (
               <button
                 type="button"
@@ -262,7 +281,6 @@ const FormattedMessage: React.FC<{
               </button>
             )}
 
-            {/* Quick Action: Best time */}
             {onQuickAction && (
               <button
                 type="button"
@@ -294,16 +312,17 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
   const [isListening, setIsListening] = useState(false);
   const [speechError, setSpeechError] = useState<string | null>(null);
 
-  // Real-time Geolocation State (silently gathered in the background, baseline in North Goa)
-  const [locationState, setLocationState] = useState<LocationState>(() => {
+  // Accurate Geolocation State (Zero error popups, fallback to Calangute/Baga)
+  const [locationState, setLocationState] = useState<LocationDetails>(() => {
     try {
-      const saved = sessionStorage.getItem('goamitra_user_location');
+      const saved = sessionStorage.getItem('goamitra_accurate_location');
       if (saved) return JSON.parse(saved);
     } catch {}
     return {
-      coords: { lat: 15.5428, lng: 73.7554 }, // Calangute / Candolim baseline in North Goa
-      areaName: 'North Goa (Calangute / Candolim / Baga)',
-      status: 'prompt',
+      lat: 15.5428,
+      lng: 73.7554,
+      placeName: 'Calangute / Baga (North Goa)',
+      isInsideGoa: true,
     };
   });
 
@@ -318,40 +337,75 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
     scrollToBottom();
   }, [messages, isLoading]);
 
-  // Request browser geolocation silently in background
+  // Request browser geolocation accurately and silently
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
+    if (!navigator.geolocation) return;
 
-          let area = 'Goa';
-          if (lat >= 15.65) area = 'North Goa (Arambol / Morjim)';
-          else if (lat >= 15.55 && lat < 15.65) area = 'North Goa (Assagao / Anjuna / Mapusa)';
-          else if (lat >= 15.48 && lat < 15.55) area = 'North Goa (Calangute / Candolim / Baga)';
-          else if (lat >= 15.40 && lat < 15.48) area = 'Central Goa (Panaji / Old Goa)';
-          else if (lat >= 15.20 && lat < 15.40) area = 'South Goa (Margao / Colva / Benaulim)';
-          else if (lat < 15.20 && lat >= 14.8) area = 'South Goa (Palolem / Agonda / Cabo de Rama)';
-          else area = 'Goa Region';
+    const onSuccess = async (pos: GeolocationPosition) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
 
-          const newState: LocationState = {
-            coords: { lat, lng },
-            areaName: area,
-            status: 'granted',
-          };
-          setLocationState(newState);
-          try {
-            sessionStorage.setItem('goamitra_user_location', JSON.stringify(newState));
-          } catch {}
-        },
-        () => {
-          // If denied, keep standard Goan baseline smoothly
-          setLocationState((prev) => ({ ...prev, status: 'denied' }));
-        },
-        { timeout: 7000, enableHighAccuracy: true }
-      );
-    }
+      // Determine local Goan zone
+      let { placeName, isInsideGoa } = getGoaLocality(lat, lng);
+
+      // Attempt reverse geocoding via free client-side API without errors
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+        const res = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`,
+          { signal: controller.signal }
+        );
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          const locality = data.locality || data.city || '';
+          const state = data.principalSubdivision || '';
+
+          if (locality) {
+            if (state.toLowerCase().includes('goa') || locality.toLowerCase().includes('goa')) {
+              placeName = `${locality}, Goa`;
+              isInsideGoa = true;
+            } else {
+              placeName = `${locality}, ${state}`;
+              isInsideGoa = false;
+            }
+          }
+        }
+      } catch {
+        // Fallback silently to our accurate coordinate boundary lookup
+      }
+
+      const updatedLoc: LocationDetails = {
+        lat,
+        lng,
+        placeName,
+        isInsideGoa,
+      };
+
+      setLocationState(updatedLoc);
+      try {
+        sessionStorage.setItem('goamitra_accurate_location', JSON.stringify(updatedLoc));
+      } catch {}
+    };
+
+    // First attempt with high accuracy
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      () => {
+        // If high accuracy times out (common on desktop/laptops), fallback to standard accuracy
+        navigator.geolocation.getCurrentPosition(
+          onSuccess,
+          () => {
+            // Silently keep default Goan baseline (zero errors)
+          },
+          { timeout: 8000, enableHighAccuracy: false }
+        );
+      },
+      { timeout: 8000, enableHighAccuracy: true }
+    );
   }, []);
 
   // Initialize Speech Recognition if supported
@@ -377,15 +431,8 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
         setInput(transcript);
       };
 
-      recognition.onerror = (event: any) => {
-        console.warn('Speech recognition error:', event.error);
+      recognition.onerror = () => {
         setIsListening(false);
-        if (event.error === 'not-allowed') {
-          setSpeechError('Microphone permission denied');
-        } else {
-          setSpeechError('Could not capture audio');
-        }
-        setTimeout(() => setSpeechError(null), 3000);
       };
 
       recognition.onend = () => {
@@ -469,6 +516,15 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
       else if (currentHour >= 19 && currentHour < 23) timeOfDay = 'Evening (Dinner shacks & night markets)';
       else timeOfDay = 'Late Night';
 
+      const locationPrompt = locationState.isInsideGoa
+        ? `USER REAL-TIME LOCATION IN GOA:
+- Area: ${locationState.placeName}
+- Coordinates: ${locationState.lat}, ${locationState.lng}
+- Base all travel times, driving routes, and distances (in km) starting directly from ${locationState.placeName}!`
+        : `USER REAL-TIME LOCATION:
+- Currently at: ${locationState.placeName} (Lat: ${locationState.lat}, Lng: ${locationState.lng})
+- Note: User is planning their Goa trip from ${locationState.placeName}. Provide distances assuming their arrival at Goa (e.g. North Goa / Mopa GOX / Dabolim GOI airport) or answer distance from their city to Goa if asked.`;
+
       const systemInstruction = `You are GAI (Goa Artificial Intelligence), a smart, hyper-local AI travel companion for Goa, India.
 User profile:
 - Name: ${userName}
@@ -476,13 +532,13 @@ User profile:
 - Group: ${memberCount} members (${travelType})
 - Interests: ${tourismTypes}
 
-REAL-TIME SITUATIONAL AWARENESS:
-- User's Current Location: ${locationState.areaName} (approx coords: ${locationState.coords.lat}, ${locationState.coords.lng})
-- Current Time: ${currentTimeStr} (${timeOfDay})
-- You ALWAYS know where the user is and what time of day it is! When they ask for "nearby food" or "sunset spots", recommend spots that are appropriate right now for ${timeOfDay} nearest to ${locationState.areaName}, and state the exact travel time & distance in km!
+SITUATIONAL & TIME AWARENESS:
+${locationPrompt}
+- Current Local Time: ${currentTimeStr} (${timeOfDay})
+- When the user asks for "nearby food", "sunset spots", or "places to visit", use this exact time of day and location to suggest spots that are open right now with realistic distances in km and driving times!
 
 CRITICAL RULES:
-1. BREVITY & SMARTNESS: Keep responses punchy, concise, and scannable! Never write long essays or walls of text (maximum 2–3 short sentences for the introduction/summary). Let the structured card below present the route & action details!
+1. BREVITY & SMARTNESS: Keep responses punchy, concise, and scannable! Never write long essays or walls of text (maximum 2–3 short sentences for the conversational intro). Let the structured card present the route & action details!
 2. GREETINGS: Do NOT start responses with "Dev Borem Korum" or repeated greetings. Get straight to the answer.
 3. LANGUAGE RULE: ALWAYS reply in the EXACT SAME LANGUAGE and SCRIPT that the user writes to you in!
    - Marathi (मराठी) -> Full Marathi response
@@ -503,7 +559,7 @@ CRITICAL RULES:
       }));
 
       const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.5-flash-lite',
         contents,
         config: {
           systemInstruction,
@@ -543,9 +599,9 @@ CRITICAL RULES:
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative">
-      {/* Sticky Upper Header */}
-      <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/60 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+    <div className="h-screen max-h-screen bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden">
+      {/* 100% Sticky Top Header - Pinned at top, never moves on scroll */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
         {/* Back Button */}
         <button
           type="button"
@@ -580,8 +636,8 @@ CRITICAL RULES:
         <div className="w-9 h-9" />
       </header>
 
-      {/* Messages Feed */}
-      <div className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5">
+      {/* Messages Feed (Only scrollable container) */}
+      <div className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5 min-h-0 overscroll-contain">
         {/* Top Minimal Pill: Ask Anything */}
         <div className="flex items-center justify-start">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E0F2FE]/80 border border-[#BAE6FD] text-[#0369A1] shadow-xs">
@@ -648,7 +704,7 @@ CRITICAL RULES:
                 <div className="px-4 py-3 rounded-3xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs text-gray-900 w-full">
                   <FormattedMessage
                     content={msg.content}
-                    userCoords={locationState.coords}
+                    userCoords={{ lat: locationState.lat, lng: locationState.lng }}
                     onQuickAction={(prompt) => handleSendMessage(prompt)}
                   />
                 </div>
@@ -688,7 +744,7 @@ CRITICAL RULES:
       </div>
 
       {/* Bottom Bar: Quick Chips & Message Input */}
-      <div className="sticky bottom-0 z-20 bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/50 pt-2 pb-5 px-4 space-y-2.5">
+      <div className="shrink-0 z-20 bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/50 pt-2 pb-5 px-4 space-y-2.5">
         {/* Quick Suggestion Chips */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {QUICK_PROMPTS.map((chip) => (
