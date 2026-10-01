@@ -7,11 +7,6 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string;
-  structuredDetails?: {
-    car?: string;
-    bus?: string;
-    location?: string;
-  };
 }
 
 interface GAIChatPageProps {
@@ -28,19 +23,240 @@ const QUICK_PROMPTS = [
   { label: 'Safety & emergency tips', icon: '🛡️', prompt: 'What are essential travel safety tips, emergency numbers and beach precautions in Goa?' },
 ];
 
+/** Helper to render inline markdown: **bold** and *italic* */
+function renderInlineMarkdown(text: string): React.ReactNode {
+  // Split by bold (**bold**)
+  const boldParts = text.split(/(\*\*.*?\*\*)/g);
+
+  return boldParts.map((bPart, bIdx) => {
+    if (bPart.startsWith('**') && bPart.endsWith('**')) {
+      const inner = bPart.slice(2, -2);
+      return (
+        <strong key={`b-${bIdx}`} className="font-bold text-gray-900">
+          {renderItalic(inner, bIdx)}
+        </strong>
+      );
+    }
+    return <React.Fragment key={`nb-${bIdx}`}>{renderItalic(bPart, bIdx)}</React.Fragment>;
+  });
+}
+
+function renderItalic(text: string, parentKey: number | string): React.ReactNode {
+  const italicParts = text.split(/(\*.*?\*)/g);
+  return italicParts.map((iPart, iIdx) => {
+    if (iPart.startsWith('*') && iPart.endsWith('*') && iPart.length > 2) {
+      return (
+        <em key={`i-${parentKey}-${iIdx}`} className="italic text-gray-800">
+          {iPart.slice(1, -1)}
+        </em>
+      );
+    }
+    return iPart;
+  });
+}
+
+/** Parses markdown text, extracts transport cards (Car, Bus, Location) and formats nicely */
+const FormattedMessage: React.FC<{ content: string }> = ({ content }) => {
+  // Extract transport cues if present
+  const lines = content.split('\n');
+  const nonTransportLines: string[] = [];
+  let carInfo: string | null = null;
+  let busInfo: string | null = null;
+  let locationInfo: string | null = null;
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const carMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Car(?:\/Auto)?(?:\/Scooter)?):\s*(.*)/i);
+    const busMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Bus(?:\/Ferry)?):\s*(.*)/i);
+    const locMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:Location):\s*(.*)/i);
+
+    if (carMatch) {
+      carInfo = carMatch[1].replace(/^\*\*|\*\*$/g, '').trim();
+    } else if (busMatch) {
+      busInfo = busMatch[1].replace(/^\*\*|\*\*$/g, '').trim();
+    } else if (locMatch) {
+      locationInfo = locMatch[1].replace(/^\*\*|\*\*$/g, '').trim();
+    } else {
+      nonTransportLines.push(line);
+    }
+  }
+
+  const hasTransportCard = Boolean(carInfo || busInfo || locationInfo);
+
+  // Group non-transport lines into paragraphs and bullet lists
+  const renderedElements: React.ReactNode[] = [];
+  let currentBullets: string[] = [];
+
+  const flushBullets = (key: string) => {
+    if (currentBullets.length > 0) {
+      renderedElements.push(
+        <ul key={key} className="my-2 space-y-1.5 pl-1">
+          {currentBullets.map((b, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-[14px] leading-relaxed text-gray-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B4A] mt-2 shrink-0" />
+              <span>{renderInlineMarkdown(b)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      currentBullets = [];
+    }
+  };
+
+  nonTransportLines.forEach((rawLine, index) => {
+    const line = rawLine.trim();
+
+    if (!line) {
+      flushBullets(`b-flush-${index}`);
+      return;
+    }
+
+    // Bullet points
+    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
+      currentBullets.push(line.replace(/^[-*•]\s+/, ''));
+      return;
+    }
+
+    // Numbered list items
+    const numMatch = line.match(/^(\d+)\.\s+(.*)/);
+    if (numMatch) {
+      flushBullets(`b-flush-num-${index}`);
+      renderedElements.push(
+        <div key={`num-${index}`} className="flex items-start gap-2 my-1.5 text-[14px] leading-relaxed">
+          <span className="font-bold text-[#FF6B4A] text-xs shrink-0 mt-0.5">
+            {numMatch[1]}.
+          </span>
+          <span className="text-gray-800">{renderInlineMarkdown(numMatch[2])}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Headings (###)
+    if (line.startsWith('### ') || line.startsWith('## ')) {
+      flushBullets(`b-flush-h-${index}`);
+      const headingText = line.replace(/^#{2,3}\s+/, '');
+      renderedElements.push(
+        <h4 key={`h-${index}`} className="font-bold text-[14.5px] text-gray-900 mt-2.5 mb-1 tracking-tight">
+          {renderInlineMarkdown(headingText)}
+        </h4>
+      );
+      return;
+    }
+
+    // Regular paragraph
+    flushBullets(`b-flush-p-${index}`);
+    renderedElements.push(
+      <p key={`p-${index}`} className="text-[14px] leading-relaxed text-gray-800 mb-2 last:mb-0">
+        {renderInlineMarkdown(line)}
+      </p>
+    );
+  });
+
+  flushBullets('b-flush-final');
+
+  return (
+    <div className="space-y-1">
+      {/* Intro & text paragraphs */}
+      {renderedElements}
+
+      {/* Styled Transport & Location Card (Matches reference screenshot) */}
+      {hasTransportCard && (
+        <div className="my-3 bg-white rounded-2xl p-3.5 border border-gray-200/90 shadow-xs space-y-3">
+          {/* Car / Auto Row */}
+          {carInfo && (
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
+                  <circle cx="7" cy="17" r="2" />
+                  <path d="M9 17h6" />
+                  <circle cx="17" cy="17" r="2" />
+                </svg>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[12.5px] font-bold text-gray-900 leading-tight">By Car/Auto</div>
+                <div className="text-[12px] text-gray-500 leading-snug mt-0.5">
+                  {renderInlineMarkdown(carInfo)}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bus / Ferry Row */}
+          {busInfo && (
+            <div className="flex items-start gap-3 pt-2.5 border-t border-gray-100">
+              <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8 6v6" />
+                  <path d="M16 6v6" />
+                  <path d="M4 12h16" />
+                  <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z" />
+                  <circle cx="7.5" cy="18.5" r="1.5" />
+                  <circle cx="16.5" cy="18.5" r="1.5" />
+                </svg>
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-[12.5px] font-bold text-gray-900 leading-tight">By Bus</div>
+                <div className="text-[12px] text-gray-500 leading-snug mt-0.5">
+                  {renderInlineMarkdown(busInfo)}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Location & "View on map" button */}
+          {locationInfo && (
+            <div className="flex items-center justify-between pt-2.5 border-t border-gray-100">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
+                <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <div className="min-w-0">
+                  <div className="text-[12px] font-bold text-gray-900 truncate">Location</div>
+                  <div className="text-[11.5px] text-gray-500 truncate">{locationInfo}</div>
+                </div>
+              </div>
+
+              {/* View on map link */}
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  `${locationInfo}, Goa`
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[11.5px] font-bold text-[#FF6B4A] bg-[#FFF0EC] hover:bg-[#FFE4DC] active:scale-95 transition-all px-3 py-1.5 rounded-full shrink-0"
+              >
+                <span>View on map</span>
+                <span>↗</span>
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your personalized Goa travel companion.\n\nWhether you need directions to hidden beaches, authentic fish thali spots, scooter rentals, or local Konkani tips for your ${preferences.travelMonth || 'Goa'} trip, ask me anything!`,
+      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your personalized Goa travel assistant.\n\nWhether you need directions, local seafood spots, scooter rentals, or hidden spots for your ${preferences.travelMonth || 'Goa'} trip, ask me anything!`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [speechError, setSpeechError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recognitionRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -50,9 +266,84 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
     scrollToBottom();
   }, [messages, isLoading]);
 
+  // Initialize Speech Recognition if supported in browser
+  useEffect(() => {
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-IN'; // Works well with English, Hindi, Hinglish accents
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setSpeechError(null);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        setInput(transcript);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.warn('Speech recognition error:', event.error);
+        setIsListening(false);
+        if (event.error === 'not-allowed') {
+          setSpeechError('Microphone permission denied');
+        } else {
+          setSpeechError('Could not capture audio');
+        }
+        setTimeout(() => setSpeechError(null), 3000);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+    };
+  }, []);
+
+  const toggleListening = () => {
+    if (!recognitionRef.current) {
+      setSpeechError('Voice input not supported in this browser');
+      setTimeout(() => setSpeechError(null), 3000);
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+    } else {
+      try {
+        recognitionRef.current.start();
+      } catch (e) {
+        console.warn('Recognition start error', e);
+      }
+    }
+  };
+
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || input).trim();
     if (!text || isLoading) return;
+
+    // Stop listening if active
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+    }
 
     const userTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -90,20 +381,21 @@ User's profile:
 - Group size: ${memberCount} members (${travelType})
 - Primary interests: ${tourismTypes}
 
-Personality:
-- Warm, knowledgeable, authentic, friendly, and welcoming (like a helpful local Goan friend).
-- Speak naturally in whatever language the user talks to you (English, Konkani, Hindi, Marathi, etc.).
-- You know all corners of Goa: North Goa (Anjuna, Vagator, Calangute, Morjim, Parra, Panaji, Old Goa, Assagao) and South Goa (Palolem, Agonda, Colva, Benaulim, Cavelossim, Cabo de Rama).
-- You know hidden gems, best sunset viewpoints, local bakeries (for fresh poee bread), authentic fish thali spots, heritage churches, Portuguese fort history, scooter rental tips, pilot motorcycle taxis, and safety precautions.
-
-Format guidelines:
-- Keep answers concise, clear, and helpful.
-- If the user asks about directions, how to reach a place, transport, or visiting a specific spot:
-  Always mention:
-  By Car/Auto/Scooter: <travel duration, route details and driving/riding advice>
-  By Bus/Ferry: <bus routes, stops or ferry crossing>
-  Location: <exact place or landmark in Goa>
-- If the user asks in Konkani/Hindi/Marathi, respond warmly in the same language!`;
+CRITICAL RULES:
+1. GREETING RULE: Do NOT start responses with "Dev Borem Korum" or repetitive greetings! Get straight to the answer in a warm, friendly, natural tone.
+2. LANGUAGE RULE: ALWAYS respond in the EXACT same language that the user writes to you in!
+   - If the user writes in Marathi (मराठी) e.g., "कसे जायचे?", "प्रवेश फी आहे का?", respond completely in Marathi!
+   - If the user writes in Konkani (कोंकणी), respond completely in Konkani!
+   - If the user writes in Hindi (हिंदी) e.g., "कैसे पहुंचे?", respond completely in Hindi!
+   - If the user writes in romanized Hinglish/Marathi/Konkani (e.g., "Parra church kase jayche?", "Entry fee kitna hai?"), respond in that EXACT same conversational romanized style!
+   - If the user writes in English, respond in English.
+3. FORMATTING RULE: Support markdown formatting. Use **bold** for key names and places, *italics* for local terms, bullet points for recommendations.
+4. TRANSPORTATION/DIRECTIONS RULE: When asked how to reach a place, directions, or transport:
+   Include these structured lines clearly:
+   By Car/Auto/Scooter: <travel time, route, and driving/riding advice>
+   By Bus/Ferry: <bus routes, stops or ferry crossing>
+   Location: <exact place or landmark in Goa>
+   Then provide any practical advice, entrance fees, or etiquette.`;
 
       // Build conversation history for Gemini API
       const contents = [...messages, userMsg].map((m) => ({
@@ -124,32 +416,17 @@ Format guidelines:
       const content = response.text || 'I could not generate a response. Please try again.';
       const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      // Extract transport cues if present
-      let structuredDetails: ChatMessage['structuredDetails'] = undefined;
-      const carMatch = content.match(/By Car\/Auto(?:\/Scooter)?:\s*([^\n]+)/i);
-      const busMatch = content.match(/By Bus(?:\/Ferry)?:\s*([^\n]+)/i);
-      const locMatch = content.match(/Location:\s*([^\n]+)/i);
-
-      if (carMatch || busMatch || locMatch) {
-        structuredDetails = {
-          car: carMatch ? carMatch[1].trim() : undefined,
-          bus: busMatch ? busMatch[1].trim() : undefined,
-          location: locMatch ? locMatch[1].trim() : undefined,
-        };
-      }
-
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         role: 'assistant',
         content,
         timestamp: botTime,
-        structuredDetails,
       };
 
       setMessages((prev) => [...prev, botMsg]);
     } catch (err: any) {
       console.error('GAI Gemini error:', err);
-      let errorResponse = "Dev Borem Korum! I'm momentarily catching my breath like an afternoon susegad. Please try asking again in a moment!";
+      let errorResponse = "I'm momentarily catching my breath. Please try asking again in a moment!";
 
       if (err?.message === 'MISSING_API_KEY') {
         errorResponse = "⚠️ Please set VITE_GEMINI_API_KEY in your environment variables (or Netlify site settings) to enable real-time GAI responses.";
@@ -230,7 +507,7 @@ Format guidelines:
               <div key={msg.id} className="flex items-end justify-end gap-2 pl-8">
                 {/* User Message Bubble */}
                 <div className="flex flex-col items-end">
-                  <div className="px-4 py-3 rounded-2xl rounded-tr-xs bg-[#FFE7E0] border border-[#FFD8CE] shadow-xs max-w-[280px]">
+                  <div className="px-4 py-3 rounded-2xl rounded-tr-xs bg-[#FFE7E0] border border-[#FFD8CE] shadow-xs max-w-[285px]">
                     <p className="text-[14.5px] font-medium text-gray-900 leading-relaxed whitespace-pre-wrap">
                       {msg.content}
                     </p>
@@ -260,64 +537,18 @@ Format guidelines:
 
           // Assistant (GAI) Bubble
           return (
-            <div key={msg.id} className="flex items-start gap-2.5 pr-6">
+            <div key={msg.id} className="flex items-start gap-2.5 pr-4">
               {/* Bot Avatar */}
               <div className="w-9 h-9 rounded-full bg-[#E0F2FE] border border-[#BAE6FD] text-[#0284C7] flex items-center justify-center shrink-0 shadow-xs mt-0.5">
-                {/* Cute Bot Icon */}
                 <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72V7h4a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h4V5.72c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2zm-3 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm6 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-6 5h6a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z" />
                 </svg>
               </div>
 
-              {/* Bot Message Bubble */}
-              <div className="flex flex-col items-start max-w-[310px]">
-                <div className="px-4 py-3.5 rounded-3xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs text-gray-900">
-                  <p className="text-[14.5px] leading-relaxed whitespace-pre-wrap font-normal">
-                    {msg.content}
-                  </p>
-
-                  {/* Rich Embedded Transport Card if structured info is available */}
-                  {msg.structuredDetails && (
-                    <div className="mt-3 bg-white rounded-2xl p-3 border border-gray-200/80 shadow-xs space-y-2.5">
-                      {msg.structuredDetails.car && (
-                        <div className="flex items-start gap-2.5">
-                          <span className="text-lg">🚗</span>
-                          <div>
-                            <div className="text-[12px] font-bold text-gray-900">By Car/Auto/Scooter</div>
-                            <div className="text-[11.5px] text-gray-500 leading-tight">
-                              {msg.structuredDetails.car}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {msg.structuredDetails.bus && (
-                        <div className="flex items-start gap-2.5 pt-2 border-t border-gray-100">
-                          <span className="text-lg">🚌</span>
-                          <div>
-                            <div className="text-[12px] font-bold text-gray-900">By Bus/Ferry</div>
-                            <div className="text-[11.5px] text-gray-500 leading-tight">
-                              {msg.structuredDetails.bus}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {msg.structuredDetails.location && (
-                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm">📍</span>
-                            <span className="text-[12px] font-bold text-gray-800 truncate max-w-[130px]">
-                              {msg.structuredDetails.location}
-                            </span>
-                          </div>
-                          <span className="text-[11px] font-semibold text-[#FF6B4A] bg-[#FFEAE5] px-2.5 py-1 rounded-full">
-                            View on map ↗
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+              {/* Bot Message Bubble with Markdown & Transport Card */}
+              <div className="flex flex-col items-start max-w-[320px] min-w-0">
+                <div className="px-4 py-3.5 rounded-3xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs text-gray-900 w-full">
+                  <FormattedMessage content={msg.content} />
                 </div>
 
                 {/* Timestamp */}
@@ -371,7 +602,14 @@ Format guidelines:
           ))}
         </div>
 
-        {/* Input Bar with Send Button */}
+        {/* Speech Error Banner if any */}
+        {speechError && (
+          <div className="text-[11px] text-red-500 font-medium bg-red-50 border border-red-200 px-3 py-1 rounded-full text-center">
+            {speechError}
+          </div>
+        )}
+
+        {/* Input Bar with Mic & Send Button */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -380,7 +618,7 @@ Format guidelines:
           className="flex items-center gap-2"
         >
           {/* Input Pill Container */}
-          <div className="flex-1 rounded-full bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3.5 py-2.5 flex items-center gap-2.5 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
+          <div className="flex-1 rounded-full bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3.5 py-2 flex items-center gap-2 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
             {/* Chat Icon */}
             <div className="w-6 h-6 rounded-full bg-[#0284C7] text-white flex items-center justify-center shrink-0">
               <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
@@ -397,9 +635,36 @@ Format guidelines:
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask GAI anything..."
+              placeholder={isListening ? 'Listening... speak now' : 'Ask GAI anything...'}
               className="w-full bg-transparent text-[14.5px] font-medium text-gray-900 placeholder-gray-400 outline-none"
             />
+
+            {/* Microphone Button */}
+            <button
+              type="button"
+              onClick={toggleListening}
+              className={`w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                isListening
+                  ? 'bg-red-500 text-white animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+                  : 'text-gray-400 hover:text-[#FF6B4A] hover:bg-gray-50'
+              }`}
+              title={isListening ? 'Stop listening' : 'Speak your question'}
+              aria-label="Voice input"
+            >
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" y1="19" x2="12" y2="22" />
+              </svg>
+            </button>
           </div>
 
           {/* Send Button */}
