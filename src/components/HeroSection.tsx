@@ -1,7 +1,20 @@
 import React from 'react';
 import heroImage from '../assets/images/hero.png';
+import { UserPreferences } from '../types/onboarding';
 
-export const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  preferences: UserPreferences;
+  onOpenProfile: () => void;
+}
+
+export const HeroSection: React.FC<HeroSectionProps> = ({
+  preferences,
+  onOpenProfile,
+}) => {
+  // Derive trip label from preferences
+  const primaryInterest = preferences.tourismTypes[0] || 'Adventure';
+  const tripTag = primaryInterest.replace(' Tourism', '');
+
   return (
     <div className="relative isolate pt-5 pb-5 px-5 select-none">
       {/* Background Hero Photo Container extending through GAI pill */}
@@ -27,8 +40,9 @@ export const HeroSection: React.FC = () => {
         {/* Location Pill */}
         <button
           type="button"
+          onClick={onOpenProfile}
           className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] active:scale-[0.98] transition-transform cursor-pointer"
-          aria-label="Current location: North Goa, Adventure Trip"
+          aria-label="Current trip preferences"
         >
           {/* Blue SVG Map Pin */}
           <svg
@@ -46,7 +60,7 @@ export const HeroSection: React.FC = () => {
 
           {/* Location Text */}
           <span className="text-[13px] font-semibold text-[#18232D] tracking-tight whitespace-nowrap">
-            North Goa <span className="font-normal text-[#64748B]">·</span> Adventure Trip
+            North Goa <span className="font-normal text-[#64748B]">·</span> {tripTag} Trip
           </span>
 
           {/* Chevron Down */}
@@ -67,6 +81,7 @@ export const HeroSection: React.FC = () => {
         {/* Profile Button */}
         <button
           type="button"
+          onClick={onOpenProfile}
           className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] active:scale-95 transition-transform cursor-pointer"
           aria-label="User profile"
         >
@@ -92,15 +107,15 @@ export const HeroSection: React.FC = () => {
           Good morning,
         </h2>
 
-        {/* User with SVG Sun Icon */}
+        {/* User Name with SVG Sun Icon */}
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[35px] font-extrabold text-[#111111] tracking-tight">
-            User
+          <span className="text-[35px] font-extrabold text-[#111111] tracking-tight truncate max-w-[280px]">
+            {preferences.name || 'User'}
           </span>
 
           {/* Clean Radiant SVG Sun Icon */}
           <svg
-            className="w-8 h-8 drop-shadow-sm select-none"
+            className="w-8 h-8 drop-shadow-sm select-none shrink-0"
             viewBox="0 0 32 32"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -124,9 +139,9 @@ export const HeroSection: React.FC = () => {
           </svg>
         </div>
 
-        {/* Subtitle */}
+        {/* Subtitle with Travel Month context */}
         <p className="mt-2 text-[14.5px] font-medium text-[#4B5763] leading-[1.38]">
-          Ready to explore Goa today?
+          Ready to explore Goa in {preferences.travelMonth || 'today'}?
           <br />
           Let’s plan something amazing.
         </p>
