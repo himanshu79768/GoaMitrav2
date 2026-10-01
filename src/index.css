@@ -18,3 +18,42 @@
     color: #111111;
   }
 }
+
+@keyframes gaiGlowMovement {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gai-glowing-border {
+  background: linear-gradient(
+    90deg,
+    #177F91,
+    #FF725F,
+    #FBBF24,
+    #9333EA,
+    #177F91,
+    #FF725F
+  );
+  background-size: 300% 300%;
+  animation: gaiGlowMovement 5s ease infinite;
+}
+
+.gai-ambient-glow {
+  background: linear-gradient(
+    90deg,
+    rgba(23, 127, 145, 0.4),
+    rgba(255, 114, 95, 0.35),
+    rgba(251, 191, 36, 0.35),
+    rgba(147, 51, 234, 0.35),
+    rgba(23, 127, 145, 0.4)
+  );
+  background-size: 300% 300%;
+  animation: gaiGlowMovement 5s ease infinite;
+}

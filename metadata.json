@@ -2,5 +2,7 @@
   "name": "GoaMitra",
   "description": "Premium mobile-first visual prototype of GoaMitra, a modern iOS-inspired Goa travel companion application.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
