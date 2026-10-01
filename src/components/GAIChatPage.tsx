@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { GoogleGenAI } from '@google/genai';
 import { UserPreferences } from '../types/onboarding';
 
 interface ChatMessage {
@@ -67,33 +68,64 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
     setIsLoading(true);
 
     try {
-      // Build conversation history for API
-      const conversationHistory = [...messages, userMsg].map((m) => ({
-        role: m.role,
-        content: m.content,
-      }));
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: conversationHistory,
-          userPreferences: preferences,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to get response from GAI');
+      if (!apiKey) {
+        throw new Error('MISSING_API_KEY');
       }
 
-      const data = await res.json();
+      // Initialize GoogleGenAI with client-side key
+      const ai = new GoogleGenAI({ apiKey });
+
+      const userName = preferences.name || 'Traveler';
+      const travelMonth = preferences.travelMonth || 'this season';
+      const travelType = preferences.travelType || 'Exploring';
+      const memberCount = preferences.memberCount || 2;
+      const tourismTypes = (preferences.tourismTypes || []).join(', ') || 'Culture and Heritage';
+
+      const systemInstruction = `You are GAI (Goa Artificial Intelligence), the dedicated, hyper-local AI travel companion for Goa, India.
+User's profile:
+- Name: ${userName}
+- Visiting in: ${travelMonth}
+- Group size: ${memberCount} members (${travelType})
+- Primary interests: ${tourismTypes}
+
+Personality:
+- Warm, knowledgeable, authentic, friendly, and welcoming (like a helpful local Goan friend).
+- Speak naturally in whatever language the user talks to you (English, Konkani, Hindi, Marathi, etc.).
+- You know all corners of Goa: North Goa (Anjuna, Vagator, Calangute, Morjim, Parra, Panaji, Old Goa, Assagao) and South Goa (Palolem, Agonda, Colva, Benaulim, Cavelossim, Cabo de Rama).
+- You know hidden gems, best sunset viewpoints, local bakeries (for fresh poee bread), authentic fish thali spots, heritage churches, Portuguese fort history, scooter rental tips, pilot motorcycle taxis, and safety precautions.
+
+Format guidelines:
+- Keep answers concise, clear, and helpful.
+- If the user asks about directions, how to reach a place, transport, or visiting a specific spot:
+  Always mention:
+  By Car/Auto/Scooter: <travel duration, route details and driving/riding advice>
+  By Bus/Ferry: <bus routes, stops or ferry crossing>
+  Location: <exact place or landmark in Goa>
+- If the user asks in Konkani/Hindi/Marathi, respond warmly in the same language!`;
+
+      // Build conversation history for Gemini API
+      const contents = [...messages, userMsg].map((m) => ({
+        role: m.role === 'user' ? 'user' : 'model',
+        parts: [{ text: m.content }],
+      }));
+
+      // Call Gemini directly with gemini-2.5-flash
+      const response = await ai.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents,
+        config: {
+          systemInstruction,
+          temperature: 0.7,
+        },
+      });
+
+      const content = response.text || 'I could not generate a response. Please try again.';
       const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-      // Check if response contains route/transport details to format nicely
-      const content = data.content || '';
-      let structuredDetails: ChatMessage['structuredDetails'] = undefined;
-
       // Extract transport cues if present
+      let structuredDetails: ChatMessage['structuredDetails'] = undefined;
       const carMatch = content.match(/By Car\/Auto(?:\/Scooter)?:\s*([^\n]+)/i);
       const busMatch = content.match(/By Bus(?:\/Ferry)?:\s*([^\n]+)/i);
       const locMatch = content.match(/Location:\s*([^\n]+)/i);
@@ -109,18 +141,24 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         role: 'assistant',
-        content: content,
+        content,
         timestamp: botTime,
         structuredDetails,
       };
 
       setMessages((prev) => [...prev, botMsg]);
     } catch (err: any) {
-      console.error('Chat error:', err);
+      console.error('GAI Gemini error:', err);
+      let errorResponse = "Dev Borem Korum! I'm momentarily catching my breath like an afternoon susegad. Please try asking again in a moment!";
+
+      if (err?.message === 'MISSING_API_KEY') {
+        errorResponse = "⚠️ Please set VITE_GEMINI_API_KEY in your environment variables (or Netlify site settings) to enable real-time GAI responses.";
+      }
+
       const errorMsg: ChatMessage = {
         id: `err-${Date.now()}`,
         role: 'assistant',
-        content: "Dev Borem Korum! I'm momentarily catching my breath like an afternoon susegad. Please try asking again in a moment!",
+        content: errorResponse,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -245,7 +283,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
                         <div className="flex items-start gap-2.5">
                           <span className="text-lg">🚗</span>
                           <div>
-                            <div className="text-[12px] font-bold text-gray-900">By Car/Auto</div>
+                            <div className="text-[12px] font-bold text-gray-900">By Car/Auto/Scooter</div>
                             <div className="text-[11.5px] text-gray-500 leading-tight">
                               {msg.structuredDetails.car}
                             </div>
@@ -257,7 +295,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
                         <div className="flex items-start gap-2.5 pt-2 border-t border-gray-100">
                           <span className="text-lg">🚌</span>
                           <div>
-                            <div className="text-[12px] font-bold text-gray-900">By Bus</div>
+                            <div className="text-[12px] font-bold text-gray-900">By Bus/Ferry</div>
                             <div className="text-[11.5px] text-gray-500 leading-tight">
                               {msg.structuredDetails.bus}
                             </div>
