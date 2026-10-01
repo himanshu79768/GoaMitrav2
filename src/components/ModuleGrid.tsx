@@ -14,6 +14,7 @@ interface ModuleCardProps {
   bgColor: string;
   icon: React.ReactNode;
   illustration: React.ReactNode;
+  onClick?: () => void;
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
@@ -22,11 +23,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   bgColor,
   icon,
   illustration,
+  onClick,
 }) => {
   return (
     <div
+      onClick={onClick}
       style={{ backgroundColor: bgColor }}
-      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[162px] transition-transform active:scale-[0.98] select-none"
+      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[162px] transition-transform active:scale-[0.98] select-none cursor-pointer"
     >
       {/* Background Subtle Thematic Illustration */}
       <div className="absolute right-0 bottom-0 w-[85%] h-[82%] pointer-events-none overflow-hidden">
@@ -50,6 +53,10 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         {/* Circular Action Button */}
         <button
           type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
           aria-label={`Open ${title}`}
           className="w-9 h-9 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#111111] shrink-0 hover:scale-105 active:scale-95 transition-all cursor-pointer"
         >
@@ -71,7 +78,11 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   );
 };
 
-export const ModuleGrid: React.FC = () => {
+interface ModuleGridProps {
+  onOpenStay?: () => void;
+}
+
+export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay }) => {
   return (
     <div className="px-5 pb-4">
       <div className="grid grid-cols-2 gap-3.5">
@@ -80,6 +91,7 @@ export const ModuleGrid: React.FC = () => {
           title="Stay"
           description={"Hotels, homestays\nand more"}
           bgColor="#FFF2E5"
+          onClick={onOpenStay}
           illustration={<StayIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#EA580C]">
@@ -133,83 +145,70 @@ export const ModuleGrid: React.FC = () => {
                 fill="currentColor"
                 aria-hidden="true"
               >
-                {/* Food Platter Cloche */}
-                <path d="M12 4a1.5 1.5 0 0 0-1.42 1.01C6.23 5.48 3 9.38 3 14h18c0-4.62-3.23-8.52-7.58-8.99A1.5 1.5 0 0 0 12 4zm-10 12h20v2H2v-2zm4 4h12v1.5H6V20z" />
+                <path d="M12 2a1 1 0 0 1 1 1v1.055A9.002 9.002 0 0 1 21 13v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-1a9.002 9.002 0 0 1 8-8.945V3a1 1 0 0 1 1-1zm-9 15h18v2H3v-2z" />
               </svg>
             </div>
           }
         />
 
-        {/* 4. Culture Card - Old Goa Purple */}
+        {/* 4. Culture Card - Goan Carnival Mask */}
         <ModuleCard
           title="Culture"
-          description={"Festivals, heritage\nand local experiences"}
-          bgColor="#F3E8FF"
+          description={"Heritage, music,\nfestivals & churches"}
+          bgColor="#EEF2FA"
           illustration={<CultureIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
-            <div className="w-9 h-9 flex items-center justify-start text-[#6B21A8]">
-              {/* Old Goa Heritage Cathedral & Basilica Icon */}
+            <div className="w-9 h-9 flex items-center justify-start text-[#4361EE]">
+              {/* Goan Heritage Music / Mandovi Guitar & Feather Mask Icon */}
               <svg
                 className="w-7 h-7"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-hidden="true"
               >
-                {/* Cross on roof */}
-                <path d="M12 2v2M11 3h2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                {/* Facade */}
-                <path d="M12 4L3 8v3h18V8L12 4z" />
-                <rect x="5" y="11" width="3" height="8" rx="0.5" />
-                <rect x="10.5" y="11" width="3" height="8" rx="0.5" />
-                <rect x="16" y="11" width="3" height="8" rx="0.5" />
-                <path d="M2 19h20v3H2v-3z" />
+                <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4a1 1 0 0 0 .7 1.6h13.9a1 1 0 0 0 .7-1.6l-.62-1.79A8.96 8.96 0 0 0 21 12c0-4.97-4.03-9-9-9zm-3 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
               </svg>
             </div>
           }
         />
 
-        {/* 5. Coupons Card - Shopping Bag % (No tree, No sun) */}
+        {/* 5. Coupons Card - Discount Tag / Vouchers */}
         <ModuleCard
           title="Coupons"
-          description={"Deals, offers\nand special discounts"}
-          bgColor="#FEF6E6"
+          description={"Exclusive Goan\ndeals and discounts"}
+          bgColor="#F5F3FF"
           illustration={<CouponsIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
-            <div className="w-9 h-9 flex items-center justify-start text-[#D97706]">
-              {/* Discount Ticket with % sign Icon */}
+            <div className="w-9 h-9 flex items-center justify-start text-[#7C3AED]">
+              {/* Discount Voucher Ticket Icon */}
               <svg
                 className="w-7 h-7"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-hidden="true"
               >
-                <path
-                  fillRule="evenodd"
-                  d="M2.5 7.5A2.5 2.5 0 0 1 5 5h14a2.5 2.5 0 0 1 2.5 2.5v1.2a2 2 0 0 0 0 3.6v1.2a2.5 2.5 0 0 1-2.5 2.5H5a2.5 2.5 0 0 1-2.5-2.5v-1.2a2 2 0 0 0 0-3.6V7.5zm11.2 1.3a1 1 0 1 0-1.4 1.4l4 4a1 1 0 0 0 1.4-1.4l-4-4zm-4.4.9a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6zm5.4 4.8a1.3 1.3 0 1 1 0-2.6 1.3 1.3 0 0 1 0 2.6z"
-                  clipRule="evenodd"
-                />
+                <path d="M21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7a2 2 0 0 0 0-2.83zM6.5 8C5.67 8 5 7.33 5 6.5S5.67 5 6.5 5 8 5.67 8 6.5 7.33 8 6.5 8z" />
               </svg>
             </div>
           }
         />
 
-        {/* 6. Emergency Card - Danger & Health Kit Sign Red Color */}
+        {/* 6. Emergency Card - Safety Shield / Emergency Contacts */}
         <ModuleCard
           title="Emergency"
-          description={"Help, safety info\nand important contacts"}
-          bgColor="#FEE2E2"
+          description={"Police, hospital\nand lifeguard info"}
+          bgColor="#FEEFEE"
           illustration={<EmergencyIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
-            <div className="w-9 h-9 flex items-center justify-start text-[#DC2626]">
-              {/* Health Kit Box & Medical Cross Icon */}
+            <div className="w-9 h-9 flex items-center justify-start text-[#E11D48]">
+              {/* Lifeguard Medical Cross Shield Icon */}
               <svg
                 className="w-7 h-7"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-hidden="true"
               >
-                {/* Kit handle */}
-                <path d="M9 3h6a1 1 0 0 1 1 1v2h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3V4a1 1 0 0 1 1-1zm2 3h2V5h-2v1zm2 5h-2v2H9v2h2v2h2v-2h2v-2h-2v-2z" />
+                <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3 10h-2v3h-2v-3H8v-2h3V7h2v3h3v2z" />
               </svg>
             </div>
           }

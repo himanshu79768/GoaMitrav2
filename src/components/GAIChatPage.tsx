@@ -19,6 +19,7 @@ interface LocationDetails {
 interface GAIChatPageProps {
   preferences: UserPreferences;
   onBack: () => void;
+  initialPrompt?: string;
 }
 
 const QUICK_PROMPTS = [
@@ -297,7 +298,7 @@ const FormattedMessage: React.FC<{
   );
 };
 
-export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack }) => {
+export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, initialPrompt }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome-1',
@@ -311,6 +312,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [speechError, setSpeechError] = useState<string | null>(null);
+  const promptSentRef = useRef(false);
 
   // Accurate Geolocation State (Zero error popups, fallback to Calangute/Baga)
   const [locationState, setLocationState] = useState<LocationDetails>(() => {
@@ -336,6 +338,14 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack })
   useEffect(() => {
     scrollToBottom();
   }, [messages, isLoading]);
+
+  // If opened with an initial prompt from Stay or other pages, send it automatically
+  useEffect(() => {
+    if (initialPrompt && !promptSentRef.current) {
+      promptSentRef.current = true;
+      handleSendMessage(initialPrompt);
+    }
+  }, [initialPrompt]);
 
   // Request browser geolocation accurately and silently
   useEffect(() => {
@@ -558,14 +568,26 @@ CRITICAL RULES:
         parts: [{ text: m.content }],
       }));
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash-lite',
-        contents,
-        config: {
-          systemInstruction,
-          temperature: 0.7,
-        },
-      });
+      let response;
+      try {
+        response = await ai.models.generateContent({
+          model: 'gemini-3.5-flash-lite',
+          contents,
+          config: {
+            systemInstruction,
+            temperature: 0.7,
+          },
+        });
+      } catch {
+        response = await ai.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents,
+          config: {
+            systemInstruction,
+            temperature: 0.7,
+          },
+        });
+      }
 
       const content = response.text || 'I could not generate a response. Please try again.';
       const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
