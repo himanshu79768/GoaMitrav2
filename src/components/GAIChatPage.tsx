@@ -25,7 +25,7 @@ interface GAIChatPageProps {
 const QUICK_PROMPTS = [
   { label: 'Nearby food?', icon: '🍴', prompt: 'What are the best authentic Goan food spots closest to my current spot right now?' },
   { label: 'Sunset spots?', icon: '🌅', prompt: 'What is the closest and best sunset viewpoint to visit from here?' },
-  { label: 'Scooter/cab rates?', icon: '🛵', prompt: 'How much does scooter rental and GoaMiles cab cost around here?' },
+  { label: 'Scooter/cab rates?', icon: '🛵', prompt: 'How much does scooter rental and private taxi cost around here?' },
   { label: 'Historic churches?', icon: '📍', prompt: 'What are the closest historic churches and Portuguese heritage sights near me?' },
   { label: 'Safety & emergency', icon: '🛡️', prompt: 'What are emergency contacts, lifeguard flags and safety rules around here?' },
 ];
@@ -636,7 +636,7 @@ CRITICAL RULES:
   };
 
   return (
-    <div className="h-screen max-h-screen bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden">
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden">
       {/* 100% Sticky Top Header - Pinned at top, never moves on scroll */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
         {/* Back Button */}
@@ -777,11 +777,11 @@ CRITICAL RULES:
           </div>
         )}
 
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="h-1 shrink-0" />
       </div>
 
-      {/* Bottom Bar: Quick Chips & Message Input */}
-      <div className="shrink-0 z-20 bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/50 pt-2 pb-5 px-4 space-y-2.5">
+      {/* Bottom Bar: Quick Chips & Message Input (Pinned cleanly above mobile nav bar) */}
+      <div className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/50 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] px-4 space-y-2">
         {/* Quick Suggestion Chips */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {QUICK_PROMPTS.map((chip) => (

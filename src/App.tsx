@@ -13,6 +13,8 @@ import { GAIChatPage } from './components/GAIChatPage';
 import { StayPage } from './components/StayPage';
 import { DestinationsPage, DestinationItem, ALL_DESTINATIONS } from './components/DestinationsPage';
 import { TravelPage } from './components/TravelPage';
+import { CouponsPage } from './components/CouponsPage';
+import { EmergencyPage } from './components/EmergencyPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
 
@@ -22,7 +24,7 @@ const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 export default function App() {
   // Check localStorage: if onboarding completed once, show homepage directly on refresh
   const [currentScreen, setCurrentScreen] = useState<
-    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel'
+    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'coupons' | 'emergency'
   >(() => {
     try {
       const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
@@ -192,6 +194,8 @@ export default function App() {
               <ModuleGrid
                 onOpenStay={() => setCurrentScreen('stay')}
                 onOpenDestinations={() => setCurrentScreen('destinations')}
+                onOpenCoupons={() => setCurrentScreen('coupons')}
+                onOpenEmergency={() => setCurrentScreen('emergency')}
               />
 
               {/* Travel Profile Modal */}
@@ -268,7 +272,45 @@ export default function App() {
             </motion.div>
           )}
 
-          {/* Step 7: GAI AI Travel Chatbot Page */}
+          {/* Step 7: Coupons Page (Minimal text structure requested) */}
+          {currentScreen === 'coupons' && (
+            <motion.div
+              key="coupons"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+              className="w-full min-h-screen"
+            >
+              <CouponsPage
+                onBack={() => setCurrentScreen('homepage')}
+                onOpenProfile={() => setIsProfileOpen(true)}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 8: Emergency & Safety Page (Exact match to reference photo) */}
+          {currentScreen === 'emergency' && (
+            <motion.div
+              key="emergency"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+              className="w-full min-h-screen"
+            >
+              <EmergencyPage
+                preferences={savedPreferences}
+                onBack={() => setCurrentScreen('homepage')}
+                onOpenProfile={() => setIsProfileOpen(true)}
+                onAskGAI={(prompt) => handleOpenChat(prompt)}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 9: GAI AI Travel Chatbot Page (Exact 100dvh height for mobile keyboard/scrolling) */}
           {currentScreen === 'gai_chat' && (
             <motion.div
               key="gai_chat"
@@ -277,7 +319,7 @@ export default function App() {
               animate="animate"
               exit="exit"
               transition={pageTransition}
-              className="w-full min-h-screen"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden"
             >
               <GAIChatPage
                 preferences={savedPreferences}

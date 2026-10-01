@@ -81,9 +81,16 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 interface ModuleGridProps {
   onOpenStay?: () => void;
   onOpenDestinations?: () => void;
+  onOpenCoupons?: () => void;
+  onOpenEmergency?: () => void;
 }
 
-export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay, onOpenDestinations }) => {
+export const ModuleGrid: React.FC<ModuleGridProps> = ({
+  onOpenStay,
+  onOpenDestinations,
+  onOpenCoupons,
+  onOpenEmergency,
+}) => {
   return (
     <div className="px-5 pb-4">
       <div className="grid grid-cols-2 gap-3.5">
@@ -179,6 +186,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay, onOpenDestin
           title="Coupons"
           description={"Exclusive Goan\ndeals and discounts"}
           bgColor="#F5F3FF"
+          onClick={onOpenCoupons}
           illustration={<CouponsIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#7C3AED]">
@@ -200,6 +208,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({ onOpenStay, onOpenDestin
           title="Emergency"
           description={"Police, hospital\nand lifeguard info"}
           bgColor="#FEEFEE"
+          onClick={onOpenEmergency}
           illustration={<EmergencyIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#E11D48]">
