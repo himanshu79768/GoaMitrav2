@@ -5,19 +5,19 @@ export const HeroSection: React.FC = () => {
   return (
     <div className="relative isolate pt-5 pb-5 px-5 select-none">
       {/* Background Hero Photo Container extending through GAI pill */}
-      <div className="absolute inset-0 top-0 h-[490px] overflow-hidden pointer-events-none -z-10">
+      <div className="absolute inset-0 top-0 h-[495px] overflow-hidden pointer-events-none -z-10">
         <img
           src={heroImage}
           alt="Goa Coastal Landscape"
           className="w-full h-full object-cover object-center scale-[1.02]"
           loading="eager"
         />
-        {/* Balanced translucent overlay: keeps hero visible behind GAI bar while ensuring high typography contrast */}
+        {/* Subtle, translucent overlay: keeps hero image vibrant and visible through liquid glass GAI bar */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 20%, rgba(255,255,255,0.2) 48%, rgba(247,247,245,0.45) 70%, rgba(247,247,245,0.92) 88%, #F7F7F5 100%)',
+              'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 18%, rgba(255,255,255,0.12) 46%, rgba(247,247,245,0.28) 68%, rgba(247,247,245,0.88) 88%, #F7F7F5 100%)',
           }}
         />
       </div>
@@ -132,21 +132,15 @@ export const HeroSection: React.FC = () => {
         </p>
       </div>
 
-      {/* AI Search / GAI Bar with Moving Glowing Gradient Border & Frosted Translucent Glass */}
+      {/* AI Search / GAI Bar with Slow Soft Border & iOS Liquid Glass Effect (Hero clearly visible inside) */}
       <div className="relative mt-6">
-        {/* Soft Ambient Glow Halo */}
-        <div
-          className="absolute -inset-1 rounded-full gai-ambient-glow opacity-60 blur-md pointer-events-none"
-          aria-hidden="true"
-        />
-
-        {/* Animated Moving Gradient Border Container */}
-        <div className="relative p-[1.5px] rounded-full gai-glowing-border shadow-[0_8px_32px_rgba(23,127,145,0.18)]">
-          {/* Inner Translucent Glassmorphism Pill (Background hero visible inside with optical blur) */}
-          <div className="flex items-center justify-between p-2 pl-3 rounded-full backdrop-blur-2xl bg-white/45 border border-white/50 hover:bg-white/55 transition-all">
-            {/* Left: Search Circle Button */}
+        {/* Soft, Slow Animated Non-Harsh Border (No colorful gradient) */}
+        <div className="relative p-[1.5px] rounded-full gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
+          {/* Inner iOS Liquid Glassmorphism Pill: High backdrop-blur, Low Opacity for visible background hero */}
+          <div className="flex items-center justify-between p-2 pl-3 rounded-full backdrop-blur-2xl bg-white/20 sm:bg-white/25 border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85),0_8px_32px_rgba(0,0,0,0.04)] hover:bg-white/30 transition-all">
+            {/* Left: Search Button */}
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="w-10 h-10 rounded-full bg-white/90 shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#222E3A] shrink-0">
+              <div className="w-10 h-10 rounded-full bg-white/65 backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-white/50 flex items-center justify-center text-[#222E3A] shrink-0">
                 <svg
                   className="w-5 h-5 text-[#2B3540]"
                   viewBox="0 0 24 24"
@@ -164,10 +158,10 @@ export const HeroSection: React.FC = () => {
 
               {/* Prompt Texts */}
               <div className="flex flex-col min-w-0 pr-2">
-                <span className="text-[15.5px] font-bold text-[#1C252E] tracking-tight leading-tight truncate">
+                <span className="text-[15.5px] font-bold text-[#141C24] tracking-tight leading-tight truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
                   Ask GAI anything...
                 </span>
-                <span className="text-[12px] text-[#55606A] font-normal tracking-normal truncate mt-0.5">
+                <span className="text-[12px] text-[#4A5562] font-medium tracking-normal truncate mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)]">
                   Find places, food, routes, safety info...
                 </span>
               </div>
@@ -176,7 +170,7 @@ export const HeroSection: React.FC = () => {
             {/* Right: Circular Arrow Action Button */}
             <button
               type="button"
-              className="w-10 h-10 rounded-full bg-white shadow-[0_2px_10px_rgba(0,0,0,0.08)] flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 ml-1"
+              className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-white/60 flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all cursor-pointer shrink-0 ml-1"
               aria-label="Submit search"
             >
               <svg

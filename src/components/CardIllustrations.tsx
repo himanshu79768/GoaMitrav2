@@ -1,13 +1,13 @@
 import React from 'react';
 
 /**
- * Custom vector illustrations for module cards matching exact user specifications:
+ * Custom vector illustrations for module cards:
  * 1. Stay: Goan home / villa in warm orange
- * 2. Destinations: Fort Aguada in coastal green
- * 3. Food: Goan culinary food dishes & platter in coral red
- * 4. Culture: Old Goa heritage monuments (Basilica of Bom Jesus) in royal purple
- * 5. Coupons: Shopping bag with % (with tree and sun removed) in warm gold
- * 6. Emergency: Danger warning alert and medical health kit in vibrant red
+ * 2. Destinations: Highly accurate Fort Aguada circular lighthouse & stone fortress (no crows, no trees)
+ * 3. Food: Authentic Goan culinary feast platter in coral red
+ * 4. Culture: Real Basilica of Bom Jesus baroque facade with 3-tier arches, volute scrolls, and Jesuit emblem (no trees)
+ * 5. Coupons: Clean shopping bag with % (no stars, no sparkles, no trees, no sun)
+ * 6. Emergency: Medical health kit with medical cross (danger sign removed)
  */
 
 export const StayIllustration: React.FC<{ className?: string }> = ({ className = '' }) => (
@@ -53,7 +53,6 @@ export const StayIllustration: React.FC<{ className?: string }> = ({ className =
       
       {/* Goan Balcão (Porch with Pillars & Seat) */}
       <rect x="22" y="44" width="46" height="33" fill="#EA580C" fillOpacity="0.28" rx="1.5" />
-      {/* Balcão sloping front canopy */}
       <path d="M18 44 L45 32 L72 44 Z" fill="#C2410C" fillOpacity="0.4" />
       
       {/* Balcão pillars */}
@@ -73,7 +72,7 @@ export const StayIllustration: React.FC<{ className?: string }> = ({ className =
       <rect x="30" y="77.5" width="30" height="3.5" fill="#9A3412" fillOpacity="0.35" rx="1" />
     </g>
 
-    {/* Cozy garden planter & lantern beside home */}
+    {/* Cozy garden planter beside home */}
     <g transform="translate(42, 68)" opacity="0.4">
       <path d="M4 14 L8 24 L0 24 Z" fill="#C2410C" />
       <circle cx="4" cy="11" r="5" fill="#EA580C" />
@@ -91,79 +90,88 @@ export const DestinationsIllustration: React.FC<{ className?: string }> = ({ cla
     className={`pointer-events-none select-none ${className}`}
     aria-hidden="true"
   >
-    {/* Ocean waves around Fort Aguada base */}
+    {/* Ocean coastline slope under Fort Aguada (No crows, No trees) */}
     <path
-      d="M-10 92 C25 88, 60 92, 100 86 C130 82, 155 86, 175 80 L175 115 L-10 115 Z"
+      d="M-10 94 C30 90, 70 94, 110 88 C135 84, 155 88, 175 82 L175 115 L-10 115 Z"
       fill="#059669"
       fillOpacity="0.12"
     />
     <path
-      d="M15 98 C55 92, 95 94, 175 86 L175 115 L15 115 Z"
+      d="M10 100 C55 94, 100 96, 175 88 L175 115 L10 115 Z"
       fill="#059669"
-      fillOpacity="0.2"
+      fillOpacity="0.22"
     />
 
-    {/* Fort Aguada - Famous Circular Bastion & Ramparts */}
-    <g transform="translate(60, 20)">
-      {/* Massive Circular Stone Fortress Bastion of Aguada */}
+    {/* Accurate Fort Aguada - Iconic 4-tier Circular 17th Century Portuguese Lighthouse & Fortress Ramparts */}
+    <g transform="translate(54, 10)">
+      {/* Lower Fort Bastion Wall (Sea rampart with cannon embrasures) */}
       <path
-        d="M28 28 C28 20, 68 20, 68 28 L72 68 L24 68 Z"
+        d="M-6 58 L88 58 L92 84 L-12 84 Z"
         fill="#047857"
-        fillOpacity="0.35"
+        fillOpacity="0.3"
       />
-      {/* Top parapet / gun platform */}
-      <ellipse cx="48" cy="28" rx="22" ry="5.5" fill="#10B981" fillOpacity="0.3" />
-      <ellipse cx="48" cy="27" rx="20" ry="4.5" fill="#065F46" fillOpacity="0.35" />
+      {/* Stone masonry joint lines on rampart */}
+      <line x1="-2" y1="68" x2="88" y2="68" stroke="#065F46" strokeWidth="1" strokeOpacity="0.3" />
+      <line x1="14" y1="58" x2="14" y2="68" stroke="#065F46" strokeWidth="0.8" strokeOpacity="0.3" />
+      <line x1="38" y1="58" x2="38" y2="68" stroke="#065F46" strokeWidth="0.8" strokeOpacity="0.3" />
+      <line x1="64" y1="58" x2="64" y2="68" stroke="#065F46" strokeWidth="0.8" strokeOpacity="0.3" />
+      
+      {/* Rampart Crenellations / Battlements */}
+      <rect x="0" y="52" width="8" height="6" fill="#047857" fillOpacity="0.45" />
+      <rect x="14" y="52" width="8" height="6" fill="#047857" fillOpacity="0.45" />
+      <rect x="28" y="52" width="8" height="6" fill="#047857" fillOpacity="0.45" />
+      <rect x="42" y="52" width="8" height="6" fill="#047857" fillOpacity="0.45" />
+      <rect x="56" y="52" width="8" height="6" fill="#047857" fillOpacity="0.45" />
+      <rect x="70" y="52" width="8" height="6" fill="#047857" fillOpacity="0.45" />
 
-      {/* Fort Aguada Watchtower / Lantern Citadel */}
-      <rect x="42" y="10" width="12" height="18" fill="#047857" fillOpacity="0.45" rx="1.5" />
-      <rect x="40" y="8" width="16" height="3" fill="#065F46" fillOpacity="0.5" rx="1" />
-      <path d="M43 8 C43 3, 53 3, 53 8 Z" fill="#065F46" fillOpacity="0.55" />
-      <rect x="46" y="14" width="4" height="6" fill="#022C22" fillOpacity="0.4" rx="1.5" />
+      {/* Fort Arched Gateway */}
+      <path d="M12 84 C12 70, 24 70, 24 84 Z" fill="#022C22" fillOpacity="0.45" />
 
-      {/* Sea-facing stone battlements & cannon embrasures */}
-      <rect x="25" y="24" width="5" height="5" fill="#047857" fillOpacity="0.45" />
-      <rect x="35" y="23" width="5" height="5" fill="#047857" fillOpacity="0.45" />
-      <rect x="56" y="23" width="5" height="5" fill="#047857" fillOpacity="0.45" />
-      <rect x="66" y="24" width="5" height="5" fill="#047857" fillOpacity="0.45" />
-
-      {/* Lower curtain rampart wall extending to the sea */}
+      {/* The Famous Fort Aguada Circular Lighthouse (Tiered stone drum) */}
+      {/* Tier 1 (Base circular bastion drum) */}
       <path
-        d="M-2 46 L28 46 L24 76 L-6 76 Z"
+        d="M34 54 L62 54 L66 74 L30 74 Z"
         fill="#047857"
-        fillOpacity="0.28"
+        fillOpacity="0.42"
       />
-      {/* Wall crenellations */}
-      <rect x="2" y="42" width="6" height="5" fill="#047857" fillOpacity="0.4" />
-      <rect x="12" y="42" width="6" height="5" fill="#047857" fillOpacity="0.4" />
-      <rect x="22" y="42" width="6" height="5" fill="#047857" fillOpacity="0.4" />
+      <ellipse cx="48" cy="54" rx="14" ry="3.5" fill="#10B981" fillOpacity="0.35" />
 
-      {/* Fort gate arch */}
-      <path d="M10 76 C10 62, 20 62, 20 76 Z" fill="#022C22" fillOpacity="0.4" />
-    </g>
-
-    {/* Swaying coconut palms around Fort Aguada */}
-    <g transform="translate(132, 20)">
+      {/* Tier 2 (Middle cylindrical stone tower) */}
       <path
-        d="M10 72 C8 48, 4 28, 0 14"
-        stroke="#065F46"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-        strokeOpacity="0.38"
+        d="M36 34 L60 34 L62 54 L34 54 Z"
+        fill="#065F46"
+        fillOpacity="0.45"
       />
-      <path
-        d="M0 14 C-10 6, -18 10, -22 18 M0 14 C-8 2, -14 -4, -10 -10 M0 14 C4 4, 12 2, 16 -2 M0 14 C-2 20, 2 26, 10 30"
-        stroke="#059669"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeOpacity="0.45"
-      />
-    </g>
+      <ellipse cx="48" cy="34" rx="12" ry="3" fill="#10B981" fillOpacity="0.35" />
+      {/* Windows on tower */}
+      <rect x="46" y="40" width="4" height="6" fill="#022C22" fillOpacity="0.5" rx="1" />
 
-    {/* Flying seagulls over Aguada coast */}
-    <g opacity="0.35">
-      <path d="M30 24 Q34 20 38 24 Q42 20 46 24" stroke="#065F46" strokeWidth="1.2" strokeLinecap="round" fill="none" />
-      <path d="M48 18 Q51 15 54 18 Q57 15 60 18" stroke="#065F46" strokeWidth="1" strokeLinecap="round" fill="none" />
+      {/* Tier 3 (Upper tower cylinder) */}
+      <path
+        d="M39 18 L57 18 L60 34 L36 34 Z"
+        fill="#047857"
+        fillOpacity="0.5"
+      />
+      {/* Observation Gallery / Balcony Railing */}
+      <ellipse cx="48" cy="18" rx="11" ry="2.8" fill="#065F46" fillOpacity="0.6" />
+      <rect x="36" y="15" width="24" height="3" fill="#047857" fillOpacity="0.5" rx="0.8" />
+      <line x1="38" y1="15" x2="38" y2="18" stroke="#022C22" strokeWidth="1" strokeOpacity="0.5" />
+      <line x1="43" y1="15" x2="43" y2="18" stroke="#022C22" strokeWidth="1" strokeOpacity="0.5" />
+      <line x1="48" y1="15" x2="48" y2="18" stroke="#022C22" strokeWidth="1" strokeOpacity="0.5" />
+      <line x1="53" y1="15" x2="53" y2="18" stroke="#022C22" strokeWidth="1" strokeOpacity="0.5" />
+      <line x1="58" y1="15" x2="58" y2="18" stroke="#022C22" strokeWidth="1" strokeOpacity="0.5" />
+
+      {/* Tier 4 (Glass Lantern Chamber & Dome) */}
+      <rect x="42" y="9" width="12" height="6.5" fill="#022C22" fillOpacity="0.4" rx="0.5" />
+      <path d="M42 9 C42 3, 54 3, 54 9 Z" fill="#065F46" fillOpacity="0.6" />
+      {/* Lightning rod / Spire */}
+      <line x1="48" y1="1" x2="48" y2="4" stroke="#065F46" strokeWidth="1.5" strokeLinecap="round" />
+
+      {/* Fort Cannon mounted on rampart facing sea */}
+      <g transform="translate(68, 48)">
+        <path d="M0 4 L14 1 L14 7 L0 5 Z" fill="#022C22" fillOpacity="0.55" />
+        <circle cx="5" cy="6" r="3.2" fill="#047857" fillOpacity="0.6" />
+      </g>
     </g>
   </svg>
 );
@@ -212,7 +220,6 @@ export const FoodIllustration: React.FC<{ className?: string }> = ({ className =
           fill="#B2321B"
           fillOpacity="0.5"
         />
-        {/* Grill marks */}
         <line x1="6" y1="2" x2="16" y2="10" stroke="#7C2D12" strokeWidth="1.2" strokeOpacity="0.6" />
         <line x1="10" y1="1" x2="18" y2="8" stroke="#7C2D12" strokeWidth="1.2" strokeOpacity="0.6" />
       </g>
@@ -225,9 +232,7 @@ export const FoodIllustration: React.FC<{ className?: string }> = ({ className =
       <path d="M12 46 C16 42, 22 46, 20 52 Z" fill="#F59E0B" fillOpacity="0.65" />
 
       {/* Cutlery beside thali */}
-      {/* Fork */}
       <path d="M-4 38 L-4 68 M-7 38 L-7 46 M-1 38 L-1 46" stroke="#B2321B" strokeWidth="1.4" strokeLinecap="round" strokeOpacity="0.4" />
-      {/* Spoon */}
       <ellipse cx="89" cy="40" rx="3.5" ry="5.5" fill="#B2321B" fillOpacity="0.35" />
       <line x1="89" y1="45" x2="89" y2="70" stroke="#B2321B" strokeWidth="1.5" strokeOpacity="0.4" strokeLinecap="round" />
     </g>
@@ -249,7 +254,7 @@ export const CultureIllustration: React.FC<{ className?: string }> = ({ classNam
     className={`pointer-events-none select-none ${className}`}
     aria-hidden="true"
   >
-    {/* Soft ground hills in Old Goa purple */}
+    {/* Courtyard base in Old Goa purple (No trees) */}
     <path
       d="M-10 94 C30 88, 75 92, 170 84 L170 115 L-10 115 Z"
       fill="#6B21A8"
@@ -261,69 +266,84 @@ export const CultureIllustration: React.FC<{ className?: string }> = ({ classNam
       fillOpacity="0.18"
     />
 
-    {/* Famous Basilica of Bom Jesus, Old Goa (UNESCO World Heritage) */}
-    <g transform="translate(62, 12)">
-      {/* Three-Tier Baroque Red Laterite Facade */}
-      
-      {/* Tier 1 (Base Level with 3 Arched Entrances) */}
-      <rect x="8" y="44" width="70" height="34" fill="#6B21A8" fillOpacity="0.3" rx="1" />
-      {/* Grand Central Portal / Arch */}
-      <path d="M37 78 C37 60, 49 60, 49 78 Z" fill="#3B0764" fillOpacity="0.45" />
-      {/* Side Arches */}
-      <path d="M16 78 C16 66, 24 66, 24 78 Z" fill="#3B0764" fillOpacity="0.4" />
-      <path d="M62 78 C62 66, 70 66, 70 78 Z" fill="#3B0764" fillOpacity="0.4" />
+    {/* Accurate Basilica of Bom Jesus, Old Goa (World Heritage Red Laterite Baroque Monument) */}
+    <g transform="translate(56, 10)">
+      {/* Tier 1: Grand Lower Level with 3 Rounded Arched Portals */}
+      <rect x="6" y="46" width="76" height="34" fill="#6B21A8" fillOpacity="0.32" rx="1" />
+      {/* Central Grand Doorway with Basalt Arch & Pediment */}
+      <path d="M37 80 C37 60, 51 60, 51 80 Z" fill="#3B0764" fillOpacity="0.5" />
+      <path d="M34 60 L44 54 L54 60 Z" fill="#4A044E" fillOpacity="0.5" />
+      {/* Side Portals */}
+      <path d="M14 80 C14 67, 24 67, 24 80 Z" fill="#3B0764" fillOpacity="0.45" />
+      <path d="M64 80 C64 67, 74 67, 74 80 Z" fill="#3B0764" fillOpacity="0.45" />
+      {/* Lower Pilasters */}
+      <rect x="10" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="28" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="57" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="75" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
 
-      {/* Tier 2 (Middle Level with Corinthian Pillars & Windows) */}
-      <rect x="14" y="24" width="58" height="20" fill="#6B21A8" fillOpacity="0.35" rx="1" />
-      {/* Pilasters */}
-      <rect x="18" y="24" width="3" height="20" fill="#4A044E" fillOpacity="0.45" />
-      <rect x="33" y="24" width="3" height="20" fill="#4A044E" fillOpacity="0.45" />
-      <rect x="50" y="24" width="3" height="20" fill="#4A044E" fillOpacity="0.45" />
-      <rect x="65" y="24" width="3" height="20" fill="#4A044E" fillOpacity="0.45" />
-      {/* Circular Rose Windows */}
-      <circle cx="26" cy="34" r="3.5" fill="#3B0764" fillOpacity="0.4" />
-      <circle cx="43" cy="34" r="4.5" fill="#3B0764" fillOpacity="0.45" />
-      <circle cx="58" cy="34" r="3.5" fill="#3B0764" fillOpacity="0.4" />
+      {/* Horizontal Entablature 1 */}
+      <rect x="4" y="43" width="80" height="3.5" fill="#4A044E" fillOpacity="0.5" rx="0.5" />
 
-      {/* Tier 3 (Top Baroque Gable with Jesuits IHS Emblems & Scrolls) */}
+      {/* Tier 2: Middle Level with 3 Large Rectangular Windows & Classical Pilasters */}
+      <rect x="12" y="24" width="64" height="19" fill="#6B21A8" fillOpacity="0.36" rx="1" />
+      {/* 3 Windows with Carved Stone Frames */}
+      <rect x="18" y="27" width="8" height="12" fill="#3B0764" fillOpacity="0.45" rx="1" />
+      <rect x="40" y="27" width="8" height="12" fill="#3B0764" fillOpacity="0.5" rx="1" />
+      <rect x="62" y="27" width="8" height="12" fill="#3B0764" fillOpacity="0.45" rx="1" />
+      {/* Window Triangular Pediments */}
+      <path d="M17 27 L22 23 L27 27 Z" fill="#4A044E" fillOpacity="0.45" />
+      <path d="M39 27 L44 23 L49 27 Z" fill="#4A044E" fillOpacity="0.55" />
+      <path d="M61 27 L66 23 L71 27 Z" fill="#4A044E" fillOpacity="0.45" />
+      {/* Paired Pilasters on Tier 2 */}
+      <rect x="13" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="30" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="35" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="51" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="56" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+      <rect x="73" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+
+      {/* Horizontal Entablature 2 */}
+      <rect x="10" y="21" width="68" height="3.5" fill="#4A044E" fillOpacity="0.5" rx="0.5" />
+
+      {/* Tier 3: Classic Baroque Gable with Authentic Volute Scrolls (S-Curves) */}
       <path
-        d="M26 24 C26 12, 43 8, 43 8 C43 8, 60 12, 60 24 Z"
+        d="M26 21 C26 9, 44 5, 44 5 C44 5, 62 9, 62 21 Z"
         fill="#6B21A8"
-        fillOpacity="0.42"
+        fillOpacity="0.45"
       />
-      {/* Baroque scroll flanks */}
-      <path d="M26 24 C22 20, 22 14, 26 14" stroke="#4A044E" strokeWidth="2" strokeOpacity="0.45" fill="none" />
-      <path d="M60 24 C64 20, 64 14, 60 14" stroke="#4A044E" strokeWidth="2" strokeOpacity="0.45" fill="none" />
-      
-      {/* Historic Cross on Apex */}
-      <rect x="42" y="1" width="2" height="9" fill="#3B0764" fillOpacity="0.55" />
-      <rect x="39" y="3.5" width="8" height="2" fill="#3B0764" fillOpacity="0.55" />
-
-      {/* Adjacent Se Cathedral Bell Tower in Old Goa */}
-      <rect x="-4" y="28" width="12" height="50" fill="#6B21A8" fillOpacity="0.25" rx="1" />
-      <path d="M-4 28 L2 18 L8 28 Z" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="0" y="34" width="4" height="8" fill="#3B0764" fillOpacity="0.35" rx="1.5" />
-
-      {/* Grand baroque stepped plaza */}
-      <path d="M-8 78 L86 78 L90 84 L-12 84 Z" fill="#6B21A8" fillOpacity="0.25" />
-    </g>
-
-    {/* Old Goa coconut palm */}
-    <g transform="translate(136, 16)">
+      {/* Left Volute Scroll */}
       <path
-        d="M10 74 C8 50, 4 30, 0 16"
-        stroke="#4A044E"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-        strokeOpacity="0.35"
+        d="M26 21 C18 19, 16 11, 22 9 C27 8, 28 14, 26 21 Z"
+        fill="#4A044E"
+        fillOpacity="0.45"
       />
+      {/* Right Volute Scroll */}
       <path
-        d="M0 16 C-10 8, -18 12, -20 20 M0 16 C-8 4, -14 -2, -10 -8 M0 16 C4 6, 12 4, 16 0 M0 16 C-2 22, 2 28, 8 32"
-        stroke="#6B21A8"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeOpacity="0.4"
+        d="M62 21 C70 19, 72 11, 66 9 C61 8, 60 14, 62 21 Z"
+        fill="#4A044E"
+        fillOpacity="0.45"
       />
+
+      {/* Famous Jesuit Monogram Emblem ("IHS" Medallion) in Center of Gable */}
+      <circle cx="44" cy="13" r="5.5" fill="#FBBF24" fillOpacity="0.6" />
+      <circle cx="44" cy="13" r="4.5" fill="#4A044E" fillOpacity="0.7" />
+      <text x="44" y="15" textAnchor="middle" fontFamily="sans-serif" fontSize="4.2" fontWeight="bold" fill="#FBBF24">
+        IHS
+      </text>
+
+      {/* Historic Crowning Latin Cross on Apex */}
+      <rect x="43" y="0" width="2" height="7.5" fill="#3B0764" fillOpacity="0.65" />
+      <rect x="40.5" y="2" width="7" height="2" fill="#3B0764" fillOpacity="0.65" />
+
+      {/* Old Goa Belfry Tower adjacent */}
+      <rect x="-6" y="26" width="14" height="54" fill="#6B21A8" fillOpacity="0.28" rx="1" />
+      <path d="M-6 26 L1 16 L8 26 Z" fill="#4A044E" fillOpacity="0.45" />
+      <rect x="-1" y="32" width="4.5" height="10" fill="#3B0764" fillOpacity="0.4" rx="2" />
+
+      {/* Stepped Laterite Stone Plaza */}
+      <rect x="-10" y="80" width="102" height="3" fill="#6B21A8" fillOpacity="0.3" />
+      <rect x="-14" y="83" width="110" height="3.5" fill="#4A044E" fillOpacity="0.25" />
     </g>
   </svg>
 );
@@ -336,7 +356,7 @@ export const CouponsIllustration: React.FC<{ className?: string }> = ({ classNam
     className={`pointer-events-none select-none ${className}`}
     aria-hidden="true"
   >
-    {/* Ground ripples in warm golden amber - NO tree, NO sun */}
+    {/* Ground ripples in warm golden amber - Just the discount bag (no stars, no sparkles, no tree, no sun) */}
     <path
       d="M-10 94 C30 90, 80 92, 170 86 L170 115 L-10 115 Z"
       fill="#D97706"
@@ -348,61 +368,45 @@ export const CouponsIllustration: React.FC<{ className?: string }> = ({ classNam
       fillOpacity="0.2"
     />
 
-    {/* Shopping Bag with % symbol (same as requested, without tree and without sun) */}
-    <g transform="translate(76, 20)">
+    {/* Clean Stylish Discount Shopping Bag with % symbol */}
+    <g transform="translate(68, 16)">
       {/* Bag handles */}
       <path
-        d="M16 20 C16 4, 38 4, 38 20"
+        d="M20 22 C20 4, 46 4, 46 22"
         stroke="#92400E"
-        strokeWidth="3.5"
+        strokeWidth="3.8"
         strokeLinecap="round"
         fill="none"
-        strokeOpacity="0.45"
+        strokeOpacity="0.48"
       />
       {/* Bag body */}
       <path
-        d="M4 20 L50 20 L55 74 L0 74 Z"
+        d="M6 22 L60 22 L66 80 L0 80 Z"
         fill="#D97706"
-        fillOpacity="0.32"
+        fillOpacity="0.34"
       />
       {/* Bag fold detail */}
       <path
-        d="M4 20 L27 27 L50 20"
+        d="M6 22 L33 30 L60 22"
         stroke="#92400E"
-        strokeWidth="1.6"
-        strokeOpacity="0.35"
+        strokeWidth="1.8"
+        strokeOpacity="0.38"
         fill="none"
       />
-      {/* Percent Symbol on Bag */}
+      {/* Front Accent Pocket / Label with Percent Symbol */}
+      <rect x="18" y="38" width="30" height="30" rx="4" fill="#FEF6E6" fillOpacity="0.4" />
       <text
-        x="27"
-        y="54"
+        x="33"
+        y="60"
         textAnchor="middle"
         fontFamily="sans-serif"
-        fontSize="19"
+        fontSize="22"
         fontWeight="bold"
-        fill="#FFFFFF"
+        fill="#92400E"
         fillOpacity="0.85"
       >
         %
       </text>
-    </g>
-
-    {/* Additional Gift Box & Coupon Vouchers with % - replacing tree and sun */}
-    <g transform="translate(24, 46)">
-      {/* Discount Voucher Ticket */}
-      <rect x="0" y="8" width="42" height="24" rx="3" fill="#D97706" fillOpacity="0.25" stroke="#92400E" strokeWidth="1.2" strokeDasharray="3 2" strokeOpacity="0.4" />
-      <circle cx="0" cy="20" r="4" fill="#FEF6E6" />
-      <circle cx="42" cy="20" r="4" fill="#FEF6E6" />
-      <text x="21" y="25" textAnchor="middle" fontFamily="sans-serif" fontSize="13" fontWeight="bold" fill="#92400E" fillOpacity="0.6">
-        50% OFF
-      </text>
-    </g>
-
-    {/* Sparkle discount accents */}
-    <g opacity="0.35">
-      <path d="M136 28 L138 34 L144 36 L138 38 L136 44 L134 38 L128 36 L134 34 Z" fill="#D97706" />
-      <path d="M42 28 L43.5 32 L48 33.5 L43.5 35 L42 39 L40.5 35 L36 33.5 L40.5 32 Z" fill="#D97706" />
     </g>
   </svg>
 );
@@ -415,7 +419,7 @@ export const EmergencyIllustration: React.FC<{ className?: string }> = ({ classN
     className={`pointer-events-none select-none ${className}`}
     aria-hidden="true"
   >
-    {/* Soft ground hills in emergency red */}
+    {/* Soft ground hills in emergency red (Danger sign removed) */}
     <path
       d="M-10 92 C30 88, 80 90, 170 84 L170 115 L-10 115 Z"
       fill="#DC2626"
@@ -427,55 +431,39 @@ export const EmergencyIllustration: React.FC<{ className?: string }> = ({ classN
       fillOpacity="0.2"
     />
 
-    {/* Medical Health Kit Box with Cross Sign in Red */}
-    <g transform="translate(68, 22)">
+    {/* Medical Health Kit Box with Cross Sign in Red (No danger sign) */}
+    <g transform="translate(62, 16)">
       {/* Health Kit Handle */}
       <path
-        d="M24 16 C24 8, 44 8, 44 16"
+        d="M28 18 C28 8, 52 8, 52 18"
         stroke="#991B1B"
-        strokeWidth="3.5"
+        strokeWidth="3.8"
         strokeLinecap="round"
         fill="none"
-        strokeOpacity="0.5"
+        strokeOpacity="0.55"
       />
       {/* First Aid Box Body */}
-      <rect x="6" y="16" width="56" height="48" rx="6" fill="#DC2626" fillOpacity="0.32" />
-      <rect x="6" y="16" width="56" height="48" rx="6" stroke="#991B1B" strokeWidth="1.5" strokeOpacity="0.4" fill="none" />
+      <rect x="6" y="18" width="68" height="54" rx="8" fill="#DC2626" fillOpacity="0.34" />
+      <rect x="6" y="18" width="68" height="54" rx="8" stroke="#991B1B" strokeWidth="1.8" strokeOpacity="0.45" fill="none" />
       
       {/* Box Latches */}
-      <rect x="14" y="15" width="6" height="6" rx="1" fill="#FFFFFF" fillOpacity="0.6" />
-      <rect x="48" y="15" width="6" height="6" rx="1" fill="#FFFFFF" fillOpacity="0.6" />
+      <rect x="16" y="16.5" width="8" height="7" rx="1.5" fill="#FFFFFF" fillOpacity="0.65" />
+      <rect x="56" y="16.5" width="8" height="7" rx="1.5" fill="#FFFFFF" fillOpacity="0.65" />
 
       {/* Prominent White Medical Cross on Health Kit */}
-      <g transform="translate(34, 40)">
-        <circle cx="0" cy="0" r="14" fill="#FFFFFF" fillOpacity="0.8" />
-        <rect x="-3" y="-9" width="6" height="18" rx="1.5" fill="#DC2626" fillOpacity="0.9" />
-        <rect x="-9" y="-3" width="18" height="6" rx="1.5" fill="#DC2626" fillOpacity="0.9" />
+      <g transform="translate(40, 45)">
+        <circle cx="0" cy="0" r="16" fill="#FFFFFF" fillOpacity="0.85" />
+        <rect x="-3.5" y="-10.5" width="7" height="21" rx="2" fill="#DC2626" fillOpacity="0.95" />
+        <rect x="-10.5" y="-3.5" width="21" height="7" rx="2" fill="#DC2626" fillOpacity="0.95" />
       </g>
     </g>
 
-    {/* Danger Warning Triangle with Exclamation Sign in Red */}
-    <g transform="translate(24, 30)">
-      {/* Rounded Danger Alert Triangle */}
+    {/* Clean Heartbeat / Emergency Pulse Lifeline */}
+    <g opacity="0.4">
       <path
-        d="M18 4 L34 32 C35.5 35, 33.5 37, 30 37 L6 37 C2.5 37, 0.5 35, 2 32 L18 4 Z"
-        fill="#EF4444"
-        fillOpacity="0.3"
-        stroke="#B91C1C"
-        strokeWidth="1.5"
-        strokeOpacity="0.45"
-      />
-      {/* Exclamation point */}
-      <rect x="16.5" y="14" width="3" height="10" rx="1.5" fill="#991B1B" fillOpacity="0.75" />
-      <circle cx="18" cy="28" r="1.8" fill="#991B1B" fillOpacity="0.75" />
-    </g>
-
-    {/* ECG / Emergency Pulse Lifeline */}
-    <g opacity="0.35">
-      <path
-        d="M2 78 L20 78 L24 72 L28 84 L32 68 L36 82 L40 78 L70 78"
+        d="M6 78 L26 78 L31 71 L36 85 L42 66 L47 83 L52 78 L80 78"
         stroke="#DC2626"
-        strokeWidth="1.6"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
