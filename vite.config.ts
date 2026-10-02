@@ -15,7 +15,7 @@ export default defineConfig(() => {
         manifest: {
           id: '/',
           name: 'GoaMitra — Goa Travel Companion',
-          short_name: 'GoaMitra',
+          short_name: 'GoaMitra Prototype',
           description: 'Your intelligent personalized Goa travel guide, stays, local food, routes, and live emergency safety companion.',
           theme_color: '#F7F7F5',
           background_color: '#F7F7F5',
@@ -25,15 +25,15 @@ export default defineConfig(() => {
           scope: '/',
           icons: [
             {
-              src: '/icon.svg',
+              src: '/icon.png',
               sizes: '192x192 512x512',
-              type: 'image/svg+xml',
+              type: 'image/png',
               purpose: 'any',
             },
             {
-              src: '/icon.svg',
+              src: '/icon.png',
               sizes: '512x512',
-              type: 'image/svg+xml',
+              type: 'image/png',
               purpose: 'maskable',
             },
           ],
