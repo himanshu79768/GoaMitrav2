@@ -958,7 +958,7 @@ CRITICAL RULES:
       let response;
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash-lite',
+          model: 'gemini-3.5-flash-lite',
           contents: historyContents,
           config: {
             tools: [{ googleSearch: {} }],
@@ -969,7 +969,7 @@ CRITICAL RULES:
       } catch (searchErr) {
         console.warn('Fallback standard generateContent without search tool', searchErr);
         response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-3.5-flash',
           contents: historyContents,
           config: {
             systemInstruction,
