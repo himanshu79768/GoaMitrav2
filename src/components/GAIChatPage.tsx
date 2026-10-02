@@ -223,7 +223,7 @@ const FormattedMessage: React.FC<{
   for (const line of lines) {
     const trimmed = line.trim();
     const carMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Car(?:\/Auto)?(?:\/Scooter)?):\s*(.*)/i);
-    const busMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Bus(?:\)?):\s*(.*)/i);
+    const busMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Bus(?:\/Bus)?):\s*(.*)/i);
     const locMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:Location|Place):\s*(.*)/i);
 
     if (carMatch) {
