@@ -19,6 +19,7 @@ import { EmergencyPage } from './components/EmergencyPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
 import { preloadAllAppImages } from './utils/imagePreloader';
+import { haptics } from './utils/haptics';
 
 const ONBOARDING_COMPLETED_KEY = 'goamitra_onboarding_completed';
 const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
@@ -47,18 +48,20 @@ export default function App() {
   // Navigation direction tracker for pure slide transitions (forward: right-to-left, backward: left-to-right)
   const [navDirection, setNavDirection] = useState<'forward' | 'backward'>('forward');
 
-  // Helper forward navigation
+  // Helper forward navigation with tactile transition feel
   const navigateForward = (
     screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'coupons' | 'emergency'
   ) => {
+    haptics.transition();
     setNavDirection('forward');
     setCurrentScreen(screen);
   };
 
-  // Helper backward navigation
+  // Helper backward navigation with subtle tactile spring feel
   const navigateBack = (
     screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'coupons' | 'emergency'
   ) => {
+    haptics.impact('light');
     setNavDirection('backward');
     setCurrentScreen(screen);
   };
@@ -94,6 +97,7 @@ export default function App() {
   const [chatInitialPrompt, setChatInitialPrompt] = useState<string | undefined>();
 
   const toggleInterest = (interest: string) => {
+    haptics.selection();
     setSelectedInterests((prev) =>
       prev.includes(interest)
         ? prev.filter((i) => i !== interest)
@@ -102,6 +106,7 @@ export default function App() {
   };
 
   const handleFinishOnboarding = () => {
+    haptics.notification('success');
     const finalPreferences: UserPreferences = {
       name: name.trim() || 'Explorer',
       tourismTypes:
@@ -126,14 +131,17 @@ export default function App() {
   };
 
   const handleOpenChat = (prompt?: string) => {
+    haptics.impact('medium');
     setChatInitialPrompt(prompt);
     navigateForward('gai_chat');
   };
 
   const handleOpenTravelForDestination = (dest: DestinationItem) => {
+    haptics.impact('medium');
     setSelectedDestinationForTravel(dest);
     navigateForward('travel');
   };
+
 
   // Pure Slide Transitions with Zero Fading and Zero Delay (Native iOS feel)
   const pageVariants = {

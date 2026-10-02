@@ -1,4 +1,5 @@
 import React from 'react';
+import { haptics } from '../utils/haptics';
 
 interface OnboardingStepTwoProps {
   name: string;
@@ -64,7 +65,10 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
             {/* Back Button */}
             <button
               type="button"
-              onClick={onBack}
+              onClick={() => {
+                haptics.impact('light');
+                onBack();
+              }}
               className="w-8 h-8 rounded-full bg-white border border-gray-200/80 shadow-sm flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
               aria-label="Go back"
             >
@@ -145,6 +149,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
               disabled={isCountLocked || memberCount <= 1}
               onClick={() => {
                 if (!isCountLocked) {
+                  haptics.impact('light');
                   setMemberCount(Math.max(1, memberCount - 1));
                 }
               }}
@@ -163,6 +168,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
               disabled={isCountLocked}
               onClick={() => {
                 if (!isCountLocked) {
+                  haptics.impact('light');
                   setMemberCount(memberCount + 1);
                 }
               }}
@@ -191,6 +197,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
                 <div
                   key={item.type}
                   onClick={() => {
+                    haptics.selection();
                     setTravelType(item.type);
                     if (item.type === 'Solo Traveler') {
                       setMemberCount(1);
@@ -244,7 +251,10 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
       <div className="pt-6 mt-6">
         <button
           type="button"
-          onClick={onFinish}
+          onClick={() => {
+            haptics.notification('success');
+            onFinish();
+          }}
           className="w-full py-4 rounded-2xl font-bold text-[16px] bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>Explore Goa Now</span>
@@ -264,3 +274,4 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
     </div>
   );
 };
+

@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import heroImage from '../assets/images/hero.png';
 import { UserPreferences } from '../types/onboarding';
+import { haptics } from '../utils/haptics';
 
 interface HeroSectionProps {
   preferences: UserPreferences;
@@ -45,7 +46,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           type="button"
           whileHover={{ y: -1 }}
           whileTap={{ scale: 0.96 }}
-          onClick={onOpenProfile}
+          onClick={() => {
+            haptics.impact('light');
+            onOpenProfile();
+          }}
           className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:bg-white/90 transition-colors cursor-pointer"
           aria-label="Current trip preferences"
         >
@@ -89,7 +93,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           whileHover={{ scale: 1.06 }}
           whileTap={{ scale: 0.92 }}
           transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-          onClick={onOpenProfile}
+          onClick={() => {
+            haptics.impact('light');
+            onOpenProfile();
+          }}
           className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] cursor-pointer"
           aria-label="User profile"
         >
@@ -108,6 +115,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </svg>
         </motion.button>
       </div>
+
 
       {/* Greeting Area */}
       <div className="mt-7 mb-5">
@@ -161,11 +169,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="relative p-[1.5px] rounded-full gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
           {/* Inner iOS Liquid Glassmorphism Pill: Click opens Chatbot */}
           <div
-            onClick={onOpenChat}
+            onClick={() => {
+              haptics.impact('medium');
+              onOpenChat();
+            }}
             role="button"
             tabIndex={0}
+            data-haptic="medium"
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') onOpenChat();
+              if (e.key === 'Enter' || e.key === ' ') {
+                haptics.impact('medium');
+                onOpenChat();
+              }
             }}
             className="flex items-center justify-between p-2 pl-3 rounded-full backdrop-blur-2xl bg-white/20 sm:bg-white/25 border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85),0_8px_32px_rgba(0,0,0,0.04)] hover:bg-white/35 active:scale-[0.99] transition-all cursor-pointer"
           >

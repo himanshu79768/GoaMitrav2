@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import culturalImg from '../assets/images/goa_cultural_tourism_1790841178468.jpg';
 import heritageImg from '../assets/images/goa_heritage_tourism_1790841197716.jpg';
+import { haptics } from '../utils/haptics';
 
 interface OnboardingStepOneProps {
+
   name: string;
   setName: (name: string) => void;
   selectedInterests: string[];
@@ -215,7 +217,10 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
           <div className="relative mt-3">
             <button
               type="button"
-              onClick={() => setIsMonthPickerOpen(!isMonthPickerOpen)}
+              onClick={() => {
+                haptics.selection();
+                setIsMonthPickerOpen(!isMonthPickerOpen);
+              }}
               className="w-full rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3.5 flex items-center justify-between text-left hover:border-gray-300 active:scale-[0.99] transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
@@ -267,6 +272,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
                       key={m.name}
                       type="button"
                       onClick={() => {
+                        haptics.selection();
                         setSelectedMonth(m.name);
                         setIsMonthPickerOpen(false);
                       }}
@@ -294,7 +300,10 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
         <button
           type="button"
           disabled={!isUnlocked}
-          onClick={onContinue}
+          onClick={() => {
+            haptics.impact('medium');
+            onContinue();
+          }}
           className={`w-full py-4 rounded-2xl font-bold text-[16px] flex items-center justify-center gap-2 transition-all ${
             isUnlocked
               ? 'bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] cursor-pointer'

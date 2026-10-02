@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserPreferences } from '../types/onboarding';
+import { haptics } from '../utils/haptics';
 
 interface UserProfileModalProps {
   isOpen: boolean;
@@ -15,6 +16,27 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   preferences,
   onEditPreferences,
 }) => {
+  const [hapticsEnabled, setHapticsEnabled] = useState(() => haptics.getIsEnabled());
+  const [hapticSoundEnabled, setHapticSoundEnabled] = useState(() => haptics.getIsSoundEnabled());
+
+  const handleToggleHaptics = () => {
+    const next = !hapticsEnabled;
+    setHapticsEnabled(next);
+    haptics.setEnabled(next);
+    if (next) {
+      haptics.impact('medium');
+    }
+  };
+
+  const handleToggleHapticSound = () => {
+    const next = !hapticSoundEnabled;
+    setHapticSoundEnabled(next);
+    haptics.setSoundEnabled(next);
+    if (next) {
+      haptics.impact('light');
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -45,10 +67,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             dragElastic={{ top: 0.05, bottom: 0.7 }}
             onDragEnd={(_, info) => {
               if (info.offset.y > 100 || info.velocity.y > 400) {
+                haptics.impact('light');
                 onClose();
               }
             }}
-            className="w-full max-w-[430px] bg-[#F7F7F5] rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-white/60 relative z-10 touch-none"
+            className="w-full max-w-[430px] bg-[#F7F7F5] rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-white/60 relative z-10 touch-none max-h-[90vh] overflow-y-auto"
           >
             {/* Modal Handle (Interactive drag bar) */}
             <div className="w-12 h-1.5 bg-gray-300/80 hover:bg-gray-400 rounded-full mx-auto mb-4 cursor-grab active:cursor-grabbing transition-colors" />
@@ -73,7 +96,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 type="button"
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
-                onClick={onClose}
+                onClick={() => {
+                  haptics.impact('light');
+                  onClose();
+                }}
                 className="w-8 h-8 rounded-full bg-gray-200/70 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors cursor-pointer"
                 aria-label="Close Profile"
               >
@@ -118,15 +144,90 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   </p>
                 </div>
               </div>
+
+              {/* iOS Tactile Haptics Engine Control */}
+              <div className="p-3.5 rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">📳</span>
+                    <div>
+                      <h4 className="text-[13px] font-bold text-gray-900 leading-tight">
+                        Tactile Haptics
+                      </h4>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Physical tap pulses & Taptic engine sensations
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* iOS Style Switch */}
+                  <button
+                    type="button"
+                    onClick={handleToggleHaptics}
+                    className={`w-12 h-6.5 rounded-full p-0.5 transition-colors cursor-pointer relative flex items-center ${
+                      hapticsEnabled ? 'bg-[#FF6B4A]' : 'bg-gray-300'
+                    }`}
+                    aria-label="Toggle haptics"
+                  >
+                    <motion.div
+                      layout
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                      className={`w-5.5 h-5.5 rounded-full bg-white shadow-sm ${
+                        hapticsEnabled ? 'ml-auto' : 'mr-auto'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Tactile Live Test Buttons */}
+                {hapticsEnabled && (
+                  <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="text-[10.5px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      Test Tactile Tiers
+                    </div>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => haptics.impact('light')}
+                        className="py-1.5 px-1 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-semibold active:scale-95 transition-all text-center"
+                      >
+                        Light
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => haptics.impact('medium')}
+                        className="py-1.5 px-1 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-semibold active:scale-95 transition-all text-center"
+                      >
+                        Medium
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => haptics.impact('heavy')}
+                        className="py-1.5 px-1 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 text-[11px] font-semibold active:scale-95 transition-all text-center"
+                      >
+                        Heavy
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => haptics.notification('success')}
+                        className="py-1.5 px-1 rounded-xl bg-[#FFEAE5] hover:bg-[#FFD7CE] text-[#FF6B4A] text-[11px] font-bold active:scale-95 transition-all text-center"
+                      >
+                        Success ✨
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-6 flex flex-col gap-2">
+            <div className="mt-5 flex flex-col gap-2">
               <motion.button
                 type="button"
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => {
+                  haptics.impact('medium');
                   onClose();
                   setTimeout(() => {
                     onEditPreferences();
@@ -141,7 +242,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               <motion.button
                 type="button"
                 whileTap={{ scale: 0.98 }}
-                onClick={onClose}
+                onClick={() => {
+                  haptics.impact('light');
+                  onClose();
+                }}
                 className="w-full py-3 rounded-xl font-semibold text-sm text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 Close
@@ -153,3 +257,4 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     </AnimatePresence>
   );
 };
+
