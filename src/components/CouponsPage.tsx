@@ -2,14 +2,13 @@ import React from 'react';
 
 interface CouponsPageProps {
   onBack: () => void;
-  onOpenProfile: () => void;
 }
 
-export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack, onOpenProfile }) => {
+export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack }) => {
   return (
-    <div className="h-screen max-h-screen bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden">
-      {/* 1. Sticky Top Navigation Bar (Same Structure as other pages) */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-start max-w-[430px] mx-auto select-none relative w-full">
+      {/* 1. Sticky Top Navigation Bar (Profile icon removed, balanced spacer on right) */}
+      <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
         <button
           type="button"
@@ -35,26 +34,13 @@ export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack, onOpenProfile 
           Coupons
         </h1>
 
-        {/* User Profile Button */}
-        <button
-          type="button"
-          onClick={onOpenProfile}
-          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-          aria-label="User Profile"
-        >
-          <svg className="w-5 h-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        {/* Right Balance Spacer (Profile only on homescreen) */}
+        <div className="w-9 h-9" />
       </header>
 
-      {/* 2. Body Container (No filter, no pill, no hero - just clear centered text) */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-        {/* Subtle empty coupon illustration */}
+      {/* 2. Body Container (Centered text, natural full-page scrolling) */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center">
+        {/* Empty coupon illustration */}
         <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 mb-4 shadow-2xs">
           <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />

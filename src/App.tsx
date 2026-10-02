@@ -13,6 +13,7 @@ import { GAIChatPage } from './components/GAIChatPage';
 import { StayPage } from './components/StayPage';
 import { DestinationsPage, DestinationItem, ALL_DESTINATIONS } from './components/DestinationsPage';
 import { TravelPage } from './components/TravelPage';
+import { FoodPage } from './components/FoodPage';
 import { CouponsPage } from './components/CouponsPage';
 import { EmergencyPage } from './components/EmergencyPage';
 import { UserProfileModal } from './components/UserProfileModal';
@@ -24,7 +25,7 @@ const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 export default function App() {
   // Check localStorage: if onboarding completed once, show homepage directly on refresh
   const [currentScreen, setCurrentScreen] = useState<
-    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'coupons' | 'emergency'
+    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'coupons' | 'emergency'
   >(() => {
     try {
       const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
@@ -194,6 +195,7 @@ export default function App() {
               <ModuleGrid
                 onOpenStay={() => setCurrentScreen('stay')}
                 onOpenDestinations={() => setCurrentScreen('destinations')}
+                onOpenFood={() => setCurrentScreen('food')}
                 onOpenCoupons={() => setCurrentScreen('coupons')}
                 onOpenEmergency={() => setCurrentScreen('emergency')}
               />
@@ -225,7 +227,6 @@ export default function App() {
               <StayPage
                 preferences={savedPreferences}
                 onBack={() => setCurrentScreen('homepage')}
-                onOpenProfile={() => setIsProfileOpen(true)}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
               />
             </motion.div>
@@ -245,7 +246,6 @@ export default function App() {
               <DestinationsPage
                 preferences={savedPreferences}
                 onBack={() => setCurrentScreen('homepage')}
-                onOpenProfile={() => setIsProfileOpen(true)}
                 onSelectDestination={handleOpenTravelForDestination}
               />
             </motion.div>
@@ -266,13 +266,31 @@ export default function App() {
                 destination={selectedDestinationForTravel}
                 preferences={savedPreferences}
                 onBack={() => setCurrentScreen('destinations')}
-                onOpenProfile={() => setIsProfileOpen(true)}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
               />
             </motion.div>
           )}
 
-          {/* Step 7: Coupons Page (Minimal text structure requested) */}
+          {/* Step 7: Food Page (Dishes vs Restaurants, Veg/Non-veg, Goan Authentic vs Normal, Dietary filters) */}
+          {currentScreen === 'food' && (
+            <motion.div
+              key="food"
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={pageTransition}
+              className="w-full min-h-screen"
+            >
+              <FoodPage
+                preferences={savedPreferences}
+                onBack={() => setCurrentScreen('homepage')}
+                onAskGAI={(prompt) => handleOpenChat(prompt)}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 8: Coupons Page (Minimal text structure requested) */}
           {currentScreen === 'coupons' && (
             <motion.div
               key="coupons"
@@ -285,12 +303,11 @@ export default function App() {
             >
               <CouponsPage
                 onBack={() => setCurrentScreen('homepage')}
-                onOpenProfile={() => setIsProfileOpen(true)}
               />
             </motion.div>
           )}
 
-          {/* Step 8: Emergency & Safety Page (Exact match to reference photo) */}
+          {/* Step 8: Emergency & Safety Page */}
           {currentScreen === 'emergency' && (
             <motion.div
               key="emergency"
@@ -304,7 +321,6 @@ export default function App() {
               <EmergencyPage
                 preferences={savedPreferences}
                 onBack={() => setCurrentScreen('homepage')}
-                onOpenProfile={() => setIsProfileOpen(true)}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
               />
             </motion.div>

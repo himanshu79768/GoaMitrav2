@@ -674,8 +674,11 @@ CRITICAL RULES:
         <div className="w-9 h-9" />
       </header>
 
-      {/* Messages Feed (Only scrollable container) */}
-      <div className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5 min-h-0 overscroll-contain">
+      {/* Messages Feed (Only scrollable container with smooth mobile touch scrolling) */}
+      <div
+        className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         {/* Top Minimal Pill: Ask Anything */}
         <div className="flex items-center justify-start">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E0F2FE]/80 border border-[#BAE6FD] text-[#0369A1] shadow-xs">

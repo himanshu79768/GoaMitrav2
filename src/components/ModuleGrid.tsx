@@ -81,6 +81,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
 interface ModuleGridProps {
   onOpenStay?: () => void;
   onOpenDestinations?: () => void;
+  onOpenFood?: () => void;
   onOpenCoupons?: () => void;
   onOpenEmergency?: () => void;
 }
@@ -88,6 +89,7 @@ interface ModuleGridProps {
 export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenStay,
   onOpenDestinations,
+  onOpenFood,
   onOpenCoupons,
   onOpenEmergency,
 }) => {
@@ -144,6 +146,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
           title="Food"
           description={"Local cuisine,\ncafes and more"}
           bgColor="#FDEEE9"
+          onClick={onOpenFood}
           illustration={<FoodIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#D94E34]">

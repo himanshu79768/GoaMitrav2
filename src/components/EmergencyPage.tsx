@@ -5,18 +5,16 @@ import { UserPreferences } from '../types/onboarding';
 interface EmergencyPageProps {
   preferences: UserPreferences;
   onBack: () => void;
-  onOpenProfile: () => void;
   onAskGAI: (initialPrompt?: string) => void;
 }
 
 export const EmergencyPage: React.FC<EmergencyPageProps> = ({
   preferences,
   onBack,
-  onOpenProfile,
   onAskGAI,
 }) => {
   const [activeModal, setActiveModal] = useState<
-    'sos' | 'checkin' | 'translate' | 'helplines' | 'roadside' | 'safety_zones' | null
+    'sos' | 'checkin' | 'translate' | 'helplines' | 'roadside' | null
   >(null);
 
   const [userLocality, setUserLocality] = useState<string>('Calangute, North Goa');
@@ -73,9 +71,9 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
   )}, ${userCoords.lng.toFixed(4)}). Just letting you know I am safe! Sent via GoaMitra.`;
 
   return (
-    <div className="h-screen max-h-screen bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden">
-      {/* 1. Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-start max-w-[430px] mx-auto select-none relative w-full">
+      {/* 1. Sticky Top Navigation Bar (Profile icon removed, balanced spacer on right) */}
+      <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
         <button
           type="button"
@@ -101,28 +99,14 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           Emergency & Safety
         </h1>
 
-        {/* User Profile Button */}
-        <button
-          type="button"
-          onClick={onOpenProfile}
-          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-          aria-label="User Profile"
-        >
-          <svg className="w-5 h-5 text-gray-700" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fillRule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        {/* Right Balance Spacer (Profile only on homescreen) */}
+        <div className="w-9 h-9" />
       </header>
 
-      {/* 2. Scrollable Body Viewport */}
-      <div className="flex-1 overflow-y-auto px-4 pt-3.5 pb-6 space-y-4 min-h-0 overscroll-contain">
-        {/* Hero Card: Coastal lighthouse & sunrise matching uploaded screenshot */}
+      {/* 2. Unified Scroll Body */}
+      <div className="px-4 pt-3.5 pb-10 space-y-4 w-full flex-1">
+        {/* Hero Card: Coastal lighthouse & sunrise */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[170px] flex items-end p-5 bg-gradient-to-br from-[#E0F2FE] to-[#FCE7F3]">
-          {/* Lighthouse artwork image */}
           <img
             src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&auto=format&fit=crop&q=80"
             alt="Goa Coastal Safety"
@@ -141,7 +125,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           </div>
         </div>
 
-        {/* SOS Urgent Banner (Red gradient button matching screenshot) */}
+        {/* SOS Urgent Banner (Red gradient button) */}
         <button
           type="button"
           onClick={startSos}
@@ -168,7 +152,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           <span className="text-xl font-bold opacity-80 pr-1">›</span>
         </button>
 
-        {/* 2x2 Action Cards Grid (Exact match to screenshot) */}
+        {/* 2x2 Action Cards Grid */}
         <div className="grid grid-cols-2 gap-3.5">
           {/* 1. Check-in Card (Teal) */}
           <div
@@ -279,78 +263,6 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
 
             <div className="text-[10px] font-semibold text-[#2563EB] pt-1">
               Nearby verified mechanics
-            </div>
-          </div>
-        </div>
-
-        {/* Safety Zones Near You Card (Exact match to screenshot) */}
-        <div
-          onClick={() => setActiveModal('safety_zones')}
-          className="bg-white rounded-3xl p-4 border border-gray-200/80 shadow-xs space-y-3 cursor-pointer hover:shadow-md transition-all"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-full bg-[#EAF5F7] text-[#177F91] flex items-center justify-center">
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" />
-                </svg>
-              </div>
-              <div>
-                <h4 className="text-[15px] font-black text-gray-900 leading-tight">
-                  Safety zones near you
-                </h4>
-                <p className="text-[11px] text-gray-500 font-medium">
-                  Tap to view full map & beach safety
-                </p>
-              </div>
-            </div>
-            <span className="text-gray-400 font-bold text-sm">›</span>
-          </div>
-
-          {/* Map Preview Graphic */}
-          <div className="relative rounded-2xl overflow-hidden border border-gray-200/80 h-44 bg-[#DCEBF5]">
-            <img
-              src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=700&auto=format&fit=crop&q=80"
-              alt="Goa Safety Map"
-              className="w-full h-full object-cover opacity-60"
-            />
-
-            {/* Stylized Goan coastline overlay markers */}
-            <div className="absolute inset-0 p-3 flex flex-col justify-between">
-              {/* Legend on Top Right */}
-              <div className="self-end bg-white/90 backdrop-blur-md rounded-xl p-2 shadow-xs text-[10px] space-y-1 font-semibold text-gray-700">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
-                  <span>Well-lit / Safer area</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
-                  <span>Caution at night</span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
-                  <span>Avoid (less safe / rip currents)</span>
-                </div>
-              </div>
-
-              {/* Pin markers */}
-              <div className="space-y-1.5 text-[10.5px] font-bold text-gray-900">
-                <div className="inline-flex items-center gap-1 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs">
-                  <span className="w-2 h-2 rounded-full bg-[#10B981]" />
-                  <span>Calangute Beach</span>
-                </div>
-                <br />
-                <div className="inline-flex items-center gap-1 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs ml-4">
-                  <span className="w-2 h-2 rounded-full bg-[#10B981]" />
-                  <span>Candolim</span>
-                </div>
-                <br />
-                <div className="inline-flex items-center gap-1 bg-white/95 px-2 py-0.5 rounded-full shadow-2xs ml-8">
-                  <span className="w-2 h-2 rounded-full bg-[#2563EB]" />
-                  <span>Panjim · You are near here</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -597,69 +509,6 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
                   </div>
                 ))}
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* 6. SAFETY ZONES & BEACH FLAGS SHEET */}
-        {activeModal === 'safety_zones' && (
-          <motion.div
-            key="safety-zones-modal"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center"
-            onClick={() => setActiveModal(null)}
-          >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 space-y-3.5 max-h-[85vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
-              <h3 className="text-lg font-black text-gray-900">Goa Beach & Night Safety</h3>
-
-              <div className="space-y-2 text-xs">
-                <div className="p-3 bg-green-50 rounded-2xl border border-green-200 text-green-900 space-y-1">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                    <span>Red & Yellow Flag (Safe Swimming Zone)</span>
-                  </div>
-                  <p className="text-[11px] text-green-800">
-                    Patrolled by Drishti Marine lifeguards between 7:30 AM to 6:30 PM. Always swim between these flags.
-                  </p>
-                </div>
-
-                <div className="p-3 bg-red-50 rounded-2xl border border-red-200 text-red-900 space-y-1">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                    <span>Red Flag (Strictly No Swimming)</span>
-                  </div>
-                  <p className="text-[11px] text-red-800">
-                    High rip currents, underwater sinkholes, or rough monsoon surf. Never enter water when red flags are raised.
-                  </p>
-                </div>
-
-                <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-900 space-y-1">
-                  <div className="font-bold flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                    <span>Night Scooter Riding Advice</span>
-                  </div>
-                  <p className="text-[11px] text-amber-800">
-                    Avoid unlit internal dirt tracks behind rocky forts or isolated beach dunes after 10 PM. Stick to well-lit main state highways (NH66, Calangute-Candolim main road).
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setActiveModal(null)}
-                className="w-full py-3 rounded-2xl bg-gray-900 text-white font-bold text-xs"
-              >
-                Got it
-              </button>
             </motion.div>
           </motion.div>
         )}
