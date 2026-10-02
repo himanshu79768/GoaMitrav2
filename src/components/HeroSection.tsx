@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import heroImage from '../assets/images/hero.png';
 import { UserPreferences } from '../types/onboarding';
 
@@ -40,10 +41,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Top Bar: Location Pill & Profile Button */}
       <div className="flex items-center justify-between pt-1">
         {/* Location Pill */}
-        <button
+        <motion.button
           type="button"
+          whileHover={{ y: -1 }}
+          whileTap={{ scale: 0.96 }}
           onClick={onOpenProfile}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] active:scale-[0.98] transition-transform cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:bg-white/90 transition-colors cursor-pointer"
           aria-label="Current trip preferences"
         >
           {/* Blue SVG Map Pin */}
@@ -78,13 +81,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           >
             <path d="M4 6l4 4 4-4" />
           </svg>
-        </button>
+        </motion.button>
 
         {/* Profile Button */}
-        <button
+        <motion.button
           type="button"
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.92 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 25 }}
           onClick={onOpenProfile}
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] active:scale-95 transition-transform cursor-pointer"
+          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] cursor-pointer"
           aria-label="User profile"
         >
           {/* SVG User Silhouette Icon */}
@@ -100,7 +106,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               clipRule="evenodd"
             />
           </svg>
-        </button>
+        </motion.button>
       </div>
 
       {/* Greeting Area */}
