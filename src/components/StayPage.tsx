@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { UserPreferences } from '../types/onboarding';
+import { UserPreferences, SavedPlaceItem } from '../types/onboarding';
 
-interface StayItem {
+export interface StayItem {
   id: string;
   name: string;
   type: 'hotel' | 'homestay';
@@ -25,10 +25,12 @@ interface StayPageProps {
   preferences: UserPreferences;
   onBack: () => void;
   onAskGAI: (initialPrompt?: string) => void;
+  savedPlaces?: SavedPlaceItem[];
+  onToggleSavePlace?: (place: SavedPlaceItem) => void;
 }
 
 // 100% Unique, Verified Photos & Accurate Star Ratings for Goan stays
-const ACCURATE_VERIFIED_STAYS: StayItem[] = [
+export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
   // --- 5-STAR LUXURY RESORTS ---
   {
     id: 'stay-taj-aguada',
@@ -373,6 +375,8 @@ export const StayPage: React.FC<StayPageProps> = ({
   preferences,
   onBack,
   onAskGAI,
+  savedPlaces = [],
+  onToggleSavePlace,
 }) => {
   // Main Toggle: Hotels vs Homestays/Villas
   const [stayType, setStayType] = useState<'hotel' | 'homestay'>('hotel');
@@ -394,6 +398,18 @@ export const StayPage: React.FC<StayPageProps> = ({
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    const stayItem = ACCURATE_VERIFIED_STAYS.find((s) => s.id === id);
+    if (stayItem && onToggleSavePlace) {
+      onToggleSavePlace({
+        id: stayItem.id,
+        title: stayItem.name,
+        category: 'stay',
+        subtitle: `${stayItem.starRating}-Star ${stayItem.type}`,
+        location: stayItem.locality,
+        image: stayItem.image,
+        ratingOrPrice: `₹${stayItem.basePricePerRoom}/night`,
+      });
+    }
     setFavorites((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
@@ -586,7 +602,7 @@ export const StayPage: React.FC<StayPageProps> = ({
         {/* Stays List with 100% Unique Photos & Dynamic Guest Pricing */}
         <div className="space-y-3.5 pt-1">
           {filteredStays.map((stay) => {
-            const isFav = favorites.includes(stay.id);
+            const isFav = favorites.includes(stay.id) || savedPlaces.some((p) => p.id === stay.id);
             const calculated = calculateStayPrice(stay.basePricePerRoom, memberCount);
 
             return (

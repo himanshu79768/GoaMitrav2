@@ -1,7 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI } from '@google/genai';
-import { UserPreferences } from '../types/onboarding';
+import { UserPreferences, SavedItineraryItem, SavedPlaceItem } from '../types/onboarding';
+import { ALL_DESTINATIONS } from './DestinationsPage';
+import { ACCURATE_VERIFIED_STAYS } from './StayPage';
+import { REAL_RESTAURANTS } from './FoodPage';
+
+export interface ExecutedAction {
+  type: 'saved_itinerary' | 'navigated' | 'saved_place' | 'updated_name' | 'updated_preferences' | 'removed_itinerary' | 'removed_place';
+  title: string;
+  subtitle: string;
+  badge?: string;
+  buttonText?: string;
+  onButtonClick?: () => void;
+}
 
 interface ChatMessage {
   id: string;
@@ -10,6 +22,7 @@ interface ChatMessage {
   timestamp: string;
   imagePreview?: string; // base64 data URL for uploaded image
   groundingSources?: { title?: string; uri?: string }[];
+  executedAction?: ExecutedAction;
 }
 
 interface LocationDetails {
@@ -29,15 +42,91 @@ interface GAIChatPageProps {
   preferences: UserPreferences;
   onBack: () => void;
   initialPrompt?: string;
+  onSaveItinerary?: (item: SavedItineraryItem) => void;
+  onRemoveItinerary?: (id: string) => void;
+  savedItineraries?: SavedItineraryItem[];
+  savedPlaces?: SavedPlaceItem[];
+  onToggleSavePlace?: (place: SavedPlaceItem) => void;
+  onNavigateScreen?: (
+    screen: 'my_goa' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'emergency' | 'coupons' | 'homepage',
+    initialTab?: 'itineraries' | 'saved_places'
+  ) => void;
+  onUpdateName?: (newName: string) => void;
+  onUpdatePreferences?: (partial: Partial<UserPreferences>) => void;
 }
 
 const QUICK_PROMPTS = [
+  { label: 'Prepare 3-Day Itinerary', icon: '🗺️', prompt: 'Please prepare a complete 3-day itinerary for my Goa trip based on my preferences. Format it clearly by day with morning, afternoon, and evening plans.' },
   { label: 'Nearby food?', icon: '🍴', prompt: 'What are the best authentic Goan food spots closest to my current spot right now?' },
   { label: 'Sunset spots?', icon: '🌅', prompt: 'What is the closest and best sunset viewpoint to visit from here?' },
   { label: 'Scooter/cab rates?', icon: '🛵', prompt: 'How much does scooter rental and private taxi cost around here?' },
   { label: 'Historic churches?', icon: '📍', prompt: 'What are the closest historic churches and Portuguese heritage sights near me?' },
-  { label: 'Safety & emergency', icon: '🛡️', prompt: 'What are emergency contacts, lifeguard flags and safety rules around here?' },
 ];
+
+/** Helper to match places, stays, or restaurants from user input */
+function findPlaceByName(query: string): SavedPlaceItem | null {
+  const q = query.toLowerCase().trim();
+  if (!q || q.length < 2) return null;
+
+  // 1. Destinations & Forts & Beaches
+  const dest = ALL_DESTINATIONS.find((d) => {
+    const dName = d.name.toLowerCase();
+    return dName.includes(q) || q.includes(dName);
+  });
+  if (dest) {
+    return {
+      id: dest.id,
+      title: dest.name,
+      category: 'destination',
+      subtitle: dest.location,
+      location: dest.location,
+      image: dest.image,
+      ratingOrPrice: dest.entryFee || 'Landmark',
+      tags: dest.tags,
+      savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    };
+  }
+
+  // 2. Stays & Resorts
+  const stay = ACCURATE_VERIFIED_STAYS.find((s) => {
+    const sName = s.name.toLowerCase();
+    return sName.includes(q) || q.includes(sName);
+  });
+  if (stay) {
+    return {
+      id: stay.id,
+      title: stay.name,
+      category: 'stay',
+      subtitle: stay.locality,
+      location: stay.locality,
+      image: stay.image,
+      ratingOrPrice: `₹${stay.basePricePerRoom.toLocaleString('en-IN')}/night • ${stay.starsDisplay}`,
+      tags: [stay.starsDisplay, stay.type],
+      savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    };
+  }
+
+  // 3. Restaurants & Dining
+  const rest = REAL_RESTAURANTS.find((r) => {
+    const rName = r.name.toLowerCase();
+    return rName.includes(q) || q.includes(rName);
+  });
+  if (rest) {
+    return {
+      id: rest.id,
+      title: rest.name,
+      category: 'food',
+      subtitle: rest.location,
+      location: rest.location,
+      image: rest.image,
+      ratingOrPrice: `${rest.priceCategory} • ${rest.dietaryType === 'veg' ? 'Pure Veg' : 'Seafood & Multi-cuisine'}`,
+      tags: [rest.cuisineStyle === 'goan_authentic' ? 'Authentic Goan' : 'Multi-cuisine'],
+      savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    };
+  }
+
+  return null;
+}
 
 /** Safe Haptic Vibration Helper */
 function triggerHaptic(pattern: number | number[] = 12) {
@@ -206,6 +295,35 @@ const processImageFile = (file: File): Promise<AttachedImage> => {
     reader.readAsDataURL(file);
   });
 };
+
+/** Determines if a message is a prepared itinerary / travel plan rather than a general answer */
+export function isItineraryContent(content: string): boolean {
+  if (!content || content.length < 80) return false;
+
+  const lower = content.toLowerCase();
+
+  // 1. Explicit title indicators
+  const hasExplicitTitle =
+    /(?:^|\n)#+\s*(?:.*\bitinerary\b|.*trip plan|.*day plan|.*tour plan|.*schedule)/i.test(content) ||
+    /^(?:itinerary|trip plan):/im.test(content);
+
+  // 2. Multi-day patterns (Day 1, Day 2 or ### Day 1, etc.)
+  const dayMatches = content.match(/(?:^|\n)\s*(?:###?\s*|\*\*\s*)?Day\s*\d+\b/gi);
+  const hasMultipleDays = Boolean(dayMatches && dayMatches.length >= 2);
+  const hasDayWithTimeBlocks = Boolean(
+    dayMatches &&
+      dayMatches.length >= 1 &&
+      (lower.includes('morning') || lower.includes('afternoon') || lower.includes('evening'))
+  );
+
+  // 3. Single-day full schedule with morning, afternoon and evening blocks
+  const hasFullDaySchedule =
+    lower.includes('itinerary') &&
+    lower.includes('morning') &&
+    (lower.includes('afternoon') || lower.includes('evening'));
+
+  return Boolean(hasExplicitTitle || hasMultipleDays || hasDayWithTimeBlocks || hasFullDaySchedule);
+}
 
 /** FormattedMessage: Full Markdown renderer (H1-H4, bullets, numbered lists, tables, transport cards) */
 const FormattedMessage: React.FC<{
@@ -590,12 +708,24 @@ const TypewriterFormattedMessage: React.FC<{
   );
 };
 
-export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, initialPrompt }) => {
+export const GAIChatPage: React.FC<GAIChatPageProps> = ({
+  preferences,
+  onBack,
+  initialPrompt,
+  onSaveItinerary,
+  onRemoveItinerary,
+  savedItineraries,
+  savedPlaces,
+  onToggleSavePlace,
+  onNavigateScreen,
+  onUpdateName,
+  onUpdatePreferences,
+}) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your real-time Goa travel assistant.\n\nAsk me for real-time directions, local prices, live events, or tap the clip icon below to upload photos of menus, landmarks, or beach signs for instant analysis!`,
+      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your autonomous Goa travel companion with full app control powers.\n\nAsk me for real-time recommendations, or say **"Prepare 3-Day Itinerary"**. Once I create it, you can simply say **"save it"** and I will do the work automatically on your behalf!\n\nYou can also tell me **"Save Curlies"**, **"Take me to hotels"**, or **"Change my name"** anytime.`,
       timestamp: format12HourTime(),
     },
   ]);
@@ -607,11 +737,58 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
   const [isListening, setIsListening] = useState(false);
   const [speechError, setSpeechError] = useState<string | null>(null);
   const [isAttachmentSheetOpen, setIsAttachmentSheetOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Message Interaction States
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [likedIds, setLikedIds] = useState<string[]>([]);
   const [dislikedIds, setDislikedIds] = useState<string[]>([]);
+
+  const handleSaveItineraryFromMessage = (msg: { id: string; content: string }): SavedItineraryItem | null => {
+    const existing = savedItineraries?.find((i) => i.id === msg.id);
+    if (existing) {
+      setToastMessage('Already saved in My Goa! 🌴');
+      setTimeout(() => setToastMessage(null), 2500);
+      return existing;
+    }
+
+    const lines = msg.content.split('\n').filter((l) => l.trim().length > 0);
+    let title = `Goa Itinerary (${preferences.travelMonth || 'Trip'})`;
+    for (const l of lines) {
+      const clean = l.replace(/[*#]/g, '').trim();
+      if (
+        clean.length > 5 &&
+        clean.length < 65 &&
+        (clean.toLowerCase().includes('itinerary') ||
+          clean.toLowerCase().includes('plan') ||
+          clean.toLowerCase().includes('day') ||
+          clean.toLowerCase().includes('goa'))
+      ) {
+        title = clean.replace(/^(?:itinerary|trip plan):\s*/i, '').trim() || title;
+        break;
+      }
+    }
+
+    const cleanContent = msg.content.replace(/\[ACTION:[^\]]+\]/g, '').trim();
+
+    const item: SavedItineraryItem = {
+      id: msg.id,
+      title,
+      content: cleanContent,
+      timestamp: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      season: preferences.travelMonth || 'Goa Plan',
+    };
+
+    if (onSaveItinerary) {
+      onSaveItinerary(item);
+    }
+
+    triggerHaptic([15, 30]);
+    setToastMessage('Itinerary saved to My Goa! 🌴');
+    setTimeout(() => setToastMessage(null), 2500);
+
+    return item;
+  };
 
   const promptSentRef = useRef(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -858,6 +1035,22 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
     setAttachedImage(null);
     setIsLoading(true);
 
+    // Check for user direct action intent
+    const isSaveItineraryIntent =
+      /(?:^|\b)(?:save(?:\s+it|\s+this|\s+the|\s+my)?(?:\s+(?:itinerary|plan|trip|schedule|days?))?|add(?:\s+it|\s+this)?\s+to\s+my\s+goa|bookmark(?:\s+it|\s+this|\s+itinerary)?|keep(?:\s+it|\s+this)?|store(?:\s+it|\s+this)?|yes(?:\s+please)?\s+save(?:\s+it)?|save\s+for\s+me)\b/i.test(
+        text
+      );
+
+    let preSavedItinerary: SavedItineraryItem | null = null;
+    if (isSaveItineraryIntent) {
+      const latestItineraryMsg = [...messages].reverse().find(
+        (m) => m.role === 'assistant' && isItineraryContent(m.content)
+      );
+      if (latestItineraryMsg) {
+        preSavedItinerary = handleSaveItineraryFromMessage(latestItineraryMsg);
+      }
+    }
+
     try {
       const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -923,7 +1116,44 @@ CRITICAL RULES:
 5. STRUCTURED DIRECTIONS:
    By Car/Auto/Scooter: <approximate time and km distance from user's location, route advice>
    By Bus/Ferry: <bus routes, stops or ferry crossing>
-   Location: <Exact Place Name in Goa>`;
+   Location: <Exact Place Name in Goa>
+6. PREPARED ITINERARIES & TRIP PLANS:
+   - When the user asks for an itinerary, trip plan, multi-day schedule, or customized travel schedule:
+     * START your message with a clear top header: # Itinerary: <Trip Title>
+     * Break the itinerary down into day-by-day sections (e.g. ### Day 1: <Area/Theme>, ### Day 2: <Area/Theme>) with Morning, Afternoon, and Evening activities.
+   - For all regular questions, recommendations, food tips, taxi rates, or casual conversation, DO NOT format or label it as an itinerary. Answer directly, concisely, and helpfully.
+7. AUTONOMOUS APP POWERS (EXECUTE ACTIONS ON USER'S BEHALF):
+   You have executive control powers over the GoaMitra app to do work automatically on behalf of the user.
+   When the user asks you to save an itinerary (e.g. "save it", "save this plan", "add to my goa"), bookmark a place, open a screen, or change their name/preferences, you can execute the action automatically by appending the appropriate action command tag on its own line at the very end of your response:
+
+   [ACTION:SAVE_ITINERARY] -> Automatically saves the generated itinerary to My Goa.
+   [ACTION:SAVE_PLACE:Exact Place Name] -> Automatically bookmarks any fort, beach, landmark, stay/hotel, or restaurant into My Goa (Liked Places).
+   [ACTION:REMOVE_PLACE:Exact Place Name] -> Removes a place from My Goa liked places.
+   [ACTION:REMOVE_ITINERARY] -> Removes the latest saved itinerary from My Goa.
+   [ACTION:NAVIGATE:my_goa] -> Automatically redirects to My Goa dashboard.
+   [ACTION:NAVIGATE:stay] -> Automatically redirects to the Stays & Hotels section.
+   [ACTION:NAVIGATE:destinations] -> Automatically redirects to Destinations & Forts.
+   [ACTION:NAVIGATE:travel] -> Automatically redirects to Travel & Cab/Scooter transit.
+   [ACTION:NAVIGATE:food] -> Automatically redirects to Food & Dining.
+   [ACTION:NAVIGATE:culture] -> Automatically redirects to Culture & Festivals.
+   [ACTION:NAVIGATE:emergency] -> Automatically redirects to Emergency Helplines.
+   [ACTION:NAVIGATE:coupons] -> Automatically redirects to Discount Coupons.
+   [ACTION:NAVIGATE:homepage] -> Automatically redirects to Homepage.
+   [ACTION:UPDATE_NAME:NewName] -> Updates the user's name across the app.
+   [ACTION:UPDATE_PREF:month=December;group=4;style=Adventure] -> Updates user's trip preferences.
+
+   - When user says "save it" after receiving an itinerary:
+     Acknowledge: "I've saved your custom itinerary directly to your **My Goa** dashboard! 🌴 It is now stored under your Saved Itineraries. Would you like me to open My Goa now, or customize anything else?"
+     Tag: [ACTION:SAVE_ITINERARY]
+   - When user says "save [place name]" or "bookmark [place name]":
+     Acknowledge: "I've added **[Place Name]** to your liked places in **My Goa**! ❤️"
+     Tag: [ACTION:SAVE_PLACE:<Place Name>]
+   - When user says "open my goa" or "take me to my goa":
+     Acknowledge: "Opening your **My Goa** personal dashboard now! 🌴"
+     Tag: [ACTION:NAVIGATE:my_goa]
+   - When user says "take me to stays" or "show hotels":
+     Acknowledge: "Taking you to Goa's verified stays & beachfront resorts now! 🏨"
+     Tag: [ACTION:NAVIGATE:stay]`;
 
       // Construct Gemini Contents Array
       const historyContents: any[] = [];
@@ -978,7 +1208,7 @@ CRITICAL RULES:
         });
       }
 
-      const content = response.text || 'I could not analyze the request. Please try again.';
+      let content = response.text || 'I could not analyze the request. Please try again.';
       const botTime = format12HourTime();
 
       let groundingSources: { title?: string; uri?: string }[] = [];
@@ -991,12 +1221,274 @@ CRITICAL RULES:
         }
       } catch {}
 
+      // Autonomous Action Parsing and Execution on behalf of the user
+      let executedAction: ExecutedAction | undefined = undefined;
+
+      // 1. SAVE ITINERARY AUTOMATICALLY
+      if (isSaveItineraryIntent || content.includes('[ACTION:SAVE_ITINERARY]')) {
+        const targetItinerary =
+          preSavedItinerary ||
+          [...messages].reverse().find((m) => m.role === 'assistant' && isItineraryContent(m.content));
+
+        const savedItem =
+          preSavedItinerary || (targetItinerary ? handleSaveItineraryFromMessage(targetItinerary) : null);
+
+        if (savedItem) {
+          const andOpenMyGoa =
+            /(?:open|show|take\s+me\s+to)\s+(?:my\s+goa|dashboard|itinerar)/i.test(text) ||
+            content.includes('[ACTION:NAVIGATE:my_goa]');
+
+          executedAction = {
+            type: 'saved_itinerary',
+            title: 'Itinerary Saved to My Goa',
+            subtitle: andOpenMyGoa
+              ? `Saved "${savedItem.title}". Opening My Goa...`
+              : `Saved "${savedItem.title}" to your dashboard`,
+            buttonText: 'Open My Goa',
+            onButtonClick: () => {
+              triggerHaptic(12);
+              onNavigateScreen?.('my_goa', 'itineraries');
+            },
+          };
+
+          if (andOpenMyGoa && onNavigateScreen) {
+            setTimeout(() => {
+              onNavigateScreen('my_goa', 'itineraries');
+            }, 1200);
+          }
+        }
+      }
+
+      // 2. SAVE PLACE / STAY / RESTAURANT AUTOMATICALLY
+      const savePlaceTagMatch = content.match(/\[ACTION:SAVE_PLACE:([^\]]+)\]/i);
+      const userSavePlaceMatch = text.match(
+        /(?:^|\b)(?:save|bookmark|add|favorite)\s+([A-Za-z0-9\s'&]+?)(?:\s+to\s+(?:my\s+goa|favorites?|saved|places?)|$)/i
+      );
+
+      const placeNameToSave = (
+        savePlaceTagMatch?.[1] ||
+        (userSavePlaceMatch && !isSaveItineraryIntent ? userSavePlaceMatch[1] : '')
+      ).trim();
+
+      if (placeNameToSave && placeNameToSave.length > 2 && onToggleSavePlace && !executedAction) {
+        const matchedPlace = findPlaceByName(placeNameToSave) || {
+          id: `saved-${Date.now()}`,
+          title: placeNameToSave,
+          category:
+            placeNameToSave.toLowerCase().includes('hotel') ||
+            placeNameToSave.toLowerCase().includes('resort') ||
+            placeNameToSave.toLowerCase().includes('stay')
+              ? 'stay'
+              : placeNameToSave.toLowerCase().includes('rest') ||
+                placeNameToSave.toLowerCase().includes('cafe') ||
+                placeNameToSave.toLowerCase().includes('dish') ||
+                placeNameToSave.toLowerCase().includes('food')
+              ? 'food'
+              : 'destination',
+          subtitle: 'Goa spot',
+          location: 'Goa',
+          image:
+            'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&auto=format&fit=crop&q=80',
+          ratingOrPrice: 'Saved by GAI',
+          savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        };
+
+        onToggleSavePlace(matchedPlace);
+        triggerHaptic([15, 30]);
+        setToastMessage(`Saved "${matchedPlace.title}" to My Goa! ❤️`);
+        setTimeout(() => setToastMessage(null), 2500);
+
+        executedAction = {
+          type: 'saved_place',
+          title: `Saved "${matchedPlace.title}" to My Goa`,
+          subtitle: `Added to Liked Places (${matchedPlace.location || 'Goa'})`,
+          buttonText: 'View in My Goa',
+          onButtonClick: () => {
+            triggerHaptic(12);
+            onNavigateScreen?.('my_goa', 'saved_places');
+          },
+        };
+      }
+
+      // 3. REMOVE PLACE
+      const removePlaceTagMatch = content.match(/\[ACTION:REMOVE_PLACE:([^\]]+)\]/i);
+      const userRemovePlaceMatch = text.match(
+        /(?:^|\b)(?:remove|unsave|delete)\s+([A-Za-z0-9\s'&]+?)(?:\s+from\s+(?:my\s+goa|saved|favorites?)|$)/i
+      );
+      const placeNameToRemove = (removePlaceTagMatch?.[1] || userRemovePlaceMatch?.[1] || '').trim();
+
+      if (placeNameToRemove && savedPlaces && onToggleSavePlace && !executedAction) {
+        const target = savedPlaces.find((p) =>
+          p.title.toLowerCase().includes(placeNameToRemove.toLowerCase())
+        );
+        if (target) {
+          onToggleSavePlace(target);
+          triggerHaptic(12);
+          setToastMessage(`Removed "${target.title}" from My Goa`);
+          setTimeout(() => setToastMessage(null), 2500);
+          executedAction = {
+            type: 'removed_place',
+            title: `Removed "${target.title}"`,
+            subtitle: 'Removed from your My Goa liked places',
+          };
+        }
+      }
+
+      // 4. REMOVE ITINERARY
+      const isRemoveItinerary =
+        /(?:^|\b)(?:remove|delete|unsave)\s+(?:the\s+|this\s+|my\s+)?(?:itinerary|plan|trip)\b/i.test(text) ||
+        content.includes('[ACTION:REMOVE_ITINERARY]');
+
+      if (isRemoveItinerary && savedItineraries && savedItineraries.length > 0 && onRemoveItinerary && !executedAction) {
+        const itemToRemove = savedItineraries[0];
+        onRemoveItinerary(itemToRemove.id);
+        triggerHaptic(12);
+        setToastMessage(`Removed "${itemToRemove.title}" from My Goa`);
+        setTimeout(() => setToastMessage(null), 2500);
+        executedAction = {
+          type: 'removed_itinerary',
+          title: 'Removed Itinerary',
+          subtitle: `Removed "${itemToRemove.title}" from My Goa`,
+        };
+      }
+
+      // 5. NAVIGATE TO SCREENS AUTOMATICALLY
+      const navTagMatch = content.match(/\[ACTION:NAVIGATE:([a-z_]+)\]/i);
+      const userNavMatch = text.match(
+        /(?:^|\b)(?:open|go\s+to|take\s+me\s+to|navigate\s+to|show\s+me)\s+(my\s+goa|stays?|hotels?|destinations?|landmarks?|food|restaurants?|culture|festivals?|events?|travel|cabs?|taxis?|scooters?|emergency|helpline|coupons|homepage|home)\b/i
+      );
+
+      const navTarget = navTagMatch?.[1]?.toLowerCase() || userNavMatch?.[1]?.toLowerCase();
+      if (navTarget && onNavigateScreen && !executedAction) {
+        let screenTarget: any = null;
+        let initialTabTarget: 'itineraries' | 'saved_places' | undefined = undefined;
+
+        if (
+          navTarget.includes('my_goa') ||
+          navTarget.includes('mygoa') ||
+          navTarget.includes('itinerar') ||
+          navTarget.includes('saved')
+        ) {
+          screenTarget = 'my_goa';
+          initialTabTarget = navTarget.includes('place') || navTarget.includes('like') ? 'saved_places' : 'itineraries';
+        } else if (navTarget.includes('stay') || navTarget.includes('hotel')) {
+          screenTarget = 'stay';
+        } else if (navTarget.includes('dest') || navTarget.includes('landmark')) {
+          screenTarget = 'destinations';
+        } else if (navTarget.includes('food') || navTarget.includes('restaur')) {
+          screenTarget = 'food';
+        } else if (navTarget.includes('travel') || navTarget.includes('cab') || navTarget.includes('taxi') || navTarget.includes('scooter')) {
+          screenTarget = 'travel';
+        } else if (
+          navTarget.includes('cultur') ||
+          navTarget.includes('festiv') ||
+          navTarget.includes('event')
+        ) {
+          screenTarget = 'culture';
+        } else if (navTarget.includes('emerg') || navTarget.includes('help')) {
+          screenTarget = 'emergency';
+        } else if (navTarget.includes('coupon')) {
+          screenTarget = 'coupons';
+        } else if (navTarget.includes('home')) {
+          screenTarget = 'homepage';
+        }
+
+        if (screenTarget) {
+          const screenNames: Record<string, string> = {
+            my_goa: 'My Goa Dashboard',
+            stay: 'Stays & Resorts',
+            destinations: 'Destinations & Forts',
+            food: 'Food & Dining',
+            travel: 'Travel & Local Transit',
+            culture: 'Culture & Festivals',
+            emergency: 'Emergency Helplines',
+            coupons: 'Coupons & Deals',
+            homepage: 'Homepage',
+          };
+          const targetName = screenNames[screenTarget] || screenTarget;
+
+          executedAction = {
+            type: 'navigated',
+            title: `Navigating to ${targetName}`,
+            subtitle: 'Switching screen automatically in 1s...',
+            buttonText: 'Open Now',
+            onButtonClick: () => {
+              triggerHaptic(12);
+              onNavigateScreen(screenTarget, initialTabTarget);
+            },
+          };
+
+          // Automatically navigate after 1.2s so user sees the message
+          setTimeout(() => {
+            onNavigateScreen(screenTarget, initialTabTarget);
+          }, 1200);
+        }
+      }
+
+      // 6. UPDATE USER NAME AUTOMATICALLY
+      const nameTagMatch = content.match(/\[ACTION:UPDATE_NAME:([^\]]+)\]/i);
+      const userNameMatch = text.match(
+        /(?:^|\b)(?:change|update|set)\s+(?:my\s+)?name\s+to\s+([A-Za-z\s]+)\b/i
+      );
+      const extractedName = (nameTagMatch?.[1] || userNameMatch?.[1] || '').trim();
+
+      if (extractedName && extractedName.length > 1 && extractedName.length < 35 && onUpdateName && !executedAction) {
+        onUpdateName(extractedName);
+        triggerHaptic([15, 30]);
+        executedAction = {
+          type: 'updated_name',
+          title: `Name Updated to "${extractedName}"`,
+          subtitle: 'Updated across your profile & greetings',
+        };
+      }
+
+      // 7. UPDATE TRIP PREFERENCES AUTOMATICALLY
+      const prefTagMatch = content.match(/\[ACTION:UPDATE_PREF:([^\]]+)\]/i);
+      const userMonthMatch = text.match(/(?:change|update|set)\s+(?:travel\s+)?month\s+to\s+([A-Za-z]+)\b/i);
+      const userGroupMatch =
+        text.match(/(?:change|update|set)\s+(?:group\s+size|member\s+count|people|members?)\s+to\s+(\d+)\b/i) ||
+        text.match(/(?:we\s+are|group\s+of)\s+(\d+)\s+people\b/i);
+      const userStyleMatch = text.match(
+        /(?:change|update|set)\s+(?:travel\s+)?(?:style|type)\s+to\s+([A-Za-z\s/]+)\b/i
+      );
+
+      const partialUpdates: Partial<UserPreferences> = {};
+      if (prefTagMatch) {
+        const parts = prefTagMatch[1].split(';');
+        parts.forEach((p) => {
+          const [k, v] = p.split('=').map((s) => s.trim());
+          if (k === 'month') partialUpdates.travelMonth = v;
+          if (k === 'group') partialUpdates.memberCount = parseInt(v, 10) || 2;
+          if (k === 'style') partialUpdates.travelType = v;
+        });
+      }
+      if (userMonthMatch) partialUpdates.travelMonth = userMonthMatch[1];
+      if (userGroupMatch) partialUpdates.memberCount = parseInt(userGroupMatch[1], 10);
+      if (userStyleMatch) partialUpdates.travelType = userStyleMatch[1].trim();
+
+      if (Object.keys(partialUpdates).length > 0 && onUpdatePreferences && !executedAction) {
+        onUpdatePreferences(partialUpdates);
+        triggerHaptic([15, 30]);
+        const details = Object.entries(partialUpdates)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join(', ');
+        executedAction = {
+          type: 'updated_preferences',
+          title: 'Trip Preferences Updated',
+          subtitle: details,
+        };
+      }
+
+      // Clean action tags from displayed text so user reads pristine output
+      const cleanContent = content.replace(/\[ACTION:[^\]]+\]/g, '').trim();
+
       const botMsg: ChatMessage = {
         id: `bot-${Date.now()}`,
         role: 'assistant',
-        content,
+        content: cleanContent,
         timestamp: botTime,
         groundingSources: groundingSources.length > 0 ? groundingSources : undefined,
+        executedAction,
       };
 
       setLatestBotMessageId(botMsg.id);
@@ -1005,7 +1497,9 @@ CRITICAL RULES:
       console.error('GAI Gemini error:', err);
       let errorResponse = "I'm momentarily catching my breath. Please try asking again in a moment!";
 
-      if (err?.message === 'MISSING_API_KEY') {
+      if (isSaveItineraryIntent && preSavedItinerary) {
+        errorResponse = `I've automatically saved your customized itinerary (**${preSavedItinerary.title}**) directly to your **My Goa** dashboard! 🌴 It is now safely stored under your Saved Itineraries.`;
+      } else if (err?.message === 'MISSING_API_KEY') {
         errorResponse = "⚠️ Please set VITE_GEMINI_API_KEY in your environment variables to enable real-time GAI responses.";
       }
 
@@ -1014,6 +1508,18 @@ CRITICAL RULES:
         role: 'assistant',
         content: errorResponse,
         timestamp: format12HourTime(),
+        executedAction: preSavedItinerary
+          ? {
+              type: 'saved_itinerary',
+              title: 'Itinerary Saved to My Goa',
+              subtitle: `Saved "${preSavedItinerary.title}" to your dashboard`,
+              buttonText: 'Open My Goa',
+              onButtonClick: () => {
+                triggerHaptic(12);
+                onNavigateScreen?.('my_goa', 'itineraries');
+              },
+            }
+          : undefined,
       };
       setLatestBotMessageId(errorMsg.id);
       setMessages((prev) => [...prev, errorMsg]);
@@ -1134,6 +1640,9 @@ CRITICAL RULES:
           }
 
           // Assistant (GAI) Bubble
+          const isItinerary = isItineraryContent(msg.content);
+          const isItinerarySaved = savedItineraries?.some((i) => i.id === msg.id);
+
           return (
             <div key={msg.id} className="flex items-start gap-2.5 pr-2">
               {/* Bot Avatar */}
@@ -1154,6 +1663,84 @@ CRITICAL RULES:
                     onScrollNeeded={scrollToBottom}
                   />
                 </div>
+
+                {/* Autonomous Executed Action Card (Rendered when GAI has performed work automatically on behalf of the user) */}
+                {msg.executedAction && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 4, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    className="mt-2 w-full bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-300/80 rounded-2xl p-3 shadow-xs flex items-center justify-between gap-2.5"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-sm shrink-0 font-black shadow-xs">
+                        ⚡
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-200/70 px-1.5 py-0.5 rounded-md">
+                            Done on your behalf
+                          </span>
+                        </div>
+                        <div className="text-[12.5px] font-black text-gray-900 truncate mt-0.5">
+                          {msg.executedAction.title}
+                        </div>
+                        <div className="text-[11px] text-gray-600 font-medium truncate">
+                          {msg.executedAction.subtitle}
+                        </div>
+                      </div>
+                    </div>
+
+                    {msg.executedAction.buttonText && (
+                      <button
+                        type="button"
+                        onClick={msg.executedAction.onButtonClick}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
+                      >
+                        <span>{msg.executedAction.buttonText}</span>
+                        <span>→</span>
+                      </button>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Dedicated Itinerary Action Card (ONLY rendered when message is a prepared itinerary) */}
+                {isItinerary && (
+                  <div className="mt-2 w-full bg-gradient-to-r from-[#FFF5F1] to-[#FFEFEA] border border-[#FF6B4A]/30 rounded-2xl p-3 flex items-center justify-between gap-2.5 shadow-2xs">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-xl bg-[#FF6B4A] text-white flex items-center justify-center text-sm shrink-0 font-bold shadow-xs">
+                        🗺️
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-[12.5px] font-black text-gray-900 truncate">
+                          {isItinerarySaved ? 'Itinerary Saved in My Goa' : 'Prepared Travel Itinerary'}
+                        </div>
+                        <div className="text-[11px] text-gray-500 font-medium truncate">
+                          {isItinerarySaved ? 'View anytime from your My Goa hub' : 'Save full schedule to My Goa'}
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleSaveItineraryFromMessage(msg)}
+                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-extrabold transition-all cursor-pointer shadow-xs shrink-0 active:scale-95 ${
+                        isItinerarySaved
+                          ? 'bg-[#177F91] text-white border border-[#177F91]'
+                          : 'bg-[#FF6B4A] text-white hover:bg-[#FF5436]'
+                      }`}
+                    >
+                      {isItinerarySaved ? (
+                        <>
+                          <span>✓ Saved</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>✨ Add to My Goa</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
 
                 {/* Footer Bar: 12h Timestamp + Small Working Action Buttons (Copy, Share, Like, Dislike) */}
                 <div className="flex items-center justify-between w-full mt-1 px-1">
@@ -1514,6 +2101,21 @@ CRITICAL RULES:
               </div>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating Toast Notification Popup */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 rounded-full bg-[#111111]/90 backdrop-blur-md text-white text-xs font-extrabold shadow-2xl border border-white/20 flex items-center gap-2 select-none"
+          >
+            <span className="text-sm">✨</span>
+            <span>{toastMessage}</span>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

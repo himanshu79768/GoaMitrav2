@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { UserPreferences } from '../types/onboarding';
+import { UserPreferences, SavedPlaceItem } from '../types/onboarding';
 
 export interface RestaurantItem {
   id: string;
@@ -43,6 +43,8 @@ interface FoodPageProps {
   preferences: UserPreferences;
   onBack: () => void;
   onAskGAI: (initialPrompt?: string) => void;
+  savedPlaces?: SavedPlaceItem[];
+  onToggleSavePlace?: (place: SavedPlaceItem) => void;
 }
 
 // 100% Real, Verified Goan Restaurants (with accurate location minutes)
@@ -428,7 +430,13 @@ export const ALL_DISHES: DishItem[] = [
   },
 ];
 
-export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGAI }) => {
+export const FoodPage: React.FC<FoodPageProps> = ({
+  preferences,
+  onBack,
+  onAskGAI,
+  savedPlaces = [],
+  onToggleSavePlace,
+}) => {
   // 1. Primary Segmented Control: BY DEFAULT KEEP DISHES
   const [viewType, setViewType] = useState<'dishes' | 'restaurants'>('dishes');
 
@@ -471,6 +479,33 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (onToggleSavePlace) {
+      const rest = REAL_RESTAURANTS.find((r) => r.id === id);
+      if (rest) {
+        onToggleSavePlace({
+          id: rest.id,
+          title: rest.name,
+          category: 'food',
+          subtitle: rest.priceCategory,
+          location: rest.location,
+          image: rest.image,
+          ratingOrPrice: rest.priceCategory,
+        });
+      } else {
+        const dish = ALL_DISHES.find((d) => d.id === id);
+        if (dish) {
+          onToggleSavePlace({
+            id: dish.id,
+            title: dish.name,
+            category: 'food',
+            subtitle: dish.cuisineStyle === 'goan_authentic' ? 'Goan Authentic Dish' : 'Specialty Dish',
+            location: dish.origin,
+            image: dish.image,
+            ratingOrPrice: dish.dietaryType === 'veg' ? 'Pure Veg' : 'Non-veg',
+          });
+        }
+      }
+    }
     setFavorites((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
@@ -758,7 +793,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
             /* DISHES LIST VIEW */
             <div className="space-y-3.5">
               {filteredDishes.map((dish) => {
-                const isFav = favorites.includes(dish.id);
+                const isFav = favorites.includes(dish.id) || savedPlaces.some((p) => p.id === dish.id);
 
                 return (
                   <div
@@ -855,7 +890,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
             /* RESTAURANTS LIST VIEW */
             <div className="space-y-3.5">
               {filteredRestaurants.map((rest) => {
-                const isFav = favorites.includes(rest.id);
+                const isFav = favorites.includes(rest.id) || savedPlaces.some((p) => p.id === rest.id);
                 const proximity = getProximityText(rest);
 
                 return (

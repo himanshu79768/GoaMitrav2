@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { UserPreferences } from '../types/onboarding';
+import { UserPreferences, SavedPlaceItem } from '../types/onboarding';
 import goaCulturalImg from '../assets/images/goa_cultural_tourism_1790841178468.jpg';
 
 interface CulturalEventItem {
@@ -24,6 +24,8 @@ interface CulturePageProps {
   onBack: () => void;
   onOpenProfile?: () => void;
   onAskGAI: (initialPrompt?: string) => void;
+  savedPlaces?: SavedPlaceItem[];
+  onToggleSavePlace?: (place: SavedPlaceItem) => void;
 }
 
 const ALL_MONTHS = [
@@ -1227,6 +1229,8 @@ export const CulturePage: React.FC<CulturePageProps> = ({
   preferences,
   onBack,
   onAskGAI,
+  savedPlaces = [],
+  onToggleSavePlace,
 }) => {
   // Active Tab: 'events' | 'traditions'
   const [activeTab, setActiveTab] = useState<'events' | 'traditions'>('events');
@@ -1246,6 +1250,20 @@ export const CulturePage: React.FC<CulturePageProps> = ({
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    if (onToggleSavePlace) {
+      const evt = CULTURAL_EVENTS.find((item) => item.id === id);
+      if (evt) {
+        onToggleSavePlace({
+          id: evt.id,
+          title: evt.name,
+          category: 'culture',
+          subtitle: evt.categoryBadge,
+          location: evt.location,
+          image: evt.image,
+          ratingOrPrice: evt.dateDisplay,
+        });
+      }
+    }
     setFavorites((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
   };
 
@@ -1444,7 +1462,7 @@ export const CulturePage: React.FC<CulturePageProps> = ({
 
                 {filteredEvents.length > 0 ? (
                   filteredEvents.map((evt) => {
-                    const isFav = favorites.includes(evt.id);
+                    const isFav = favorites.includes(evt.id) || savedPlaces.some((p) => p.id === evt.id);
 
                     return (
                       <div

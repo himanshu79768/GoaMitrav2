@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserPreferences } from '../types/onboarding';
+import { UserPreferences, SavedPlaceItem } from '../types/onboarding';
 
 export interface DestinationItem {
   id: string;
@@ -29,6 +29,8 @@ interface DestinationsPageProps {
   preferences: UserPreferences;
   onBack: () => void;
   onSelectDestination: (destination: DestinationItem) => void;
+  savedPlaces?: SavedPlaceItem[];
+  onToggleSavePlace?: (place: SavedPlaceItem) => void;
 }
 
 // 100% Genuine Outdoor Landmark Photos (Zero hotel rooms)
@@ -334,6 +336,8 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
   preferences,
   onBack,
   onSelectDestination,
+  savedPlaces = [],
+  onToggleSavePlace,
 }) => {
   const [selectedTag, setSelectedTag] = useState<string>('All');
   const [userLocality, setUserLocality] = useState<string>('Calangute, North Goa');
@@ -584,11 +588,40 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                           </span>
                         )}
 
-                        {/* Travel Link Cue */}
-                        <span className="text-[10px] font-bold text-[#177F91] bg-[#EAF5F7] px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                          <span>Rides</span>
-                          <span>↗</span>
-                        </span>
+                        {/* Heart / Save Button */}
+                        <div className="flex items-center gap-1.5 ml-auto">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (onToggleSavePlace) {
+                                onToggleSavePlace({
+                                  id: item.id,
+                                  title: item.name,
+                                  category: 'destination',
+                                  subtitle: item.category,
+                                  location: item.location,
+                                  image: item.image,
+                                  ratingOrPrice: `${item.distanceKm} km away`,
+                                });
+                              }
+                            }}
+                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs transition-all cursor-pointer ${
+                              savedPlaces.some((p) => p.id === item.id)
+                                ? 'bg-red-500 text-white shadow-sm scale-105'
+                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                            }`}
+                            title="Save to My Goa"
+                          >
+                            ❤️
+                          </button>
+
+                          {/* Travel Link Cue */}
+                          <span className="text-[10px] font-bold text-[#177F91] bg-[#EAF5F7] px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                            <span>Rides</span>
+                            <span>↗</span>
+                          </span>
+                        </div>
                       </div>
 
                       {/* Destination Name */}

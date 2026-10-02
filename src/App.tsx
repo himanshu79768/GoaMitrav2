@@ -19,12 +19,14 @@ import { CouponsPage } from './components/CouponsPage';
 import { EmergencyPage } from './components/EmergencyPage';
 import { MyGoaPage } from './components/MyGoaPage';
 import { UserProfileModal } from './components/UserProfileModal';
-import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
+import { UserPreferences, SavedPlaceItem, SavedItineraryItem, DEFAULT_PREFERENCES } from './types/onboarding';
 import { preloadAllAppImages } from './utils/imagePreloader';
 import { OfflineIndicator } from './components/OfflineIndicator';
 
 const ONBOARDING_COMPLETED_KEY = 'goamitra_onboarding_completed';
 const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
+const SAVED_PLACES_KEY = 'goamitra_saved_places';
+const SAVED_ITINERARIES_KEY = 'goamitra_saved_itineraries';
 
 type ScreenType =
   | 'onboarding_step_1'
@@ -88,6 +90,66 @@ export default function App() {
     return DEFAULT_PREFERENCES;
   });
 
+  // Saved Places State
+  const [savedPlaces, setSavedPlaces] = useState<SavedPlaceItem[]>(() => {
+    try {
+      const stored = localStorage.getItem(SAVED_PLACES_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [];
+  });
+
+  // Saved Itineraries State
+  const [savedItineraries, setSavedItineraries] = useState<SavedItineraryItem[]>(() => {
+    try {
+      const stored = localStorage.getItem(SAVED_ITINERARIES_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [];
+  });
+
+  const handleToggleSavePlace = (place: SavedPlaceItem) => {
+    setSavedPlaces((prev) => {
+      const exists = prev.some((p) => p.id === place.id);
+      const updated = exists ? prev.filter((p) => p.id !== place.id) : [place, ...prev];
+      try {
+        localStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleRemoveSavedPlace = (id: string) => {
+    setSavedPlaces((prev) => {
+      const updated = prev.filter((p) => p.id !== id);
+      try {
+        localStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleSaveItinerary = (itinerary: SavedItineraryItem) => {
+    setSavedItineraries((prev) => {
+      if (prev.some((i) => i.id === itinerary.id)) return prev;
+      const updated = [itinerary, ...prev];
+      try {
+        localStorage.setItem(SAVED_ITINERARIES_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
+  const handleRemoveItinerary = (id: string) => {
+    setSavedItineraries((prev) => {
+      const updated = prev.filter((i) => i.id !== id);
+      try {
+        localStorage.setItem(SAVED_ITINERARIES_KEY, JSON.stringify(updated));
+      } catch {}
+      return updated;
+    });
+  };
+
   // User input states for onboarding
   const [name, setName] = useState<string>(() => savedPreferences.name || '');
   const [selectedInterests, setSelectedInterests] = useState<string[]>(() => savedPreferences.tourismTypes || []);
@@ -118,6 +180,8 @@ export default function App() {
     setIsNameDialogOpen(true);
   };
 
+  const [myGoaInitialTab, setMyGoaInitialTab] = useState<'itineraries' | 'saved_places'>('itineraries');
+
   const handleUpdateName = (newName: string) => {
     setName(newName);
     const updated = { ...savedPreferences, name: newName };
@@ -127,6 +191,23 @@ export default function App() {
     } catch (e) {
       console.error('Failed to update name in localStorage', e);
     }
+  };
+
+  const handleUpdatePreferences = (partial: Partial<UserPreferences>) => {
+    setSavedPreferences((prev) => {
+      const updated = { ...prev, ...partial };
+      try {
+        localStorage.setItem(USER_PREFERENCES_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to update preferences in localStorage', e);
+      }
+      return updated;
+    });
+    if (partial.name !== undefined) setName(partial.name);
+    if (partial.tourismTypes !== undefined) setSelectedInterests(partial.tourismTypes);
+    if (partial.travelMonth !== undefined) setSelectedMonth(partial.travelMonth);
+    if (partial.memberCount !== undefined) setMemberCount(partial.memberCount);
+    if (partial.travelType !== undefined) setTravelType(partial.travelType);
   };
 
   const handleLogout = () => {
@@ -298,6 +379,8 @@ export default function App() {
                 preferences={savedPreferences}
                 onBack={() => navigateBack('homepage')}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
+                savedPlaces={savedPlaces}
+                onToggleSavePlace={handleToggleSavePlace}
               />
             </motion.div>
           )}
@@ -317,6 +400,8 @@ export default function App() {
                 preferences={savedPreferences}
                 onBack={() => navigateBack('homepage')}
                 onSelectDestination={handleOpenTravelForDestination}
+                savedPlaces={savedPlaces}
+                onToggleSavePlace={handleToggleSavePlace}
               />
             </motion.div>
           )}
@@ -356,6 +441,8 @@ export default function App() {
                 preferences={savedPreferences}
                 onBack={() => navigateBack('homepage')}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
+                savedPlaces={savedPlaces}
+                onToggleSavePlace={handleToggleSavePlace}
               />
             </motion.div>
           )}
@@ -374,8 +461,9 @@ export default function App() {
               <CulturePage
                 preferences={savedPreferences}
                 onBack={() => navigateBack('homepage')}
-                onOpenProfile={() => setIsProfileOpen(true)}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
+                savedPlaces={savedPlaces}
+                onToggleSavePlace={handleToggleSavePlace}
               />
             </motion.div>
           )}
@@ -434,6 +522,19 @@ export default function App() {
                   setChatInitialPrompt(undefined);
                   navigateBack('homepage');
                 }}
+                savedItineraries={savedItineraries}
+                onSaveItinerary={handleSaveItinerary}
+                onRemoveItinerary={handleRemoveItinerary}
+                savedPlaces={savedPlaces}
+                onToggleSavePlace={handleToggleSavePlace}
+                onNavigateScreen={(screen, initialTab) => {
+                  if (screen === 'my_goa' && initialTab) {
+                    setMyGoaInitialTab(initialTab);
+                  }
+                  navigateForward(screen as any);
+                }}
+                onUpdateName={handleUpdateName}
+                onUpdatePreferences={handleUpdatePreferences}
               />
             </motion.div>
           )}
@@ -451,9 +552,14 @@ export default function App() {
             >
               <MyGoaPage
                 preferences={savedPreferences}
+                savedPlaces={savedPlaces}
+                savedItineraries={savedItineraries}
+                initialTab={myGoaInitialTab}
                 onBack={() => navigateBack('homepage')}
                 onEditPreferences={() => navigateForward('onboarding_step_1')}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
+                onRemoveSavedPlace={handleRemoveSavedPlace}
+                onRemoveItinerary={handleRemoveItinerary}
               />
             </motion.div>
           )}
