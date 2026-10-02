@@ -251,13 +251,15 @@ export default function App() {
     navigateForward('homepage');
   };
 
+  const isOnboarding = currentScreen === 'onboarding_step_1' || currentScreen === 'onboarding_step_2';
+
   // Wake-word & Smooth Floating Half-Screen Bottomsheet states (Homescreen only)
   const [isGAIAwakened, setIsGAIAwakened] = useState(false);
   const [isGAIBottomSheetOpen, setIsGAIBottomSheetOpen] = useState(false);
   const [wakeDetectedPrompt, setWakeDetectedPrompt] = useState<string | undefined>();
 
-  // Global Speech Microphone & Wake-word Listener across the app
-  const { hasMicPermission, isWakeListening } = useGAIWakeWord({
+  // Silent Voice Wake-word Listener strictly on Homescreen
+  const { hasMicPermission } = useGAIWakeWord({
     onWake: (detectedPrompt) => {
       if (typeof window !== 'undefined' && 'vibrate' in navigator) {
         try {
@@ -265,20 +267,15 @@ export default function App() {
         } catch {}
       }
 
-      // Bottomsheet ONLY for homescreen when saying "Hey GAI!"
-      if (currentScreen === 'homepage') {
-        setIsGAIAwakened(true);
-        setIsGAIBottomSheetOpen(true);
-        if (detectedPrompt) {
-          setWakeDetectedPrompt(detectedPrompt);
-        }
-      } else {
-        // If on other screens, open the default full GAI Chat screen
-        setChatInitialPrompt(detectedPrompt);
-        navigateForward('gai_chat');
+      // Open floating bottomsheet on homescreen with awakened glowing gradient pill
+      setIsGAIAwakened(true);
+      setIsGAIBottomSheetOpen(true);
+      if (detectedPrompt) {
+        setWakeDetectedPrompt(detectedPrompt);
       }
     },
-    isPaused: isGAIBottomSheetOpen || currentScreen === 'gai_chat',
+    // Strictly active on homescreen only; completely turned off across all other screens
+    isHomeScreen: currentScreen === 'homepage' && !isGAIBottomSheetOpen && !isOnboarding,
   });
 
   const handleOpenChat = (prompt?: string) => {
@@ -322,8 +319,6 @@ export default function App() {
       },
     }),
   };
-
-  const isOnboarding = currentScreen === 'onboarding_step_1' || currentScreen === 'onboarding_step_2';
 
   return (
     <main className="w-full min-h-screen bg-[#E5E5DF] sm:py-0 flex items-center justify-center">

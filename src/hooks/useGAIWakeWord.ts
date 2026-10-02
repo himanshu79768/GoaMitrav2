@@ -2,120 +2,84 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 
 interface UseGAIWakeWordOptions {
   onWake: (detectedPrompt?: string) => void;
-  isPaused?: boolean;
+  isHomeScreen: boolean;
 }
 
-export function useGAIWakeWord({ onWake, isPaused = false }: UseGAIWakeWordOptions) {
+export function useGAIWakeWord({ onWake, isHomeScreen }: UseGAIWakeWordOptions) {
   const [hasMicPermission, setHasMicPermission] = useState<boolean | null>(null);
-  const [isWakeListening, setIsWakeListening] = useState(false);
-  const recognitionRef = useRef<any>(null);
-  const isPausedRef = useRef(isPaused);
-  isPausedRef.current = isPaused;
+  const [isListening, setIsListening] = useState(false);
 
   const onWakeRef = useRef(onWake);
   onWakeRef.current = onWake;
 
-  // 1. Ask Microphone Permission on App Start
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+  const isHomeScreenRef = useRef(isHomeScreen);
+  isHomeScreenRef.current = isHomeScreen;
 
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          // Immediately stop tracks so the browser mic indicator turns off until speech is needed
-          stream.getTracks().forEach((track) => track.stop());
-          setHasMicPermission(true);
-        })
-        .catch((err) => {
-          console.warn('Microphone permission request result:', err?.name);
-          setHasMicPermission(false);
-        });
-    }
-  }, []);
+  const recognitionRef = useRef<any>(null);
+  const isRecognizingRef = useRef(false);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const monitorIntervalRef = useRef<any>(null);
+  const lastVoiceTimeRef = useRef(0);
 
-  // 2. Initialize Continuous Wake-Word Recognition
+  // Initialize SpeechRecognition once
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      console.warn('SpeechRecognition API not available in this browser');
-      return;
-    }
+    if (!SpeechRecognition) return;
 
     let recognition: any;
     try {
       recognition = new SpeechRecognition();
-      recognition.continuous = true;
+      recognition.continuous = false; // Single utterance per detection to prevent infinite timeout loops
       recognition.interimResults = true;
       recognition.lang = 'en-IN';
     } catch (e) {
-      console.warn('Failed to construct SpeechRecognition for wake-word', e);
       return;
     }
 
-    recognitionRef.current = recognition;
-
-    const startListening = () => {
-      if (isPausedRef.current) return;
-      try {
-        recognition.start();
-        setIsWakeListening(true);
-      } catch (err) {
-        // Recognition might already be running
-      }
-    };
-
-    const stopListening = () => {
-      try {
-        recognition.stop();
-        setIsWakeListening(false);
-      } catch {}
+    recognition.onstart = () => {
+      isRecognizingRef.current = true;
+      setIsListening(true);
     };
 
     recognition.onresult = (event: any) => {
-      if (isPausedRef.current) return;
+      if (!isHomeScreenRef.current) return;
 
       const lastResult = event.results[event.results.length - 1];
       const transcript = lastResult[0]?.transcript?.trim().toLowerCase() || '';
 
-      // Check for wake words: "hey gai", "hey gai!", "hey guy", "hey goa", "ok gai", "gai"
+      // Match wake phrases: "hey gai", "hey gai!", "hey guy", "hey goa", "ok gai", "gai"
       const wakeMatch = transcript.match(/(?:hey|hello|hi|ok|okay)?\s*(?:gai|guy|g\s*a\s*i|goa|guyz)\b/i);
 
       if (wakeMatch) {
-        // Extract any prompt spoken immediately after wake word
         const afterWake = transcript.slice(wakeMatch.index! + wakeMatch[0].length).trim();
-        stopListening();
+        try {
+          recognition.stop();
+        } catch {}
+        isRecognizingRef.current = false;
+        setIsListening(false);
         onWakeRef.current(afterWake || undefined);
       }
     };
 
-    recognition.onerror = (e: any) => {
-      if (e.error === 'not-allowed') {
-        setIsWakeListening(false);
-        return;
-      }
-      // Silently ignore other errors like 'no-speech' or 'aborted'
+    recognition.onerror = () => {
+      isRecognizingRef.current = false;
+      setIsListening(false);
+      // NOTE: DO NOT auto-restart here! We wait for actual voice activity from the silent AudioContext
     };
 
     recognition.onend = () => {
-      setIsWakeListening(false);
-      // Auto-restart continuous background wake-word listening if not paused
-      if (!isPausedRef.current) {
-        setTimeout(() => {
-          if (!isPausedRef.current) {
-            startListening();
-          }
-        }, 600);
-      }
+      isRecognizingRef.current = false;
+      setIsListening(false);
+      // NOTE: DO NOT auto-restart here! This prevents the active/deactive cycling loop
     };
 
-    if (!isPaused) {
-      startListening();
-    }
+    recognitionRef.current = recognition;
 
     return () => {
       try {
@@ -124,39 +88,160 @@ export function useGAIWakeWord({ onWake, isPaused = false }: UseGAIWakeWordOptio
     };
   }, []);
 
-  // 3. React to isPaused changes (pause when bottomsheet/chat is actively capturing speech)
+  // Manage silent audio stream & voice activity detection strictly on Homescreen
   useEffect(() => {
-    if (!recognitionRef.current) return;
+    if (typeof window === 'undefined') return;
 
-    if (isPaused) {
-      try {
-        recognitionRef.current.stop();
-        setIsWakeListening(false);
-      } catch {}
-    } else {
-      setTimeout(() => {
-        if (!isPausedRef.current && recognitionRef.current) {
+    // Clean up when NOT on homescreen
+    const cleanupAudio = () => {
+      if (monitorIntervalRef.current) {
+        clearInterval(monitorIntervalRef.current);
+        monitorIntervalRef.current = null;
+      }
+
+      if (recognitionRef.current && isRecognizingRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+        isRecognizingRef.current = false;
+        setIsListening(false);
+      }
+
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((track) => {
           try {
-            recognitionRef.current.start();
-            setIsWakeListening(true);
+            track.stop();
           } catch {}
-        }
-      }, 500);
+        });
+        mediaStreamRef.current = null;
+      }
+
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        try {
+          audioContextRef.current.close();
+        } catch {}
+        audioContextRef.current = null;
+      }
+    };
+
+    // If NOT on homescreen, shut down microphone completely
+    if (!isHomeScreen) {
+      cleanupAudio();
+      return;
     }
-  }, [isPaused]);
+
+    // ON HOMESCREEN: Open single quiet stream and listen silently
+    let isCancelled = false;
+
+    const startSilentHomescreenListener = async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,
+          },
+        });
+
+        if (isCancelled || !isHomeScreenRef.current) {
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+
+        mediaStreamRef.current = stream;
+        setHasMicPermission(true);
+
+        const AudioContextClass =
+          window.AudioContext || (window as any).webkitAudioContext;
+        if (!AudioContextClass) return;
+
+        const audioCtx = new AudioContextClass();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        audioContextRef.current = audioCtx;
+
+        const analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 256;
+        analyser.smoothingTimeConstant = 0.4;
+        analyserRef.current = analyser;
+
+        const source = audioCtx.createMediaStreamSource(stream);
+        source.connect(analyser);
+
+        const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+        // Periodically monitor volume: Only activate speech recognition when someone actually speaks
+        monitorIntervalRef.current = setInterval(() => {
+          if (!isHomeScreenRef.current || !analyserRef.current) return;
+
+          analyserRef.current.getByteFrequencyData(dataArray);
+
+          let sum = 0;
+          for (let i = 0; i < dataArray.length; i++) {
+            sum += dataArray[i];
+          }
+          const avgVolume = sum / dataArray.length;
+
+          const now = Date.now();
+
+          // Threshold for actual human speech above ambient silence (typically 18-24)
+          if (avgVolume > 18) {
+            lastVoiceTimeRef.current = now;
+
+            // Start recognition silently if not already running
+            if (!isRecognizingRef.current && recognitionRef.current) {
+              try {
+                recognitionRef.current.start();
+                isRecognizingRef.current = true;
+                setIsListening(true);
+              } catch (e) {
+                // Already started or busy
+              }
+            }
+          } else {
+            // If silence has persisted for > 2.5 seconds and recognition is running, let it rest
+            if (isRecognizingRef.current && now - lastVoiceTimeRef.current > 2500) {
+              if (recognitionRef.current) {
+                try {
+                  recognitionRef.current.stop();
+                } catch {}
+              }
+              isRecognizingRef.current = false;
+              setIsListening(false);
+            }
+          }
+        }, 120);
+      } catch (err: any) {
+        console.warn('Silent microphone listener notice:', err?.name);
+        setHasMicPermission(false);
+      }
+    };
+
+    startSilentHomescreenListener();
+
+    return () => {
+      isCancelled = true;
+      cleanupAudio();
+    };
+  }, [isHomeScreen]);
 
   const manuallyTriggerWake = useCallback((extraPrompt?: string) => {
-    if (recognitionRef.current) {
+    if (recognitionRef.current && isRecognizingRef.current) {
       try {
         recognitionRef.current.stop();
       } catch {}
     }
-    onWake(extraPrompt);
-  }, [onWake]);
+    isRecognizingRef.current = false;
+    setIsListening(false);
+    onWakeRef.current(extraPrompt);
+  }, []);
 
   return {
     hasMicPermission,
-    isWakeListening,
+    isListening,
     manuallyTriggerWake,
   };
 }
