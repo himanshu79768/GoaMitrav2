@@ -335,7 +335,7 @@ export default function App() {
               animate="animate"
               exit="exit"
               transition={pageTransition}
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden"
+              className="w-full min-h-screen overflow-hidden"
             >
               <GAIChatPage
                 preferences={savedPreferences}
