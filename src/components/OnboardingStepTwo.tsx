@@ -10,7 +10,6 @@ interface OnboardingStepTwoProps {
   onFinish: () => void;
 }
 
-
 const PRESET_OPTIONS = [
   {
     type: 'Solo Traveler',
@@ -57,8 +56,9 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
   const isCountLocked = travelType === 'Solo Traveler' || travelType === 'Couple / Duo';
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-between px-6 pt-7 pb-8 max-w-[430px] mx-auto select-none">
-      <div>
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none overflow-hidden relative font-sans">
+      {/* Scrollable Content Area (Auto-adjusts according to screen size) */}
+      <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-6 pb-6 no-scrollbar">
         {/* Top Header: Back Button, Logo, 2-Segment Progress Bar */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -66,7 +66,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
             <button
               type="button"
               onClick={onBack}
-              className="w-8 h-8 rounded-full bg-white border border-gray-200/80 shadow-sm flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+              className="w-8 h-8 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
               aria-label="Go back"
             >
               <svg
@@ -100,23 +100,23 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
         </header>
 
         {/* Title Section */}
-        <section className="mt-8">
-          <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
+        <section className="mt-6 sm:mt-7">
+          <span className="text-[10.5px] font-bold tracking-widest text-gray-400 uppercase">
             TRAVEL COMPANIONS
           </span>
-          <h1 className="text-[28px] font-extrabold text-gray-900 tracking-tight leading-[1.2] mt-0.5">
+          <h1 className="text-[26px] sm:text-[28px] font-extrabold text-gray-900 tracking-tight leading-[1.2] mt-0.5">
             How many members are visiting <span className="text-[#FF6B4A]">Goa?</span>
           </h1>
-          <p className="text-gray-500 text-[13.5px] mt-1">
+          <p className="text-gray-500 text-[13px] mt-0.5">
             We’ll tailor recommendations for your party size.
           </p>
         </section>
 
         {/* Interactive Member Count Stepper (Locked for Solo & Couple) */}
-        <section className="mt-6 p-4 rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-center justify-between">
+        <section className="mt-5 p-3.5 sm:p-4 rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
                 TOTAL MEMBERS
               </span>
               {isCountLocked && (
@@ -130,17 +130,17 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
             </div>
 
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-[34px] font-extrabold text-[#111111] tabular-nums">
+              <span className="text-[30px] sm:text-[34px] font-extrabold text-[#111111] tabular-nums">
                 {memberCount}
               </span>
-              <span className="text-sm font-semibold text-gray-500">
+              <span className="text-xs sm:text-sm font-semibold text-gray-500">
                 {memberCount === 1 ? 'person' : 'people'}
               </span>
             </div>
           </div>
 
-          {/* Minus & Plus Buttons (Disabled when locked to Solo or Couple) */}
-          <div className="flex items-center gap-3">
+          {/* Minus & Plus Buttons */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <button
               type="button"
               disabled={isCountLocked || memberCount <= 1}
@@ -149,7 +149,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
                   setMemberCount(Math.max(1, memberCount - 1));
                 }
               }}
-              className={`w-11 h-11 rounded-full border flex items-center justify-center text-xl font-bold transition-all ${
+              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full border flex items-center justify-center text-xl font-bold transition-all ${
                 isCountLocked || memberCount <= 1
                   ? 'border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed opacity-60'
                   : 'border-gray-300 text-gray-700 bg-white hover:border-[#FF6B4A] hover:text-[#FF6B4A] active:scale-95 cursor-pointer'
@@ -167,7 +167,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
                   setMemberCount(memberCount + 1);
                 }
               }}
-              className={`w-11 h-11 rounded-full flex items-center justify-center text-xl font-bold transition-all ${
+              className={`w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center text-xl font-bold transition-all ${
                 isCountLocked
                   ? 'border border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed opacity-60 shadow-none'
                   : 'bg-[#FF6B4A] text-white hover:bg-[#FF5436] active:scale-95 shadow-[0_4px_12px_rgba(255,107,74,0.3)] cursor-pointer'
@@ -180,12 +180,12 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
         </section>
 
         {/* Travel Style Presets */}
-        <section className="mt-6">
-          <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+        <section className="mt-5 mb-2">
+          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
             WHO ARE YOU TRAVELING WITH?
           </span>
 
-          <div className="space-y-2 mt-2.5">
+          <div className="space-y-2 mt-2">
             {PRESET_OPTIONS.map((item) => {
               const isSelected = travelType === item.type;
               return (
@@ -198,25 +198,24 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
                     } else if (item.type === 'Couple / Duo') {
                       setMemberCount(2);
                     } else {
-                      // If transitioning from Solo/Couple to a group preset, set default group count
                       if (memberCount <= 2) {
                         setMemberCount(item.count);
                       }
                     }
                   }}
-                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
+                  className={`p-3 sm:p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${
                     isSelected
                       ? 'border-[#FF6B4A] bg-[#FFF2EE] shadow-[0_4px_16px_rgba(255,107,74,0.12)]'
                       : 'border-gray-200/80 bg-white hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-2xl shrink-0">{item.icon}</span>
+                    <span className="text-xl sm:text-2xl shrink-0">{item.icon}</span>
                     <div className="truncate">
-                      <div className="text-[14.5px] font-bold text-gray-900 leading-tight">
+                      <div className="text-[14px] sm:text-[14.5px] font-bold text-gray-900 leading-tight">
                         {item.type}
                       </div>
-                      <div className="text-[11.5px] text-gray-500 font-normal leading-tight mt-0.5 truncate">
+                      <div className="text-[11px] sm:text-[11.5px] text-gray-500 font-normal leading-tight mt-0.5 truncate">
                         {item.subtitle}
                       </div>
                     </div>
@@ -241,12 +240,12 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
         </section>
       </div>
 
-      {/* Explore Goa Now Button */}
-      <div className="pt-6 mt-6">
+      {/* Persistent Bottom Action Bar (Fixed, never cutoff, auto-pads for all screens) */}
+      <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <button
           type="button"
           onClick={onFinish}
-          className="w-full py-4 rounded-2xl font-bold text-[16px] bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>Explore Goa Now</span>
           <svg
@@ -265,4 +264,3 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
     </div>
   );
 };
-

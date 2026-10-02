@@ -12,7 +12,6 @@ interface OnboardingStepOneProps {
   onContinue: () => void;
 }
 
-
 const MONTHS = [
   { name: 'January', tag: 'Best Weather & Music' },
   { name: 'February', tag: 'Carnival Season' },
@@ -45,9 +44,10 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
     selectedMonth.trim().length > 0;
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-between px-6 pt-7 pb-8 max-w-[430px] mx-auto select-none">
-      <div>
-        {/* Top Header: Logo, 2-Segment Progress Bar (Skip removed) */}
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none overflow-hidden relative font-sans">
+      {/* Scrollable Content Area (Auto-adjusts according to screen size) */}
+      <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-6 pb-6 no-scrollbar">
+        {/* Top Header: Logo, 2-Segment Progress Bar */}
         <header className="flex items-center justify-between">
           <div className="flex flex-col gap-2">
             {/* GOAMITRA Brand Wordmark */}
@@ -66,17 +66,17 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
         </header>
 
         {/* 1. Name Question */}
-        <section className="mt-8">
-          <span className="text-gray-500 font-medium text-[15px]">Hi there,</span>
-          <h1 className="text-[32px] font-extrabold text-gray-900 tracking-tight leading-[1.15] mt-0.5">
+        <section className="mt-6 sm:mt-7">
+          <span className="text-gray-500 font-medium text-[14px]">Hi there,</span>
+          <h1 className="text-[28px] sm:text-[31px] font-extrabold text-gray-900 tracking-tight leading-[1.15] mt-0.5">
             What’s your <span className="text-[#FF6B4A]">name?</span>
           </h1>
-          <p className="text-gray-500 text-[13.5px] mt-1 font-normal">
+          <p className="text-gray-500 text-[13px] mt-0.5 font-normal">
             We’ll personalize your Goa experience.
           </p>
 
           {/* Name Input Box */}
-          <div className="mt-3.5 relative rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3.5 flex items-center gap-3 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
+          <div className="mt-3 relative rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center gap-3 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
             <svg
               className="w-5 h-5 text-gray-400 shrink-0"
               viewBox="0 0 24 24"
@@ -95,29 +95,29 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name"
-              className="w-full bg-transparent text-[15.5px] font-medium text-gray-900 placeholder-gray-400 outline-none"
+              className="w-full bg-transparent text-[15px] font-medium text-gray-900 placeholder-gray-400 outline-none"
             />
           </div>
         </section>
 
-        {/* 2. Interests Question - ONLY 2 CARDS: Cultural & Heritage */}
-        <section className="mt-7">
-          <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
+        {/* 2. Interests Question - Cultural & Heritage */}
+        <section className="mt-6">
+          <span className="text-[10.5px] font-bold tracking-widest text-gray-400 uppercase">
             INTERESTS
           </span>
-          <h2 className="text-[20px] font-bold text-gray-900 tracking-tight mt-0.5 leading-snug">
+          <h2 className="text-[19px] sm:text-[20px] font-bold text-gray-900 tracking-tight mt-0.5 leading-snug">
             What interests you the most?
           </h2>
-          <p className="text-gray-500 text-[12.5px] mt-0.5">
+          <p className="text-gray-500 text-[12px] mt-0.5">
             Choose one or more to personalize your experience.
           </p>
 
-          {/* Tourism Cards: Exactly 2 Columns */}
-          <div className="grid grid-cols-2 gap-3 mt-3">
+          {/* Tourism Cards: 2 Columns with responsive heights */}
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mt-2.5">
             {/* Cultural Tourism */}
             <div
               onClick={() => toggleInterest('Cultural Tourism')}
-              className={`relative rounded-2xl h-[178px] overflow-hidden cursor-pointer shadow-sm transition-all border-2 ${
+              className={`relative rounded-2xl h-[155px] sm:h-[172px] overflow-hidden cursor-pointer shadow-sm transition-all border-2 ${
                 selectedInterests.includes('Cultural Tourism')
                   ? 'border-[#FF6B4A] scale-[1.01] shadow-[0_6px_20px_rgba(255,107,74,0.25)]'
                   : 'border-transparent opacity-95 hover:opacity-100'
@@ -133,7 +133,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
               {/* Selection Check Circle */}
               <div className="absolute top-2.5 right-2.5">
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                  className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all ${
                     selectedInterests.includes('Cultural Tourism')
                       ? 'bg-[#FF6B4A] text-white shadow-sm'
                       : 'border-2 border-white/80 bg-black/20'
@@ -149,9 +149,9 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
 
               {/* Card Label */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                <h3 className="font-bold text-[14px] leading-tight">Cultural Tourism</h3>
-                <p className="text-[11px] text-white/80 leading-tight mt-0.5">
-                  Festivals, art, food & local traditions
+                <h3 className="font-bold text-[13.5px] leading-tight">Cultural Tourism</h3>
+                <p className="text-[10.5px] text-white/80 leading-tight mt-0.5">
+                  Festivals, art, food & traditions
                 </p>
               </div>
             </div>
@@ -159,7 +159,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
             {/* Heritage Tourism */}
             <div
               onClick={() => toggleInterest('Heritage Tourism')}
-              className={`relative rounded-2xl h-[178px] overflow-hidden cursor-pointer shadow-sm transition-all border-2 ${
+              className={`relative rounded-2xl h-[155px] sm:h-[172px] overflow-hidden cursor-pointer shadow-sm transition-all border-2 ${
                 selectedInterests.includes('Heritage Tourism')
                   ? 'border-[#FF6B4A] scale-[1.01] shadow-[0_6px_20px_rgba(255,107,74,0.25)]'
                   : 'border-transparent opacity-95 hover:opacity-100'
@@ -175,7 +175,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
               {/* Selection Check Circle */}
               <div className="absolute top-2.5 right-2.5">
                 <div
-                  className={`w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                  className={`w-5.5 h-5.5 rounded-full flex items-center justify-center transition-all ${
                     selectedInterests.includes('Heritage Tourism')
                       ? 'bg-[#FF6B4A] text-white shadow-sm'
                       : 'border-2 border-white/80 bg-black/20'
@@ -191,9 +191,9 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
 
               {/* Card Label */}
               <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
-                <h3 className="font-bold text-[14px] leading-tight">Heritage Tourism</h3>
-                <p className="text-[11px] text-white/80 leading-tight mt-0.5">
-                  Forts, churches, museums & historic sites
+                <h3 className="font-bold text-[13.5px] leading-tight">Heritage Tourism</h3>
+                <p className="text-[10.5px] text-white/80 leading-tight mt-0.5">
+                  Forts, churches & historic sites
                 </p>
               </div>
             </div>
@@ -201,25 +201,25 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
         </section>
 
         {/* 3. Travel Month Question */}
-        <section className="mt-7">
-          <span className="text-[11px] font-bold tracking-widest text-gray-400 uppercase">
+        <section className="mt-6 mb-2">
+          <span className="text-[10.5px] font-bold tracking-widest text-gray-400 uppercase">
             TRAVEL MONTH
           </span>
-          <h2 className="text-[20px] font-bold text-gray-900 tracking-tight mt-0.5 leading-snug">
+          <h2 className="text-[19px] sm:text-[20px] font-bold text-gray-900 tracking-tight mt-0.5 leading-snug">
             When do you plan to visit Goa?
           </h2>
-          <p className="text-gray-500 text-[12.5px] mt-0.5">
+          <p className="text-gray-500 text-[12px] mt-0.5">
             Choose your preferred month.
           </p>
 
           {/* Month Selector Dropdown Button */}
-          <div className="relative mt-3">
+          <div className="relative mt-2.5">
             <button
               type="button"
               onClick={() => {
                 setIsMonthPickerOpen(!isMonthPickerOpen);
               }}
-              className="w-full rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3.5 flex items-center justify-between text-left hover:border-gray-300 active:scale-[0.99] transition-all cursor-pointer"
+              className="w-full rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center justify-between text-left hover:border-gray-300 active:scale-[0.99] transition-all cursor-pointer"
             >
               <div className="flex items-center gap-3">
                 <svg
@@ -238,8 +238,8 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
                   <line x1="3" y1="10" x2="21" y2="10" />
                 </svg>
                 <span
-                  className={`text-[15px] font-medium ${
-                    selectedMonth ? 'text-gray-900' : 'text-gray-400'
+                  className={`text-[14.5px] font-medium ${
+                    selectedMonth ? 'text-gray-900 font-semibold' : 'text-gray-400'
                   }`}
                 >
                   {selectedMonth || 'Select month'}
@@ -263,7 +263,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
 
             {/* Dropdown Menu Modal */}
             {isMonthPickerOpen && (
-              <div className="absolute bottom-full mb-2 left-0 right-0 max-h-56 overflow-y-auto bg-white rounded-2xl shadow-xl border border-gray-100 p-2 z-30">
+              <div className="absolute bottom-full mb-2 left-0 right-0 max-h-52 overflow-y-auto bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-30">
                 <div className="grid grid-cols-2 gap-1.5">
                   {MONTHS.map((m) => (
                     <button
@@ -273,7 +273,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
                         setSelectedMonth(m.name);
                         setIsMonthPickerOpen(false);
                       }}
-                      className={`p-2 rounded-xl text-left text-xs font-semibold transition-all ${
+                      className={`p-2 rounded-xl text-left text-xs font-semibold transition-all cursor-pointer ${
                         selectedMonth === m.name
                           ? 'bg-[#FFEAE5] text-[#FF6B4A] border border-[#FF6B4A]/30'
                           : 'hover:bg-gray-50 text-gray-700'
@@ -292,13 +292,13 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
         </section>
       </div>
 
-      {/* Continue / Unlock Get Started Button */}
-      <div className="pt-6 mt-6">
+      {/* Persistent Bottom Action Bar (Fixed, never cutoff, auto-pads for all screens) */}
+      <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
         <button
           type="button"
           disabled={!isUnlocked}
           onClick={onContinue}
-          className={`w-full py-4 rounded-2xl font-bold text-[16px] flex items-center justify-center gap-2 transition-all ${
+          className={`w-full py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] flex items-center justify-center gap-2 transition-all ${
             isUnlocked
               ? 'bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] cursor-pointer'
               : 'bg-gray-200/80 text-gray-400 cursor-not-allowed shadow-none'
@@ -319,7 +319,7 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
         </button>
 
         {!isUnlocked && (
-          <p className="text-center text-[11.5px] text-gray-400 mt-2 font-medium">
+          <p className="text-center text-[11px] text-gray-400 mt-1.5 font-medium">
             Enter your name, pick an interest & travel month to unlock
           </p>
         )}
