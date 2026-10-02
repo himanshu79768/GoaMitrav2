@@ -14,7 +14,7 @@ export default defineConfig(() => {
         includeAssets: ['favicon.ico', 'icon.svg'],
         manifest: {
           id: '/',
-          name: 'GoaMitra — Goa Travel Companion',
+          name: 'GoaMitra Prototype',
           short_name: 'GoaMitra Prototype',
           description: 'Your intelligent personalized Goa travel guide, stays, local food, routes, and live emergency safety companion.',
           theme_color: '#F7F7F5',
