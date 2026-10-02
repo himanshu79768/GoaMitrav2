@@ -14,6 +14,7 @@ import { StayPage } from './components/StayPage';
 import { DestinationsPage, DestinationItem, ALL_DESTINATIONS } from './components/DestinationsPage';
 import { TravelPage } from './components/TravelPage';
 import { FoodPage } from './components/FoodPage';
+import { CulturePage } from './components/CulturePage';
 import { CouponsPage } from './components/CouponsPage';
 import { EmergencyPage } from './components/EmergencyPage';
 import { UserProfileModal } from './components/UserProfileModal';
@@ -32,7 +33,7 @@ export default function App() {
 
   // Check localStorage: if onboarding completed once, show homepage directly on refresh
   const [currentScreen, setCurrentScreen] = useState<
-    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'coupons' | 'emergency'
+    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'coupons' | 'emergency'
   >(() => {
     try {
       const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
@@ -50,7 +51,7 @@ export default function App() {
 
   // Helper forward navigation
   const navigateForward = (
-    screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'coupons' | 'emergency'
+    screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'coupons' | 'emergency'
   ) => {
     setNavDirection('forward');
     setCurrentScreen(screen);
@@ -58,7 +59,7 @@ export default function App() {
 
   // Helper backward navigation
   const navigateBack = (
-    screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'coupons' | 'emergency'
+    screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'coupons' | 'emergency'
   ) => {
     setNavDirection('backward');
     setCurrentScreen(screen);
@@ -183,6 +184,7 @@ export default function App() {
               onOpenStay={() => navigateForward('stay')}
               onOpenDestinations={() => navigateForward('destinations')}
               onOpenFood={() => navigateForward('food')}
+              onOpenCulture={() => navigateForward('culture')}
               onOpenCoupons={() => navigateForward('coupons')}
               onOpenEmergency={() => navigateForward('emergency')}
             />
@@ -319,6 +321,26 @@ export default function App() {
               <FoodPage
                 preferences={savedPreferences}
                 onBack={() => navigateBack('homepage')}
+                onAskGAI={(prompt) => handleOpenChat(prompt)}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 7.5: Culture Page */}
+          {currentScreen === 'culture' && (
+            <motion.div
+              key="culture"
+              custom={navDirection}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+            >
+              <CulturePage
+                preferences={savedPreferences}
+                onBack={() => navigateBack('homepage')}
+                onOpenProfile={() => setIsProfileOpen(true)}
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
               />
             </motion.div>

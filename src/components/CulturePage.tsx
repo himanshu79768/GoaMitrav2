@@ -22,23 +22,23 @@ interface CulturalEventItem {
 interface CulturePageProps {
   preferences: UserPreferences;
   onBack: () => void;
-  onOpenProfile: () => void;
+  onOpenProfile?: () => void;
   onAskGAI: (initialPrompt?: string) => void;
 }
 
 const ALL_MONTHS = [
-  { name: 'January', tag: 'Three Kings & Lokotsav', highlight: 'Feast of Three Kings, Bodgeshwar Zatra & Lokotsav' },
-  { name: 'February', tag: 'Carnival & Temple Zatras', highlight: 'Goa Carnival, Mangeshi Zatra & Grape Escapade' },
-  { name: 'March', tag: 'Shigmo & Ghodemodni', highlight: 'Shigmotsav, Holi, Ghodemodni & All Saints Procession' },
-  { name: 'April', tag: 'Easter & Milagres Feast', highlight: 'Easter, Milagres Feast, Gulalotsav & Gudi Padwa' },
-  { name: 'May', tag: 'Shirgao Fire-Walking Zatra', highlight: 'Shirgao Lairai Fire-Walking & Cashew Festival' },
-  { name: 'June', tag: 'São João & River Sangodd', highlight: 'São João Water Festival & Sangodd Boat Pageants' },
-  { name: 'July', tag: 'Chikhal Kalo & Cucumber Fest', highlight: 'Chikhal Kalo Mud Fest & Cucumber Festival' },
-  { name: 'August', tag: 'Bonderam & Vasco Saptah', highlight: 'Bonderam Flag Fest, Vasco Saptah & Matoli Market' },
-  { name: 'September', tag: 'Chavath & Tiatr Festival', highlight: 'Chavath / Ganesh Chaturthi & State Tiatr Competition' },
-  { name: 'October', tag: 'Navratri & Colva Fama', highlight: 'Navratri, Colva Fama & Narkasur Effigy Parades' },
-  { name: 'November', tag: 'Tripurari & IFFI / Serendipity', highlight: 'Tripurari Poornima Boat Fest, IFFI & Serendipity Arts' },
-  { name: 'December', tag: 'St. Francis Feast & Christmas', highlight: 'Feast of St. Francis Xavier, Immaculate Conception & Christmas' },
+  { name: 'January', short: 'Jan', tag: 'Three Kings & Lokotsav', highlight: 'Feast of Three Kings, Bodgeshwar Zatra & Lokotsav' },
+  { name: 'February', short: 'Feb', tag: 'Carnival & Temple Zatras', highlight: 'Goa Carnival, Mangeshi Zatra & Grape Escapade' },
+  { name: 'March', short: 'Mar', tag: 'Shigmo & Ghodemodni', highlight: 'Shigmotsav, Holi, Ghodemodni & All Saints Procession' },
+  { name: 'April', short: 'Apr', tag: 'Easter & Milagres Feast', highlight: 'Easter, Milagres Feast, Gulalotsav & Gudi Padwa' },
+  { name: 'May', short: 'May', tag: 'Shirgao Fire-Walking Zatra', highlight: 'Shirgao Lairai Fire-Walking & Cashew Festival' },
+  { name: 'June', short: 'Jun', tag: 'São João & River Sangodd', highlight: 'São João Water Festival & Sangodd Boat Pageants' },
+  { name: 'July', short: 'Jul', tag: 'Chikhal Kalo & Cucumber Fest', highlight: 'Chikhal Kalo Mud Fest & Cucumber Festival' },
+  { name: 'August', short: 'Aug', tag: 'Bonderam & Vasco Saptah', highlight: 'Bonderam Flag Fest, Vasco Saptah & Matoli Market' },
+  { name: 'September', short: 'Sep', tag: 'Chavath & Tiatr Festival', highlight: 'Chavath / Ganesh Chaturthi & State Tiatr Competition' },
+  { name: 'October', short: 'Oct', tag: 'Navratri & Colva Fama', highlight: 'Navratri, Colva Fama & Narkasur Effigy Parades' },
+  { name: 'November', short: 'Nov', tag: 'Tripurari & IFFI / Serendipity', highlight: 'Tripurari Poornima Boat Fest, IFFI & Serendipity Arts' },
+  { name: 'December', short: 'Dec', tag: 'St. Francis Feast & Christmas', highlight: 'Feast of St. Francis Xavier, Immaculate Conception & Christmas' },
 ];
 
 const MONTHLY_CULTURAL_TIPS: Record<number, string> = {
@@ -1226,7 +1226,6 @@ const CULTURAL_EVENTS: CulturalEventItem[] = [
 export const CulturePage: React.FC<CulturePageProps> = ({
   preferences,
   onBack,
-  onOpenProfile,
   onAskGAI,
 }) => {
   // Active Tab: 'events' | 'traditions'
@@ -1256,16 +1255,34 @@ export const CulturePage: React.FC<CulturePageProps> = ({
   // Filter Events strictly by selected month
   const filteredEvents = CULTURAL_EVENTS.filter((evt) => evt.monthIndex === selectedMonthIndex);
 
+  // Tab Slide Motion Variants
+  const tabVariants = {
+    initial: (tab: 'events' | 'traditions') => ({
+      x: tab === 'events' ? -20 : 20,
+      opacity: 0,
+    }),
+    animate: {
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.2, ease: [0.25, 1, 0.5, 1] as const },
+    },
+    exit: (tab: 'events' | 'traditions') => ({
+      x: tab === 'events' ? 20 : -20,
+      opacity: 0,
+      transition: { duration: 0.15, ease: [0.25, 1, 0.5, 1] as const },
+    }),
+  };
+
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full font-sans">
-      {/* 1. PINNED STICKY TOP HEADER */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 pt-3 pb-2 flex flex-col gap-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="flex items-center justify-between">
+      {/* 1. PINNED STICKY TOP HEADER (No Profile Icon) */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 pt-3 pb-2.5 flex flex-col gap-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        <div className="flex items-center justify-between relative">
           {/* Back Button */}
           <button
             type="button"
             onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer z-10"
             aria-label="Back to Homepage"
           >
             <svg
@@ -1281,26 +1298,17 @@ export const CulturePage: React.FC<CulturePageProps> = ({
             </svg>
           </button>
 
-          {/* Title */}
-          <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
+          {/* Centered Title */}
+          <h1 className="text-[20px] font-black text-[#111111] tracking-tight absolute inset-0 flex items-center justify-center pointer-events-none">
             Culture
           </h1>
 
-          {/* Profile Button */}
-          <button
-            type="button"
-            onClick={onOpenProfile}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="User Profile"
-          >
-            <svg className="w-4.5 h-4.5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-            </svg>
-          </button>
+          {/* Spacer for symmetrical centering */}
+          <div className="w-9 h-9 opacity-0 pointer-events-none" />
         </div>
 
         {/* 2. TOP SEGMENTED CONTROL TABS (Events vs Traditions & Arts) */}
-        <div className="p-1 bg-gray-200/70 rounded-full flex items-center">
+        <div className="p-1 bg-gray-200/70 rounded-full flex items-center relative">
           <button
             type="button"
             onClick={() => setActiveTab('events')}
@@ -1326,228 +1334,285 @@ export const CulturePage: React.FC<CulturePageProps> = ({
         </div>
       </header>
 
-      {/* 3. SCROLLABLE BODY CONTAINER */}
+      {/* 3. SCROLLABLE BODY CONTAINER WITH TAB TRANSITIONS */}
       <div
         className="flex-1 overflow-y-auto px-4 pt-3 pb-12 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        {activeTab === 'events' ? (
-          <>
-            {/* HERO BANNER CARD */}
-            <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[185px] flex items-end p-5 bg-black">
-              <img
-                src={goaCulturalImg}
-                alt="Goa Cultural Procession"
-                className="absolute inset-0 w-full h-full object-cover object-center opacity-85"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
-
-              <div className="relative z-10 text-white w-full">
-                <h2 className="text-[22px] font-black tracking-tight leading-tight drop-shadow-md">
-                  Experience Goa beyond the beaches.
-                </h2>
-                <p className="text-[13px] font-medium text-white/90 mt-1 drop-shadow-xs">
-                  Festivals, traditions, music & local life.
-                </p>
-              </div>
-            </div>
-
-            {/* MONTH SELECTOR BANNER BUTTON (Tap opens Month Picker) */}
-            <button
-              type="button"
-              onClick={() => setIsMonthPickerOpen(true)}
-              className="w-full rounded-2xl bg-[#FFF6E9] border border-[#FCD34D]/60 p-3.5 flex items-center justify-between shadow-2xs hover:bg-[#FFF2DE] active:scale-[0.99] transition-all cursor-pointer"
+        <AnimatePresence mode="wait" custom={activeTab}>
+          {activeTab === 'events' ? (
+            <motion.div
+              key="events-tab"
+              custom={activeTab}
+              variants={tabVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="space-y-3.5"
             >
-              <div className="flex items-center gap-2.5">
-                <span className="text-xl shrink-0">📅</span>
-                <div className="text-left">
-                  <span className="text-[13.5px] font-extrabold text-[#92400E] leading-tight block">
-                    {currentMonthData.name}: {currentMonthData.highlight.split(',')[0]} & local cultural events
-                  </span>
+              {/* HERO BANNER CARD */}
+              <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[185px] flex items-end p-5 bg-black">
+                <img
+                  src={goaCulturalImg}
+                  alt="Goa Cultural Procession"
+                  className="absolute inset-0 w-full h-full object-cover object-center opacity-85"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
+
+                <div className="relative z-10 text-white w-full">
+                  <h2 className="text-[22px] font-black tracking-tight leading-tight drop-shadow-md">
+                    Experience Goa beyond the beaches.
+                  </h2>
+                  <p className="text-[13px] font-medium text-white/90 mt-1 drop-shadow-xs">
+                    Festivals, traditions, music & local life.
+                  </p>
                 </div>
               </div>
-              <span className="text-sm font-bold text-[#92400E] shrink-0 pl-1">
-                ›
-              </span>
-            </button>
 
-            {/* CULTURAL INSIDER TIP */}
-            <div className="bg-[#F0FDF4] border border-[#B9F6CA] rounded-2xl p-3.5 shadow-2xs flex items-start gap-2.5">
-              <p className="text-[12.5px] font-semibold text-[#1B5E20] leading-relaxed">
-                {currentTip}
-              </p>
-            </div>
-
-            {/* CULTURAL EVENTS LIST */}
-            <div className="space-y-3.5 pt-1">
-              <div className="flex items-center justify-between px-1">
-                <h3 className="text-[13px] font-extrabold text-gray-800 uppercase tracking-wider">
-                  🌴 {currentMonthData.name} Cultural Events ({filteredEvents.length})
-                </h3>
-              </div>
-
-              {filteredEvents.length > 0 ? (
-                filteredEvents.map((evt) => {
-                  const isFav = favorites.includes(evt.id);
-
-                  return (
-                    <div
-                      key={evt.id}
-                      onClick={() =>
-                        onAskGAI(
-                          `Tell me full details, timing, exact location, and insider tips for attending ${evt.name} in ${evt.location} during ${evt.month}.`
-                        )
-                      }
-                      className="bg-white rounded-[24px] border border-gray-200/80 shadow-xs overflow-hidden hover:shadow-md active:scale-[0.99] transition-all flex flex-col cursor-pointer"
-                    >
-                      {/* Image Header with Heart & Category Badge */}
-                      <div className="relative h-48 w-full bg-gray-100">
-                        <img
-                          src={evt.image}
-                          alt={evt.name}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                        {/* Top Badges */}
-                        <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5">
-                            {evt.badgeType === 'bestMatch' && (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#38BDF8] text-[#0369A1] font-extrabold text-[11px] shadow-xs">
-                                <span>★</span> Best match
-                              </span>
-                            )}
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#FFE4E6] text-[#E11D48] font-extrabold text-[11px] shadow-xs">
-                              {evt.categoryBadge}
-                            </span>
-                          </div>
-
-                          {/* Heart Favorite Button */}
-                          <button
-                            type="button"
-                            onClick={(e) => toggleFavorite(evt.id, e)}
-                            className={`w-8.5 h-8.5 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer ${
-                              isFav
-                                ? 'bg-red-500 text-white shadow-xs'
-                                : 'bg-black/30 text-white hover:bg-black/50'
-                            }`}
-                            aria-label="Favorite"
-                          >
-                            <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-                              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Card Body Details */}
-                      <div className="p-4 space-y-2">
-                        <h3 className="text-[18px] font-black text-gray-900 leading-tight">
-                          {evt.name}
-                        </h3>
-
-                        {/* Location */}
-                        <div className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-700">
-                          <span className="text-gray-400">📍</span>
-                          <span>{evt.location}</span>
-                        </div>
-
-                        {/* Date & Time */}
-                        <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#177F91]">
-                          <span>📅</span>
-                          <span>{evt.dateDisplay}</span>
-                        </div>
-
-                        {/* Description */}
-                        <p className="text-[12.5px] text-gray-600 leading-relaxed pt-0.5">
-                          {evt.description}
-                        </p>
-
-                        {/* Bottom Tag Specs matching design */}
-                        <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between text-gray-600 text-[12px] font-semibold">
-                          <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
-                            {evt.activityType && (
-                              <span className="flex items-center gap-1 text-gray-700 font-medium">
-                                <span>👥</span> {evt.activityType}
-                              </span>
-                            )}
-                            {evt.audience && (
-                              <span className="flex items-center gap-1 text-gray-700 font-medium">
-                                <span>👨‍👩‍👧</span> {evt.audience}
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-[#177F91] font-extrabold text-xs shrink-0 pl-2">
-                            Ask GAI ›
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <div className="p-8 text-center bg-white rounded-3xl border border-gray-200/80 space-y-3">
-                  <span className="text-3xl">🌴</span>
-                  <h3 className="text-base font-bold text-gray-900">
-                    No events listed for {currentMonthData.name}
-                  </h3>
-                  <p className="text-xs text-gray-500">
-                    Tap below to choose another month.
-                  </p>
+              {/* CLEAR PROMINENT MONTH FILTER BAR */}
+              <div className="bg-white rounded-2xl border border-gray-200/90 p-3 shadow-xs space-y-2">
+                <div className="flex items-center justify-between px-0.5">
+                  <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800 uppercase tracking-wider">
+                    <span>🔍</span>
+                    <span>Filter by Month</span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => setIsMonthPickerOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-[#177F91] text-white font-bold text-xs cursor-pointer"
+                    className="text-[11px] font-extrabold text-[#177F91] hover:underline flex items-center gap-1 cursor-pointer"
                   >
-                    Select Month
+                    <span>All 12 Months</span>
+                    <span>▾</span>
                   </button>
                 </div>
-              )}
-            </div>
-          </>
-        ) : (
-          /* TRADITIONS & ARTS TAB CONTENT */
-          <div className="space-y-4 pt-1">
-            <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-xs space-y-3">
-              <span className="text-xs font-black uppercase text-[#177F91] tracking-wider">Heritage & Living Culture</span>
-              <h3 className="text-lg font-black text-gray-900">Goan Folk Music & Musical Instruments</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Goan music blends Western acoustic guitars and brass with traditional Konkan percussion. The iconic <strong>Ghumot</strong> (earthenware percussion pot) is recognized as a State Heritage Instrument.
-              </p>
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                  <div className="text-sm font-bold text-gray-900">Mando & Fado</div>
-                  <div className="text-[11px] text-gray-500">Romantic ballads & Latin soul</div>
-                </div>
-                <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                  <div className="text-sm font-bold text-gray-900">Romtamel Drums</div>
-                  <div className="text-[11px] text-gray-500">High-energy Shigmo beat</div>
+
+                {/* Main Filter Trigger Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsMonthPickerOpen(true)}
+                  className="w-full rounded-xl bg-[#E0F2FE] border border-[#0284C7]/40 px-3.5 py-2.5 flex items-center justify-between text-[#0369A1] shadow-2xs hover:bg-[#D0EBFD] active:scale-[0.99] transition-all cursor-pointer"
+                >
+                  <div className="flex items-center gap-2 font-black text-[14px]">
+                    <span>📅</span>
+                    <span>{currentMonthData.name}</span>
+                    <span className="text-xs font-bold text-[#0284C7] bg-white/80 px-2 py-0.5 rounded-full border border-[#0284C7]/30">
+                      {filteredEvents.length} events
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1 text-xs font-black">
+                    <span>Change Month</span>
+                    <span className="text-sm">▾</span>
+                  </div>
+                </button>
+
+                {/* Quick Month Chips Row for Instant Filter Switch */}
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1 pb-0.5">
+                  {ALL_MONTHS.map((m, idx) => {
+                    const isSelected = selectedMonthIndex === idx;
+                    return (
+                      <button
+                        key={m.name}
+                        type="button"
+                        onClick={() => setSelectedMonthIndex(idx)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-extrabold shrink-0 transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#177F91] text-white shadow-2xs scale-105'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        {m.short}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
-            </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-xs space-y-3">
-              <span className="text-xs font-black uppercase text-[#177F91] tracking-wider">Traditional Folk Dances</span>
-              <h3 className="text-lg font-black text-gray-900">Fugdi, Dekhnni & Corridinho</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Goa’s folk dances celebrate village harvests, community solidarity, and mythological sagas.
-              </p>
-              <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-4 font-medium">
-                <li><strong>Fugdi & Dhalo:</strong> Traditional women’s circle dance performed during Gauri and Chavath.</li>
-                <li><strong>Ghodemodni:</strong> Martial dance recreating the horse-riding Maratha warriors of Bicholim.</li>
-                <li><strong>Dekhnni:</strong> Graceful dance set to Konkani folk melodies depicting river boatmen.</li>
-              </ul>
-            </div>
+              {/* CULTURAL INSIDER TIP */}
+              <div className="bg-[#F0FDF4] border border-[#B9F6CA] rounded-2xl p-3.5 shadow-2xs flex items-start gap-2.5">
+                <p className="text-[12.5px] font-semibold text-[#1B5E20] leading-relaxed">
+                  {currentTip}
+                </p>
+              </div>
 
-            <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-xs space-y-3">
-              <span className="text-xs font-black uppercase text-[#177F91] tracking-wider">Arts & Crafts</span>
-              <h3 className="text-lg font-black text-gray-900">Azulejos Tiles & Kaavi Art</h3>
-              <p className="text-xs text-gray-600 leading-relaxed">
-                Hand-painted glazed ceramic tiles (Azulejos) decorate Fontainhas, while ancient red-oxide sgraffito wall art (Kaavi) graces ancient Ponda temples.
-              </p>
-            </div>
-          </div>
-        )}
+              {/* CULTURAL EVENTS LIST */}
+              <div className="space-y-3.5 pt-1">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-[13px] font-extrabold text-gray-800 uppercase tracking-wider">
+                    🌴 {currentMonthData.name} Cultural Events ({filteredEvents.length})
+                  </h3>
+                </div>
+
+                {filteredEvents.length > 0 ? (
+                  filteredEvents.map((evt) => {
+                    const isFav = favorites.includes(evt.id);
+
+                    return (
+                      <div
+                        key={evt.id}
+                        onClick={() =>
+                          onAskGAI(
+                            `Tell me full details, timing, exact location, and insider tips for attending ${evt.name} in ${evt.location} during ${evt.month}.`
+                          )
+                        }
+                        className="bg-white rounded-[24px] border border-gray-200/80 shadow-xs overflow-hidden hover:shadow-md active:scale-[0.99] transition-all flex flex-col cursor-pointer"
+                      >
+                        {/* Image Header with Heart & Category Badge */}
+                        <div className="relative h-48 w-full bg-gray-100">
+                          <img
+                            src={evt.image}
+                            alt={evt.name}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+                          {/* Top Badges */}
+                          <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                            <div className="flex items-center gap-1.5">
+                              {evt.badgeType === 'bestMatch' && (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#38BDF8] text-[#0369A1] font-extrabold text-[11px] shadow-xs">
+                                  <span>★</span> Best match
+                                </span>
+                              )}
+                              <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#FFE4E6] text-[#E11D48] font-extrabold text-[11px] shadow-xs">
+                                {evt.categoryBadge}
+                              </span>
+                            </div>
+
+                            {/* Heart Favorite Button */}
+                            <button
+                              type="button"
+                              onClick={(e) => toggleFavorite(evt.id, e)}
+                              className={`w-8.5 h-8.5 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer ${
+                                isFav
+                                  ? 'bg-red-500 text-white shadow-xs'
+                                  : 'bg-black/30 text-white hover:bg-black/50'
+                              }`}
+                              aria-label="Favorite"
+                            >
+                              <svg className="w-4.5 h-4.5" viewBox="0 0 24 24" fill={isFav ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
+                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Card Body Details */}
+                        <div className="p-4 space-y-2">
+                          <h3 className="text-[18px] font-black text-gray-900 leading-tight">
+                            {evt.name}
+                          </h3>
+
+                          {/* Location */}
+                          <div className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-700">
+                            <span className="text-gray-400">📍</span>
+                            <span>{evt.location}</span>
+                          </div>
+
+                          {/* Date & Time */}
+                          <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#177F91]">
+                            <span>📅</span>
+                            <span>{evt.dateDisplay}</span>
+                          </div>
+
+                          {/* Description */}
+                          <p className="text-[12.5px] text-gray-600 leading-relaxed pt-0.5">
+                            {evt.description}
+                          </p>
+
+                          {/* Bottom Tag Specs */}
+                          <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between text-gray-600 text-[12px] font-semibold">
+                            <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+                              {evt.activityType && (
+                                <span className="flex items-center gap-1 text-gray-700 font-medium">
+                                  <span>👥</span> {evt.activityType}
+                                </span>
+                              )}
+                              {evt.audience && (
+                                <span className="flex items-center gap-1 text-gray-700 font-medium">
+                                  <span>👨‍👩‍👧</span> {evt.audience}
+                                </span>
+                              )}
+                            </div>
+                            <span className="text-[#177F91] font-extrabold text-xs shrink-0 pl-2">
+                              Ask GAI ›
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="p-8 text-center bg-white rounded-3xl border border-gray-200/80 space-y-3">
+                    <span className="text-3xl">🌴</span>
+                    <h3 className="text-base font-bold text-gray-900">
+                      No events listed for {currentMonthData.name}
+                    </h3>
+                    <p className="text-xs text-gray-500">
+                      Tap below to choose another month.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setIsMonthPickerOpen(true)}
+                      className="px-4 py-2 rounded-xl bg-[#177F91] text-white font-bold text-xs cursor-pointer"
+                    >
+                      Select Month
+                    </button>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ) : (
+            /* TRADITIONS & ARTS TAB CONTENT WITH MOTION TRANSITION */
+            <motion.div
+              key="traditions-tab"
+              custom={activeTab}
+              variants={tabVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="space-y-4"
+            >
+              <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-xs space-y-3">
+                <span className="text-xs font-black uppercase text-[#177F91] tracking-wider">Heritage & Living Culture</span>
+                <h3 className="text-lg font-black text-gray-900">Goan Folk Music & Musical Instruments</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Goan music blends Western acoustic guitars and brass with traditional Konkan percussion. The iconic <strong>Ghumot</strong> (earthenware percussion pot) is recognized as a State Heritage Instrument.
+                </p>
+                <div className="grid grid-cols-2 gap-2 pt-1">
+                  <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                    <div className="text-sm font-bold text-gray-900">Mando & Fado</div>
+                    <div className="text-[11px] text-gray-500">Romantic ballads & Latin soul</div>
+                  </div>
+                  <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                    <div className="text-sm font-bold text-gray-900">Romtamel Drums</div>
+                    <div className="text-[11px] text-gray-500">High-energy Shigmo beat</div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-xs space-y-3">
+                <span className="text-xs font-black uppercase text-[#177F91] tracking-wider">Traditional Folk Dances</span>
+                <h3 className="text-lg font-black text-gray-900">Fugdi, Dekhnni & Corridinho</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Goa’s folk dances celebrate village harvests, community solidarity, and mythological sagas.
+                </p>
+                <ul className="text-xs text-gray-700 space-y-1.5 list-disc pl-4 font-medium">
+                  <li><strong>Fugdi & Dhalo:</strong> Traditional women’s circle dance performed during Gauri and Chavath.</li>
+                  <li><strong>Ghodemodni:</strong> Martial dance recreating the horse-riding Maratha warriors of Bicholim.</li>
+                  <li><strong>Dekhnni:</strong> Graceful dance set to Konkani folk melodies depicting river boatmen.</li>
+                </ul>
+              </div>
+
+              <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-xs space-y-3">
+                <span className="text-xs font-black uppercase text-[#177F91] tracking-wider">Arts & Crafts</span>
+                <h3 className="text-lg font-black text-gray-900">Azulejos Tiles & Kaavi Art</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Hand-painted glazed ceramic tiles (Azulejos) decorate Fontainhas, while ancient red-oxide sgraffito wall art (Kaavi) graces ancient Ponda temples.
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* MONTH PICKER MODAL SHEET */}
@@ -1575,8 +1640,8 @@ export const CulturePage: React.FC<CulturePageProps> = ({
 
               <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div>
-                  <h3 className="text-base font-extrabold text-gray-900">Select Travel Month</h3>
-                  <p className="text-xs text-gray-500">Filter Goan festivals & zatras month by month</p>
+                  <h3 className="text-base font-extrabold text-gray-900">Filter Events by Month</h3>
+                  <p className="text-xs text-gray-500">Select any month to filter cultural festivals</p>
                 </div>
                 <button
                   type="button"
@@ -1603,19 +1668,19 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                       }}
                       className={`p-3 rounded-2xl text-left border transition-all cursor-pointer ${
                         isSelected
-                          ? 'bg-[#E0F2FE] border-[#0284C7] text-[#0284C7] shadow-xs'
+                          ? 'bg-[#177F91] border-[#177F91] text-white shadow-xs'
                           : 'bg-gray-50 border-gray-100 text-gray-800 hover:bg-gray-100'
                       }`}
                     >
                       <div className="text-sm font-extrabold flex items-center justify-between">
                         <span>{m.name}</span>
                         {isSelected ? (
-                          <span className="text-[#0284C7] text-xs font-bold">✓</span>
+                          <span className="text-white text-xs font-bold">✓ Selected</span>
                         ) : (
                           <span className="text-gray-400 text-[10px] font-semibold">{monthEventsCount} events</span>
                         )}
                       </div>
-                      <div className="text-[10.5px] text-gray-500 font-medium truncate mt-0.5">
+                      <div className={`text-[10.5px] font-medium truncate mt-0.5 ${isSelected ? 'text-white/80' : 'text-gray-500'}`}>
                         {m.tag}
                       </div>
                     </button>
