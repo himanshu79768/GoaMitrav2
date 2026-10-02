@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'motion/react';
 import heroImage from '../assets/images/hero.png';
 import { UserPreferences } from '../types/onboarding';
+import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeroSectionProps {
   preferences: UserPreferences;
@@ -38,15 +39,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         />
       </div>
 
-      {/* Top Bar: Location Pill & Profile Button */}
-      <div className="flex items-center justify-between pt-1">
+      {/* Top Bar: Location Pill, PWA Install & Profile Button */}
+      <div className="flex items-center justify-between pt-1 gap-2">
         {/* Location Pill */}
         <motion.button
           type="button"
           whileHover={{ y: -1 }}
           whileTap={{ scale: 0.96 }}
           onClick={onOpenProfile}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:bg-white/90 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:bg-white/90 transition-colors cursor-pointer min-w-0"
           aria-label="Current trip preferences"
         >
           {/* Blue SVG Map Pin */}
@@ -64,13 +65,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </svg>
 
           {/* Location Text */}
-          <span className="text-[13px] font-semibold text-[#18232D] tracking-tight whitespace-nowrap">
-            North Goa <span className="font-normal text-[#64748B]">·</span> {tripTag} Trip
+          <span className="text-[12.5px] font-semibold text-[#18232D] tracking-tight truncate">
+            North Goa <span className="font-normal text-[#64748B]">·</span> {tripTag}
           </span>
 
           {/* Chevron Down */}
           <svg
-            className="w-3.5 h-3.5 text-[#5A6876] ml-0.5"
+            className="w-3.5 h-3.5 text-[#5A6876] ml-0.5 shrink-0"
             viewBox="0 0 16 16"
             fill="none"
             stroke="currentColor"
@@ -83,30 +84,35 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </svg>
         </motion.button>
 
-        {/* Profile Button */}
-        <motion.button
-          type="button"
-          whileHover={{ scale: 1.06 }}
-          whileTap={{ scale: 0.92 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-          onClick={onOpenProfile}
-          className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] cursor-pointer"
-          aria-label="User profile"
-        >
-          {/* SVG User Silhouette Icon */}
-          <svg
-            className="w-5 h-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
+        <div className="flex items-center gap-2 shrink-0">
+          {/* In-App PWA Install Prompt Button */}
+          <PWAInstallButton />
+
+          {/* Profile Button */}
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+            onClick={onOpenProfile}
+            className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] cursor-pointer"
+            aria-label="User profile"
           >
-            <path
-              fillRule="evenodd"
-              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </motion.button>
+            {/* SVG User Silhouette Icon */}
+            <svg
+              className="w-5 h-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </motion.button>
+        </div>
       </div>
 
       {/* Greeting Area */}

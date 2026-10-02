@@ -19,6 +19,7 @@ import { EmergencyPage } from './components/EmergencyPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
 import { preloadAllAppImages } from './utils/imagePreloader';
+import { OfflineIndicator } from './components/OfflineIndicator';
 
 const ONBOARDING_COMPLETED_KEY = 'goamitra_onboarding_completed';
 const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
@@ -382,6 +383,9 @@ export default function App() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Offline Mode Banner Indicator */}
+      <OfflineIndicator />
     </main>
   );
 }

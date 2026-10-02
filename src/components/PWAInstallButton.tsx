@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { usePWAInstall } from '../hooks/usePWAInstall';
+import { usePWAInstall } from '../utils/usePWAInstall';
 
 export const PWAInstallButton: React.FC = () => {
   const { isInstallable, isInstalled, isIOS, install } = usePWAInstall();
@@ -11,81 +10,63 @@ export const PWAInstallButton: React.FC = () => {
     return null;
   }
 
-  // Chromium / Android / Desktop Install Flow
+  // Chromium / Android / Desktop flow
   if (isInstallable) {
     return (
-      <motion.button
+      <button
         type="button"
-        whileTap={{ scale: 0.96 }}
         onClick={install}
-        className="w-full py-3 rounded-xl font-bold text-xs bg-gray-900 text-white shadow-xs hover:bg-black transition-all flex items-center justify-center gap-2 cursor-pointer"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#177F91] text-white text-xs font-bold shadow-xs hover:bg-[#126270] active:scale-95 transition-all cursor-pointer"
+        aria-label="Install App"
       >
-        <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
-        <span>Install GoaMitra App</span>
-      </motion.button>
+        <span>Install App</span>
+      </button>
     );
   }
 
-  // iOS Safari Flow
+  // iOS Safari flow (beforeinstallprompt is not supported by WebKit)
   if (isIOS) {
     return (
       <>
-        <motion.button
+        <button
           type="button"
-          whileTap={{ scale: 0.96 }}
           onClick={() => setShowIOSGuide(true)}
-          className="w-full py-3 rounded-xl font-bold text-xs bg-gray-900 text-white shadow-xs hover:bg-black transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-gray-200 text-gray-800 text-xs font-bold shadow-xs hover:bg-gray-100 active:scale-95 transition-all cursor-pointer"
         >
-          <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          <span>Install on iPhone (PWA)</span>
-        </motion.button>
+          <span>📲 Add to Home Screen</span>
+        </button>
 
-        <AnimatePresence>
-          {showIOSGuide && (
-            <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 select-none">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowIOSGuide(false)}
-                className="absolute inset-0 bg-black/50 backdrop-blur-xs"
-              />
-              <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', stiffness: 400, damping: 35 }}
-                className="w-full max-w-sm rounded-t-3xl sm:rounded-2xl bg-white p-6 shadow-2xl relative z-10 border border-gray-100"
-              >
-                <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-4" />
-                <h3 className="text-[17px] font-black text-gray-900 tracking-tight text-center">
-                  Install GoaMitra on iPhone
-                </h3>
-                <div className="mt-3 space-y-2.5 text-xs text-gray-600 bg-gray-50 p-4 rounded-xl">
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-gray-900">1.</span>
-                    <span>Tap the <strong>Share</strong> icon in Safari's bottom toolbar.</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <span className="font-bold text-gray-900">2.</span>
-                    <span>Scroll down and select <strong>Add to Home Screen</strong>.</span>
-                  </div>
-                </div>
+        {showIOSGuide && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+            <div className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl border border-gray-100 select-none">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                <h3 className="text-base font-bold text-gray-900">Install on iPhone / iPad</h3>
                 <button
                   type="button"
                   onClick={() => setShowIOSGuide(false)}
-                  className="mt-4 w-full py-2.5 rounded-xl bg-gray-900 text-white text-xs font-bold hover:bg-black transition-colors"
+                  className="w-7 h-7 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center text-xs"
                 >
-                  Got it
+                  ✕
                 </button>
-              </motion.div>
+              </div>
+              <p className="mt-3 text-xs text-gray-600 leading-relaxed space-y-2">
+                <span className="block font-semibold text-gray-900">Follow 2 quick steps:</span>
+                <span className="block">1. Tap the <strong className="text-gray-900">Share button</strong> (box with arrow) in Safari.</span>
+                <span className="block">2. Scroll down and select <strong className="text-[#177F91]">Add to Home Screen</strong>.</span>
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowIOSGuide(false)}
+                className="mt-4 w-full rounded-xl bg-[#177F91] py-2.5 text-xs font-bold text-white shadow-xs hover:brightness-105 active:scale-98 transition-all"
+              >
+                Got It
+              </button>
             </div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </>
     );
   }
