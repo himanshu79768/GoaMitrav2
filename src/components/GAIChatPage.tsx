@@ -223,7 +223,7 @@ const FormattedMessage: React.FC<{
   for (const line of lines) {
     const trimmed = line.trim();
     const carMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Car(?:\/Auto)?(?:\/Scooter)?):\s*(.*)/i);
-    const busMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Bus(?:\/Ferry)?):\s*(.*)/i);
+    const busMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Bus(?:\)?):\s*(.*)/i);
     const locMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:Location|Place):\s*(.*)/i);
 
     if (carMatch) {
@@ -958,7 +958,7 @@ CRITICAL RULES:
       let response;
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-3.8-flash',
+          model: 'gemini-3.5-flash-lite',
           contents: historyContents,
           config: {
             tools: [{ googleSearch: {} }],
