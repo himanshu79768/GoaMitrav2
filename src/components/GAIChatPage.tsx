@@ -39,6 +39,24 @@ const QUICK_PROMPTS = [
   { label: 'Safety & emergency', icon: '🛡️', prompt: 'What are emergency contacts, lifeguard flags and safety rules around here?' },
 ];
 
+/** Safe Haptic Vibration Helper */
+function triggerHaptic(pattern: number | number[] = 12) {
+  if (typeof window !== 'undefined' && 'navigator' in window && 'vibrate' in navigator) {
+    try {
+      navigator.vibrate(pattern);
+    } catch {}
+  }
+}
+
+/** Formats current time into clean 12-hour format (e.g. 10:15 AM) */
+function format12HourTime(date = new Date()): string {
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+}
+
 /** Helper to render inline markdown: **bold** and *italic* */
 function renderInlineMarkdown(text: string): React.ReactNode {
   const boldParts = text.split(/(\*\*.*?\*\*)/g);
@@ -68,6 +86,59 @@ function renderItalic(text: string, parentKey: number | string): React.ReactNode
     }
     return iPart;
   });
+}
+
+/** Parses markdown tables into clean styled HTML table elements */
+function renderMarkdownTable(tableLines: string[]): React.ReactNode {
+  if (tableLines.length === 0) return null;
+
+  // Filter out formatting lines like |---|---|
+  const dataLines = tableLines.filter((line) => !line.match(/^\|?\s*:?-+:?\s*(\||\+)/));
+  if (dataLines.length === 0) return null;
+
+  const splitCells = (line: string) => {
+    const raw = line.split('|').map((c) => c.trim());
+    if (raw.length > 1) {
+      // Drop empty leading/trailing array entries from outer pipes
+      if (raw[0] === '') raw.shift();
+      if (raw[raw.length - 1] === '') raw.pop();
+    }
+    return raw;
+  };
+
+  const headerCells = splitCells(dataLines[0]);
+  const bodyRows = dataLines.slice(1).map((line) => splitCells(line));
+
+  return (
+    <div className="my-2.5 overflow-x-auto rounded-xl border border-gray-200/90 shadow-2xs bg-white max-w-full">
+      <table className="w-full text-left border-collapse text-[12.5px]">
+        {headerCells.length > 0 && (
+          <thead className="bg-gray-100/90 border-b border-gray-200 text-gray-900 font-extrabold">
+            <tr>
+              {headerCells.map((cell, idx) => (
+                <th key={idx} className="px-3 py-2 border-r last:border-r-0 border-gray-200/80 whitespace-nowrap">
+                  {renderInlineMarkdown(cell)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+        )}
+        {bodyRows.length > 0 && (
+          <tbody className="divide-y divide-gray-100 text-gray-800">
+            {bodyRows.map((row, rIdx) => (
+              <tr key={rIdx} className="hover:bg-gray-50/80 transition-colors">
+                {row.map((cell, cIdx) => (
+                  <td key={cIdx} className="px-3 py-2 border-r last:border-r-0 border-gray-100 font-medium">
+                    {renderInlineMarkdown(cell)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        )}
+      </table>
+    </div>
+  );
 }
 
 /** Determines accurate Goan locality from coordinates */
@@ -136,7 +207,7 @@ const processImageFile = (file: File): Promise<AttachedImage> => {
   });
 };
 
-/** FormattedMessage: Renders crisp markdown and interactive action cards */
+/** FormattedMessage: Full Markdown renderer (H1-H4, bullets, numbered lists, tables, transport cards) */
 const FormattedMessage: React.FC<{
   content: string;
   userCoords?: { lat: number; lng: number } | null;
@@ -171,6 +242,7 @@ const FormattedMessage: React.FC<{
 
   const renderedElements: React.ReactNode[] = [];
   let currentBullets: string[] = [];
+  let currentTableLines: string[] = [];
 
   const flushBullets = (key: string) => {
     if (currentBullets.length > 0) {
@@ -188,19 +260,40 @@ const FormattedMessage: React.FC<{
     }
   };
 
+  const flushTable = (key: string) => {
+    if (currentTableLines.length > 0) {
+      const tableNode = renderMarkdownTable(currentTableLines);
+      if (tableNode) {
+        renderedElements.push(<React.Fragment key={key}>{tableNode}</React.Fragment>);
+      }
+      currentTableLines = [];
+    }
+  };
+
   nonTransportLines.forEach((rawLine, index) => {
     const line = rawLine.trim();
+
+    // Handle Markdown Table Rows (lines containing '|')
+    if (line.includes('|')) {
+      flushBullets(`b-flush-t-${index}`);
+      currentTableLines.push(line);
+      return;
+    } else {
+      flushTable(`tbl-flush-${index}`);
+    }
 
     if (!line) {
       flushBullets(`b-flush-${index}`);
       return;
     }
 
+    // Bullet Lists
     if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
       currentBullets.push(line.replace(/^[-*•]\s+/, ''));
       return;
     }
 
+    // Numbered Lists
     const numMatch = line.match(/^(\d+)\.\s+(.*)/);
     if (numMatch) {
       flushBullets(`b-flush-num-${index}`);
@@ -215,17 +308,52 @@ const FormattedMessage: React.FC<{
       return;
     }
 
-    if (line.startsWith('### ') || line.startsWith('## ')) {
-      flushBullets(`b-flush-h-${index}`);
-      const headingText = line.replace(/^#{2,3}\s+/, '');
+    // Headings: H1 (#), H2 (##), H3 (###), H4 (####)
+    if (line.startsWith('# ')) {
+      flushBullets(`b-flush-h1-${index}`);
+      const headingText = line.replace(/^#\s+/, '');
       renderedElements.push(
-        <h4 key={`h-${index}`} className="font-bold text-[14.5px] text-gray-900 mt-2 mb-1 tracking-tight">
+        <h1 key={`h1-${index}`} className="font-extrabold text-[18px] text-gray-900 mt-3 mb-1.5 leading-snug">
+          {renderInlineMarkdown(headingText)}
+        </h1>
+      );
+      return;
+    }
+
+    if (line.startsWith('## ')) {
+      flushBullets(`b-flush-h2-${index}`);
+      const headingText = line.replace(/^##\s+/, '');
+      renderedElements.push(
+        <h2 key={`h2-${index}`} className="font-extrabold text-[16px] text-gray-900 mt-2.5 mb-1 leading-snug">
+          {renderInlineMarkdown(headingText)}
+        </h2>
+      );
+      return;
+    }
+
+    if (line.startsWith('### ')) {
+      flushBullets(`b-flush-h3-${index}`);
+      const headingText = line.replace(/^###\s+/, '');
+      renderedElements.push(
+        <h3 key={`h3-${index}`} className="font-bold text-[15px] text-gray-900 mt-2 mb-1 leading-tight">
+          {renderInlineMarkdown(headingText)}
+        </h3>
+      );
+      return;
+    }
+
+    if (line.startsWith('#### ')) {
+      flushBullets(`b-flush-h4-${index}`);
+      const headingText = line.replace(/^####\s+/, '');
+      renderedElements.push(
+        <h4 key={`h4-${index}`} className="font-bold text-[14px] text-gray-800 mt-1.5 mb-0.5">
           {renderInlineMarkdown(headingText)}
         </h4>
       );
       return;
     }
 
+    // Standard Paragraph
     flushBullets(`b-flush-p-${index}`);
     renderedElements.push(
       <p key={`p-${index}`} className="text-[14px] leading-relaxed text-gray-800 mb-1.5 last:mb-0">
@@ -235,6 +363,7 @@ const FormattedMessage: React.FC<{
   });
 
   flushBullets('b-flush-final');
+  flushTable('tbl-flush-final');
 
   return (
     <div className="space-y-1">
@@ -307,6 +436,7 @@ const FormattedMessage: React.FC<{
               href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${targetPlace}, Goa`)}`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => triggerHaptic(10)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#FFF0EC] text-[#FF6B4A] hover:bg-[#FFE4DC] active:scale-95 transition-all shadow-xs"
             >
               <span>📍 See on map</span>
@@ -319,6 +449,7 @@ const FormattedMessage: React.FC<{
               }`}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => triggerHaptic(10)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all shadow-xs"
             >
               <span>🧭 Directions</span>
@@ -328,7 +459,10 @@ const FormattedMessage: React.FC<{
             {onQuickAction && (
               <button
                 type="button"
-                onClick={() => onQuickAction(`Best food and cafes near ${targetPlace}?`)}
+                onClick={() => {
+                  triggerHaptic(12);
+                  onQuickAction(`Best food and cafes near ${targetPlace}?`);
+                }}
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-95 transition-all cursor-pointer border border-gray-200/60"
               >
                 <span>🍴 Food nearby</span>
@@ -338,7 +472,10 @@ const FormattedMessage: React.FC<{
             {onQuickAction && (
               <button
                 type="button"
-                onClick={() => onQuickAction(`Best time of day and photo spots at ${targetPlace}?`)}
+                onClick={() => {
+                  triggerHaptic(12);
+                  onQuickAction(`Best time of day and photo spots at ${targetPlace}?`);
+                }}
                 className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-95 transition-all cursor-pointer border border-gray-200/60"
               >
                 <span>📸 Photo tips</span>
@@ -361,6 +498,7 @@ const FormattedMessage: React.FC<{
                 href={src.uri}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => triggerHaptic(8)}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11px] font-medium truncate max-w-[200px]"
               >
                 <span className="truncate">{src.title || src.uri}</span>
@@ -374,22 +512,106 @@ const FormattedMessage: React.FC<{
   );
 };
 
+/** TypewriterFormattedMessage: Animates text typing smoothly with haptic vibrations */
+const TypewriterFormattedMessage: React.FC<{
+  msg: ChatMessage;
+  isLatestBot: boolean;
+  userCoords?: { lat: number; lng: number } | null;
+  onQuickAction?: (prompt: string) => void;
+  onScrollNeeded?: () => void;
+}> = ({ msg, isLatestBot, userCoords, onQuickAction, onScrollNeeded }) => {
+  const [displayedLength, setDisplayedLength] = useState(() =>
+    isLatestBot ? 0 : msg.content.length
+  );
+  const [isTyping, setIsTyping] = useState(() => isLatestBot && msg.content.length > 0);
+
+  useEffect(() => {
+    if (!isLatestBot || displayedLength >= msg.content.length) {
+      setIsTyping(false);
+      return;
+    }
+
+    // Trigger haptic vibration when AI begins typing answer
+    if (displayedLength === 0) {
+      triggerHaptic([30, 45, 30]);
+    }
+
+    const interval = setInterval(() => {
+      setDisplayedLength((prev) => {
+        const step = Math.max(2, Math.floor((msg.content.length - prev) / 12) + 1); // smooth organic acceleration
+        const next = Math.min(prev + step, msg.content.length);
+
+        // Subtle haptic pulse every ~35 chars during typing
+        if (next % 35 < step) {
+          triggerHaptic(6);
+        }
+
+        if (next >= msg.content.length) {
+          clearInterval(interval);
+          setIsTyping(false);
+          triggerHaptic(18); // completion tap
+        }
+        return next;
+      });
+
+      if (onScrollNeeded) {
+        onScrollNeeded();
+      }
+    }, 22);
+
+    return () => clearInterval(interval);
+  }, [msg.content, isLatestBot]);
+
+  const displayedContent = isLatestBot ? msg.content.slice(0, displayedLength) : msg.content;
+
+  const handleSkipTyping = () => {
+    if (isTyping) {
+      setDisplayedLength(msg.content.length);
+      setIsTyping(false);
+      triggerHaptic(12);
+    }
+  };
+
+  return (
+    <div onClick={handleSkipTyping} className={isTyping ? 'cursor-pointer' : ''}>
+      <FormattedMessage
+        content={displayedContent}
+        userCoords={userCoords}
+        groundingSources={!isTyping ? msg.groundingSources : undefined}
+        onQuickAction={onQuickAction}
+      />
+      {isTyping && (
+        <span className="inline-flex items-center gap-1.5 mt-2 text-[#FF6B4A] text-[11px] font-bold">
+          <span className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-ping" />
+          <span className="text-[#FF6B4A]/90 italic">GAI typing...</span>
+        </span>
+      )}
+    </div>
+  );
+};
+
 export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, initialPrompt }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your real-time Goa travel assistant with live web search and vision analysis capabilities.\n\nAsk me for real-time directions, local prices, live events, or tap the clip icon below to upload photos of menus, landmarks, or beach signs for instant analysis!`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your real-time Goa travel assistant.\n\nAsk me for real-time directions, local prices, live events, or tap the clip icon below to upload photos of menus, landmarks, or beach signs for instant analysis!`,
+      timestamp: format12HourTime(),
     },
   ]);
 
+  const [latestBotMessageId, setLatestBotMessageId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [attachedImage, setAttachedImage] = useState<AttachedImage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [speechError, setSpeechError] = useState<string | null>(null);
   const [isAttachmentSheetOpen, setIsAttachmentSheetOpen] = useState(false);
+
+  // Message Interaction States
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [likedIds, setLikedIds] = useState<string[]>([]);
+  const [dislikedIds, setDislikedIds] = useState<string[]>([]);
 
   const promptSentRef = useRef(false);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -504,6 +726,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
       recognition.onstart = () => {
         setIsListening(true);
         setSpeechError(null);
+        triggerHaptic(15);
       };
 
       recognition.onresult = (event: any) => {
@@ -534,6 +757,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
   }, []);
 
   const toggleListening = () => {
+    triggerHaptic(12);
     if (!recognitionRef.current) {
       setSpeechError('Voice input not supported in this browser');
       setTimeout(() => setSpeechError(null), 3000);
@@ -556,6 +780,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
     if (!file) return;
 
     try {
+      triggerHaptic(15);
       const processed = await processImageFile(file);
       setAttachedImage(processed);
       setIsAttachmentSheetOpen(false);
@@ -568,15 +793,55 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
     }
   };
 
+  const handleCopy = (id: string, text: string) => {
+    triggerHaptic(10);
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const handleShare = async (text: string) => {
+    triggerHaptic(10);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'GAI Goa Travel Tip',
+          text,
+        });
+      } catch {}
+    } else {
+      navigator.clipboard.writeText(text);
+      alert('Copied travel recommendation to clipboard!');
+    }
+  };
+
+  const toggleLike = (id: string) => {
+    triggerHaptic(10);
+    setLikedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+    setDislikedIds((prev) => prev.filter((i) => i !== id));
+  };
+
+  const toggleDislike = (id: string) => {
+    triggerHaptic(10);
+    setDislikedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+    setLikedIds((prev) => prev.filter((i) => i !== id));
+  };
+
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || input).trim();
     if ((!text && !attachedImage) || isLoading) return;
+
+    triggerHaptic(15);
 
     if (isListening && recognitionRef.current) {
       recognitionRef.current.stop();
     }
 
-    const userTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const userTime = format12HourTime();
     const currentAttachment = attachedImage;
 
     const userMsg: ChatMessage = {
@@ -587,6 +852,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
       imagePreview: currentAttachment?.dataUrl,
     };
 
+    setLatestBotMessageId(null);
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
     setAttachedImage(null);
@@ -608,7 +874,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({ preferences, onBack, i
       const tourismTypes = (preferences.tourismTypes || []).join(', ') || 'Culture and Heritage';
 
       const now = new Date();
-      const currentTimeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const currentTimeStr = format12HourTime(now);
       const currentHour = now.getHours();
       let timeOfDay = 'Daytime';
       if (currentHour >= 5 && currentHour < 11) timeOfDay = 'Morning (Breakfast & Poee bread time)';
@@ -636,18 +902,22 @@ User profile:
 SITUATIONAL & TIME AWARENESS:
 ${locationPrompt}
 - Current Local Time: ${currentTimeStr} (${timeOfDay})
-- When the user asks for "nearby food", "sunset spots", "live events", or "places to visit", use this exact time of day and location to suggest spots that are open right now with realistic distances in km and driving times!
+- When the user asks for "nearby food", "sunset spots", "live events", "comparison", or "places to visit", use this exact time of day and location to suggest spots that are open right now with realistic distances in km and driving times!
+
+FORMATTING RULES (TABLES & HEADINGS):
+- When comparing places, beaches, hotels, transport options, or prices, ALWAYS render a Markdown Table! (e.g. | Beach | Vibe | Sunset Rating |).
+- Use H1 (#), H2 (##), H3 (###), and H4 (####) for headings depending on topic importance to make key sections clear and scannable!
+- Use bullet points (- ) and numbered lists (1. ) for step-by-step guides.
 
 IMAGE & VISION ANALYSIS:
 - If the user attaches an image, analyze it thoroughly! Identify Goan dishes, restaurant menus, beach signs, historic architecture, Portuguese villas, churches, maps, or scooter rental agreements.
-- Give crisp, actionable answers about what is shown in the photo, including price estimations, history, dietary notes, or directions!
 
 REAL-TIME GOOGLE SEARCH:
 - Use Google Search to fetch up-to-the-minute info on Goa event schedules, current road conditions, ferry timings, restaurant opening status, and live weather.
 
 CRITICAL RULES:
-1. BREVITY & SMARTNESS: Keep responses punchy, concise, and scannable! Never write long essays or walls of text (maximum 2–3 short sentences for conversational intro). Let the structured card present route & action details!
-2. GREETINGS: Do NOT start responses with "Dev Borem Korum" or repeated greetings. Get straight to the answer.
+1. BREVITY & SMARTNESS: Keep responses punchy, concise, and scannable!
+2. GREETINGS: Do NOT start responses with "Dev Borem Korum" or repeated greetings.
 3. LANGUAGE RULE: ALWAYS reply in the EXACT SAME LANGUAGE and SCRIPT that the user writes to you in (English, Marathi, Konkani, Hindi, Romanized Hinglish).
 4. IDENTITY: If asked who you are or who created you, reply ONLY with: "I am GAI (Goa AI), created by GoaMitra. I'm a prototype specifically designed and structured by Khethana, Himanshu, Siddhi and Abhishekkumar."
 5. STRUCTURED DIRECTIONS:
@@ -685,7 +955,6 @@ CRITICAL RULES:
         parts: currentParts,
       });
 
-      // Call Gemini 3.8 Flash model with Realtime Web Search Grounding
       let response;
       try {
         response = await ai.models.generateContent({
@@ -710,9 +979,8 @@ CRITICAL RULES:
       }
 
       const content = response.text || 'I could not analyze the request. Please try again.';
-      const botTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const botTime = format12HourTime();
 
-      // Extract Grounding Chunks if present
       let groundingSources: { title?: string; uri?: string }[] = [];
       try {
         const searchChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks;
@@ -731,6 +999,7 @@ CRITICAL RULES:
         groundingSources: groundingSources.length > 0 ? groundingSources : undefined,
       };
 
+      setLatestBotMessageId(botMsg.id);
       setMessages((prev) => [...prev, botMsg]);
     } catch (err: any) {
       console.error('GAI Gemini error:', err);
@@ -744,8 +1013,9 @@ CRITICAL RULES:
         id: `err-${Date.now()}`,
         role: 'assistant',
         content: errorResponse,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: format12HourTime(),
       };
+      setLatestBotMessageId(errorMsg.id);
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
@@ -771,12 +1041,15 @@ CRITICAL RULES:
         className="hidden"
       />
 
-      {/* 100% Sticky Top Header */}
+      {/* 100% Sticky Top Header (Clean, no badges) */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
         {/* Back Button */}
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => {
+            triggerHaptic(10);
+            onBack();
+          }}
           className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
           aria-label="Back to Homepage"
         >
@@ -795,16 +1068,11 @@ CRITICAL RULES:
 
         {/* Title & Subtitle */}
         <div className="flex flex-col items-center">
-          <div className="flex items-center gap-1.5">
-            <h1 className="text-[19px] font-black text-gray-900 tracking-tight leading-tight">
-              GAI
-            </h1>
-            <span className="px-1.5 py-0.5 rounded-md bg-[#0284C7]/10 text-[#0284C7] font-extrabold text-[10px] tracking-wider uppercase">
-              Live Search
-            </span>
-          </div>
+          <h1 className="text-[19px] font-black text-gray-900 tracking-tight leading-tight">
+            GAI
+          </h1>
           <span className="text-[11.5px] font-medium text-gray-500 leading-tight">
-            Your Real-Time Goa AI Companion
+            Your Goa Travel Assistant
           </span>
         </div>
 
@@ -817,17 +1085,6 @@ CRITICAL RULES:
         className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        {/* Top Minimal Pill: Realtime Search Active */}
-        <div className="flex items-center justify-between">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E0F2FE]/80 border border-[#BAE6FD] text-[#0369A1] shadow-xs">
-            <span className="text-xs">🌐</span>
-            <span className="text-[11.5px] font-bold">Real-time Web Search & Vision</span>
-          </div>
-          <span className="text-[11px] font-semibold text-gray-400">
-            📍 {locationState.placeName.split('/')[0]}
-          </span>
-        </div>
-
         {/* Render Chat Messages */}
         {messages.map((msg) => {
           const isUser = msg.role === 'user';
@@ -854,12 +1111,11 @@ CRITICAL RULES:
                       </p>
                     )}
                   </div>
-                  {/* Timestamp & double checkmarks */}
+                  {/* Timestamp in 12h format (NO double ticks) */}
                   <div className="flex items-center gap-1 mt-1 pr-1">
                     <span className="text-[11px] text-gray-400 font-medium">
                       {msg.timestamp}
                     </span>
-                    <span className="text-[12px] font-bold text-[#FF6B4A]">✓✓</span>
                   </div>
                 </div>
 
@@ -887,20 +1143,89 @@ CRITICAL RULES:
                 </svg>
               </div>
 
-              {/* Bot Message Bubble */}
+              {/* Bot Message Bubble with Animated Typewriter Effect */}
               <div className="flex flex-col items-start max-w-[325px] min-w-0 flex-1">
                 <div className="px-4 py-3 rounded-3xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs text-gray-900 w-full">
-                  <FormattedMessage
-                    content={msg.content}
+                  <TypewriterFormattedMessage
+                    msg={msg}
+                    isLatestBot={msg.id === latestBotMessageId}
                     userCoords={{ lat: locationState.lat, lng: locationState.lng }}
-                    groundingSources={msg.groundingSources}
                     onQuickAction={(prompt) => handleSendMessage(prompt)}
+                    onScrollNeeded={scrollToBottom}
                   />
                 </div>
 
-                <span className="text-[11px] text-gray-400 font-medium mt-1 pl-1">
-                  {msg.timestamp}
-                </span>
+                {/* Footer Bar: 12h Timestamp + Small Working Action Buttons (Copy, Share, Like, Dislike) */}
+                <div className="flex items-center justify-between w-full mt-1 px-1">
+                  <span className="text-[11px] text-gray-400 font-medium">
+                    {msg.timestamp}
+                  </span>
+
+                  <div className="flex items-center gap-1.5 text-gray-400">
+                    {/* Copy Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleCopy(msg.id, msg.content)}
+                      className={`p-1 rounded-md hover:bg-gray-100 transition-all text-xs flex items-center gap-1 cursor-pointer ${
+                        copiedId === msg.id ? 'text-green-600 font-bold' : 'hover:text-gray-700'
+                      }`}
+                      title="Copy text"
+                    >
+                      {copiedId === msg.id ? (
+                        <span className="text-[10.5px]">✓ Copied</span>
+                      ) : (
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                      )}
+                    </button>
+
+                    {/* Share Button */}
+                    <button
+                      type="button"
+                      onClick={() => handleShare(msg.content)}
+                      className="p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 transition-all text-xs cursor-pointer"
+                      title="Share advice"
+                    >
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                      </svg>
+                    </button>
+
+                    {/* Like Button */}
+                    <button
+                      type="button"
+                      onClick={() => toggleLike(msg.id)}
+                      className={`p-1 rounded-md hover:bg-gray-100 transition-all text-xs cursor-pointer ${
+                        likedIds.includes(msg.id) ? 'text-[#FF6B4A] fill-[#FF6B4A]' : 'hover:text-gray-700'
+                      }`}
+                      title="Helpful"
+                    >
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill={likedIds.includes(msg.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                      </svg>
+                    </button>
+
+                    {/* Dislike Button */}
+                    <button
+                      type="button"
+                      onClick={() => toggleDislike(msg.id)}
+                      className={`p-1 rounded-md hover:bg-gray-100 transition-all text-xs cursor-pointer ${
+                        dislikedIds.includes(msg.id) ? 'text-gray-800 fill-gray-800' : 'hover:text-gray-700'
+                      }`}
+                      title="Not helpful"
+                    >
+                      <svg className="w-3.5 h-3.5 rotate-180" viewBox="0 0 24 24" fill={dislikedIds.includes(msg.id) ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           );
@@ -915,7 +1240,7 @@ CRITICAL RULES:
               </svg>
             </div>
             <div className="px-4 py-2.5 rounded-2xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs flex items-center gap-2">
-              <span className="text-xs font-semibold text-gray-600">GAI is analyzing live web & vision...</span>
+              <span className="text-xs font-semibold text-gray-600">GAI is searching & analyzing...</span>
               <div className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-bounce" />
                 <span
@@ -942,7 +1267,10 @@ CRITICAL RULES:
             <button
               key={chip.label}
               type="button"
-              onClick={() => handleSendMessage(chip.prompt)}
+              onClick={() => {
+                triggerHaptic(12);
+                handleSendMessage(chip.prompt);
+              }}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200/80 shadow-xs hover:border-[#FF6B4A]/50 hover:bg-[#FFF5F2] active:scale-95 transition-all text-xs font-semibold text-gray-700 whitespace-nowrap cursor-pointer shrink-0"
             >
               <span>{chip.icon}</span>
@@ -977,14 +1305,17 @@ CRITICAL RULES:
                 </div>
                 <div className="min-w-0">
                   <div className="text-xs font-bold text-gray-900 truncate">Photo Attached</div>
-                  <div className="text-[11px] text-gray-500 font-medium">Ready for GAI Vision analysis</div>
+                  <div className="text-[11px] text-gray-500 font-medium">Ready for GAI analysis</div>
                 </div>
               </div>
 
               {/* Remove Attachment Button */}
               <button
                 type="button"
-                onClick={() => setAttachedImage(null)}
+                onClick={() => {
+                  triggerHaptic(10);
+                  setAttachedImage(null);
+                }}
                 className="w-7 h-7 rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-500 flex items-center justify-center text-xs font-bold transition-all cursor-pointer shrink-0"
                 title="Remove photo"
               >
@@ -1004,10 +1335,13 @@ CRITICAL RULES:
         >
           {/* Input Pill Container */}
           <div className="flex-1 rounded-full bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3 py-1.5 flex items-center gap-2 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
-            {/* PAPERCLIP / ATTACHMENT CLIP BUTTON (Replaces message icon) */}
+            {/* PAPERCLIP / ATTACHMENT CLIP BUTTON */}
             <button
               type="button"
-              onClick={() => setIsAttachmentSheetOpen(true)}
+              onClick={() => {
+                triggerHaptic(12);
+                setIsAttachmentSheetOpen(true);
+              }}
               className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#FFE7E0] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center shrink-0 transition-all cursor-pointer"
               title="Attach photo or take picture"
               aria-label="Attach photo or camera"
@@ -1090,7 +1424,7 @@ CRITICAL RULES:
         </form>
       </div>
 
-      {/* ATTACHMENT OPTIONS BOTTOM SHEET */}
+      {/* ATTACHMENT OPTIONS BOTTOM SHEET (WITH CLEAN SVG ICONS) */}
       <AnimatePresence>
         {isAttachmentSheetOpen && (
           <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-4 select-none">
@@ -1099,7 +1433,10 @@ CRITICAL RULES:
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsAttachmentSheetOpen(false)}
+              onClick={() => {
+                triggerHaptic(10);
+                setIsAttachmentSheetOpen(false);
+              }}
               className="absolute inset-0 bg-black/50 backdrop-blur-xs"
             />
 
@@ -1115,28 +1452,37 @@ CRITICAL RULES:
 
               <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                 <div>
-                  <h3 className="text-base font-extrabold text-gray-900">Attach Media for GAI</h3>
+                  <h3 className="text-base font-extrabold text-gray-900">Attach Photo for GAI</h3>
                   <p className="text-xs text-gray-500">Analyze menus, beach landmarks, or maps</p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsAttachmentSheetOpen(false)}
+                  onClick={() => {
+                    triggerHaptic(10);
+                    setIsAttachmentSheetOpen(false);
+                  }}
                   className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center text-xs cursor-pointer"
                 >
                   ✕
                 </button>
               </div>
 
-              {/* Action Buttons: Camera & Upload */}
+              {/* Action Buttons: Camera & Upload (Using clean SVG Icons) */}
               <div className="grid grid-cols-2 gap-3 pt-1">
                 {/* 1. Camera Option */}
                 <button
                   type="button"
-                  onClick={() => cameraInputRef.current?.click()}
+                  onClick={() => {
+                    triggerHaptic(12);
+                    cameraInputRef.current?.click();
+                  }}
                   className="p-4 rounded-2xl bg-[#FFF3EE] border border-[#FFD0C0] hover:bg-[#FFE7DF] active:scale-98 transition-all flex flex-col items-center gap-2 text-center cursor-pointer shadow-2xs"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-[#FF6B4A] text-white flex items-center justify-center text-xl shadow-xs">
-                    📷
+                  <div className="w-12 h-12 rounded-2xl bg-[#FF6B4A] text-white flex items-center justify-center shadow-xs">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.5 4h-5L7 7H4a2 2 0 0 1-2 2v9a2 2 0 0 1 2 2h16a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2h-3l-2.5-3z" />
+                      <circle cx="12" cy="13" r="3" />
+                    </svg>
                   </div>
                   <div>
                     <div className="text-sm font-black text-gray-900">Take Photo</div>
@@ -1147,11 +1493,18 @@ CRITICAL RULES:
                 {/* 2. Gallery Upload Option */}
                 <button
                   type="button"
-                  onClick={() => galleryInputRef.current?.click()}
+                  onClick={() => {
+                    triggerHaptic(12);
+                    galleryInputRef.current?.click();
+                  }}
                   className="p-4 rounded-2xl bg-[#F0F9FF] border border-[#BAE6FD] hover:bg-[#E0F2FE] active:scale-98 transition-all flex flex-col items-center gap-2 text-center cursor-pointer shadow-2xs"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center text-xl shadow-xs">
-                    🖼️
+                  <div className="w-12 h-12 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center shadow-xs">
+                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
                   </div>
                   <div>
                     <div className="text-sm font-black text-gray-900">Upload Photo</div>
