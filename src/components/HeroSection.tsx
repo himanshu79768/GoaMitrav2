@@ -25,6 +25,7 @@ const getHeroDetails = (monthStr: string = '') => {
     m.includes('monsoon')
   ) {
     return {
+      season: 'rainy' as const,
       src: heroRainyImage,
       alt: 'Dudhsagar Waterfall in Rainy Season',
     };
@@ -40,6 +41,7 @@ const getHeroDetails = (monthStr: string = '') => {
     m.includes('winter')
   ) {
     return {
+      season: 'winter' as const,
       src: heroWinterImage,
       alt: 'Divar Island Paddy Fields in Misty Winter',
     };
@@ -47,9 +49,87 @@ const getHeroDetails = (monthStr: string = '') => {
 
   // Summer / Default: March, April, May
   return {
+    season: 'summer' as const,
     src: heroSummerImage,
     alt: 'Goa Coastal Beach Landscape in Summer',
   };
+};
+
+const renderSeasonIcon = (season: 'summer' | 'winter' | 'rainy') => {
+  if (season === 'rainy') {
+    return (
+      <svg
+        className="w-8 h-8 drop-shadow-sm select-none shrink-0"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Rain"
+        role="img"
+      >
+        <circle cx="16" cy="16" r="14" fill="#3B82F6" fillOpacity="0.16" />
+        <path
+          d="M10 16.5C8.343 16.5 7 15.157 7 13.5c0-1.5 1.1-2.75 2.55-2.95A4.502 4.502 0 0118 9c1.9 0 3.5 1.25 4.1 3C23.2 12.3 24 13.3 24 14.5c0 1.657-1.343 3-3 3H10z"
+          fill="#3B82F6"
+        />
+        <line x1="10" y1="19.5" x2="8.5" y2="24" stroke="#1D4ED8" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="15" y1="19.5" x2="13.5" y2="24" stroke="#0284C7" strokeWidth="2.2" strokeLinecap="round" />
+        <line x1="20" y1="19.5" x2="18.5" y2="24" stroke="#1D4ED8" strokeWidth="2.2" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
+  if (season === 'winter') {
+    return (
+      <svg
+        className="w-8 h-8 drop-shadow-sm select-none shrink-0"
+        viewBox="0 0 32 32"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Winter Cold"
+        role="img"
+      >
+        <circle cx="16" cy="16" r="14" fill="#0EA5E9" fillOpacity="0.18" />
+        <g stroke="#0284C7" strokeWidth="2.2" strokeLinecap="round">
+          <line x1="16" y1="6" x2="16" y2="26" />
+          <line x1="6" y1="16" x2="26" y2="16" />
+          <line x1="9" y1="9" x2="23" y2="23" />
+          <line x1="9" y1="23" x2="23" y2="9" />
+          <path d="M13 8.5l3 3 3-3" />
+          <path d="M13 23.5l3-3 3 3" />
+          <path d="M8.5 13l3 3-3 3" />
+          <path d="M23.5 13l-3 3 3 3" />
+        </g>
+        <circle cx="16" cy="16" r="3" fill="#38BDF8" />
+      </svg>
+    );
+  }
+
+  // Summer
+  return (
+    <svg
+      className="w-8 h-8 drop-shadow-sm select-none shrink-0"
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Sun"
+      role="img"
+    >
+      <circle cx="16" cy="16" r="9" fill="#F59E0B" fillOpacity="0.18" />
+      <g stroke="#F59E0B" strokeWidth="2.4" strokeLinecap="round">
+        <line x1="16" y1="2" x2="16" y2="5" />
+        <line x1="16" y1="27" x2="16" y2="30" />
+        <line x1="2" y1="16" x2="5" y2="16" />
+        <line x1="27" y1="16" x2="30" y2="16" />
+        <line x1="6.1" y1="6.1" x2="8.3" y2="8.3" />
+        <line x1="23.7" y1="23.7" x2="25.9" y2="25.9" />
+        <line x1="6.1" y1="25.9" x2="8.3" y2="23.7" />
+        <line x1="23.7" y1="8.3" x2="25.9" y2="6.1" />
+      </g>
+      <circle cx="16" cy="16" r="6.2" fill="#FBBF24" />
+      <circle cx="16" cy="16" r="5.6" fill="#F59E0B" />
+      <circle cx="14.8" cy="14.8" r="4.8" fill="#FCD34D" fillOpacity="0.85" />
+    </svg>
+  );
 };
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
@@ -75,9 +155,47 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           className="w-full h-full object-cover object-center scale-[1.02] transition-opacity duration-300"
           loading="eager"
         />
+
+        {/* Seasonal Animated Screen Effects Overlay */}
+        {currentHero.season === 'rainy' && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            {Array.from({ length: 18 }).map((_, i) => {
+              const left = (i * 5.8 + (i % 3) * 2.1) % 96;
+              const duration = 0.85 + (i % 5) * 0.2;
+              const delay = (i * 0.12) % 1.5;
+              const height = 18 + (i % 4) * 8;
+              return (
+                <div
+                  key={i}
+                  className="rain-drop"
+                  style={{
+                    left: `${left}%`,
+                    height: `${height}px`,
+                    animationDuration: `${duration}s`,
+                    animationDelay: `${delay}s`,
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        {currentHero.season === 'winter' && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <div className="fog-mist-layer" />
+            <div className="fog-mist-layer-secondary" />
+          </div>
+        )}
+
+        {currentHero.season === 'summer' && (
+          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <div className="summer-sunbeam" />
+          </div>
+        )}
+
         {/* Subtle, translucent overlay: keeps hero image vibrant and visible through liquid glass GAI bar */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 z-0"
           style={{
             background:
               'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 18%, rgba(255,255,255,0.12) 46%, rgba(247,247,245,0.28) 68%, rgba(247,247,245,0.88) 88%, #F7F7F5 100%)',
@@ -167,36 +285,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           Good morning,
         </h2>
 
-        {/* User Name with SVG Sun Icon */}
+        {/* User Name with Dynamic Seasonal Icon */}
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-[35px] font-extrabold text-[#111111] tracking-tight truncate max-w-[280px]">
             {preferences.name || 'User'}
           </span>
 
-          {/* Clean Radiant SVG Sun Icon */}
-          <svg
-            className="w-8 h-8 drop-shadow-sm select-none shrink-0"
-            viewBox="0 0 32 32"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            aria-label="Sun"
-            role="img"
-          >
-            <circle cx="16" cy="16" r="9" fill="#F59E0B" fillOpacity="0.18" />
-            <g stroke="#F59E0B" strokeWidth="2.4" strokeLinecap="round">
-              <line x1="16" y1="2" x2="16" y2="5" />
-              <line x1="16" y1="27" x2="16" y2="30" />
-              <line x1="2" y1="16" x2="5" y2="16" />
-              <line x1="27" y1="16" x2="30" y2="16" />
-              <line x1="6.1" y1="6.1" x2="8.3" y2="8.3" />
-              <line x1="23.7" y1="23.7" x2="25.9" y2="25.9" />
-              <line x1="6.1" y1="25.9" x2="8.3" y2="23.7" />
-              <line x1="23.7" y1="8.3" x2="25.9" y2="6.1" />
-            </g>
-            <circle cx="16" cy="16" r="6.2" fill="#FBBF24" />
-            <circle cx="16" cy="16" r="5.6" fill="#F59E0B" />
-            <circle cx="14.8" cy="14.8" r="4.8" fill="#FCD34D" fillOpacity="0.85" />
-          </svg>
+          {/* Dynamic Season Icon (Summer Sun, Winter Cold Snowflake, Rainy Rain Cloud) */}
+          {renderSeasonIcon(currentHero.season)}
         </div>
 
         {/* Subtitle with Travel Month context */}
