@@ -5,6 +5,8 @@
  */
 
 import heroImg from '../assets/images/hero.png';
+import heroWinterImg from '../assets/images/divar_paddy_winter_1790959654093.jpg';
+import heroRainyImg from '../assets/images/dudhsagar_rainy_1790959667095.jpg';
 import heritageImg from '../assets/images/goa_heritage_tourism_1790841197716.jpg';
 import culturalImg from '../assets/images/goa_cultural_tourism_1790841178468.jpg';
 import beachImg from '../assets/images/goa_beach_tourism_1790841233130.jpg';
@@ -12,6 +14,8 @@ import coastalImg from '../assets/images/goa_coastal_hero_1790837252672.jpg';
 
 const CORE_IMAGES: string[] = [
   heroImg,
+  heroWinterImg,
+  heroRainyImg,
   heritageImg,
   culturalImg,
   beachImg,

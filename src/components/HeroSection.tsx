@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import heroImage from '../assets/images/hero.png';
+import heroSummerImage from '../assets/images/hero.png';
+import heroWinterImage from '../assets/images/divar_paddy_winter_1790959654093.jpg';
+import heroRainyImage from '../assets/images/dudhsagar_rainy_1790959667095.jpg';
 import { UserPreferences } from '../types/onboarding';
 import { PWAInstallButton } from './PWAInstallButton';
 
@@ -9,6 +11,46 @@ interface HeroSectionProps {
   onOpenProfile: () => void;
   onOpenChat: () => void;
 }
+
+const getHeroDetails = (monthStr: string = '') => {
+  const m = monthStr.toLowerCase().trim();
+
+  // Rainy / Monsoon: June, July, August, September
+  if (
+    m.includes('june') ||
+    m.includes('july') ||
+    m.includes('august') ||
+    m.includes('september') ||
+    m.includes('rain') ||
+    m.includes('monsoon')
+  ) {
+    return {
+      src: heroRainyImage,
+      alt: 'Dudhsagar Waterfall in Rainy Season',
+    };
+  }
+
+  // Winter: October, November, December, January, February
+  if (
+    m.includes('october') ||
+    m.includes('november') ||
+    m.includes('december') ||
+    m.includes('january') ||
+    m.includes('february') ||
+    m.includes('winter')
+  ) {
+    return {
+      src: heroWinterImage,
+      alt: 'Divar Island Paddy Fields in Misty Winter',
+    };
+  }
+
+  // Summer / Default: March, April, May
+  return {
+    src: heroSummerImage,
+    alt: 'Goa Coastal Beach Landscape in Summer',
+  };
+};
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   preferences,
@@ -19,14 +61,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const primaryInterest = preferences.tourismTypes[0] || 'Adventure';
   const tripTag = primaryInterest.replace(' Tourism', '');
 
+  // Dynamic seasonal hero image selection based on travel month
+  const currentHero = getHeroDetails(preferences.travelMonth);
+
   return (
     <div className="relative isolate pt-5 pb-5 px-5 select-none">
       {/* Background Hero Photo Container extending through GAI pill */}
       <div className="absolute inset-0 top-0 h-[495px] overflow-hidden pointer-events-none -z-10">
         <img
-          src={heroImage}
-          alt="Goa Coastal Landscape"
-          className="w-full h-full object-cover object-center scale-[1.02]"
+          key={currentHero.src}
+          src={currentHero.src}
+          alt={currentHero.alt}
+          className="w-full h-full object-cover object-center scale-[1.02] transition-opacity duration-300"
           loading="eager"
         />
         {/* Subtle, translucent overlay: keeps hero image vibrant and visible through liquid glass GAI bar */}
