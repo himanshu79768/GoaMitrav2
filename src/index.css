@@ -7,7 +7,6 @@
 
   * {
     -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
   }
 
   /* Universal scrollbar hiding across the entire app */
@@ -29,17 +28,7 @@
     text-rendering: optimizeLegibility;
     background-color: #E5E5DF;
     color: #111111;
-    touch-action: manipulation;
   }
-}
-
-/* iOS tactile tap feedback transitions */
-button, [role="button"], a {
-  transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s ease;
-}
-
-button:active:not(:disabled), [role="button"]:active:not([aria-disabled="true"]) {
-  transform: scale(0.975);
 }
 
 /* Slow, soft, elegant non-harsh glass border animation */
@@ -67,4 +56,5 @@ button:active:not(:disabled), [role="button"]:active:not([aria-disabled="true"])
   background-size: 250% 250%;
   animation: softLiquidBorder 9s ease-in-out infinite;
 }
+
 

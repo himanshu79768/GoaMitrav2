@@ -8,7 +8,6 @@ import {
   CouponsIllustration,
   EmergencyIllustration,
 } from './CardIllustrations';
-import { haptics } from '../utils/haptics';
 
 interface ModuleCardProps {
   title: string;
@@ -27,20 +26,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   illustration,
   onClick,
 }) => {
-  const handleClick = () => {
-    haptics.impact('medium');
-    onClick?.();
-  };
-
   return (
     <motion.div
-      onClick={handleClick}
-      data-haptic="medium"
+      onClick={onClick}
       whileHover={{ y: -2 }}
       whileTap={{ scale: 0.975 }}
       transition={{ type: 'spring', stiffness: 450, damping: 28 }}
       style={{ backgroundColor: bgColor }}
-      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[162px] select-none cursor-pointer active:scale-[0.975]"
+      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[162px] select-none cursor-pointer"
     >
       {/* Background Subtle Thematic Illustration */}
       <div className="absolute right-0 bottom-0 w-[85%] h-[82%] pointer-events-none overflow-hidden">
@@ -66,10 +59,9 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           type="button"
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.92 }}
-          data-haptic="medium"
           onClick={(e) => {
             e.stopPropagation();
-            handleClick();
+            onClick?.();
           }}
           aria-label={`Open ${title}`}
           className="w-9 h-9 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#111111] shrink-0 transition-shadow cursor-pointer"
@@ -91,6 +83,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
     </motion.div>
   );
 };
+
 
 
 interface ModuleGridProps {
