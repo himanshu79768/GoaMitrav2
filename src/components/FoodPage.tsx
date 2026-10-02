@@ -229,7 +229,7 @@ export const REAL_RESTAURANTS: RestaurantItem[] = [
     dietaryType: 'both',
     hasJain: false,
     isAllergySafe: true,
-    matchBadge: 'Local favourite',
+    matchBadge: 'Hidden gem',
     location: 'Mapusa Court Circle & Anjuna',
     areaGroup: 'Mapusa',
     minutesFromMapusa: 1,

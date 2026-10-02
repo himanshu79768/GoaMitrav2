@@ -57,4 +57,48 @@
   animation: softLiquidBorder 9s ease-in-out infinite;
 }
 
+/* Water Drop Liquid Glass Magnifying Effect */
+.water-drop-lens {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(14px) saturate(220%) contrast(112%) brightness(108%);
+  -webkit-backdrop-filter: blur(14px) saturate(220%) contrast(112%) brightness(108%);
+  box-shadow: 
+    inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1.5px 2.5px 0 rgba(0, 0, 0, 0.08),
+    inset 1px 0 1.5px 0 rgba(255, 255, 255, 0.5),
+    0 12px 32px -4px rgba(0, 0, 0, 0.12),
+    0 4px 12px -2px rgba(0, 0, 0, 0.08);
+}
+
+/* Water drop curved specular highlight (glint reflection on top edge) */
+.water-drop-lens::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12%;
+  right: 12%;
+  height: 48%;
+  border-radius: 9999px 9999px 50% 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Water Drop Hover Magnification */
+.water-drop-lens:hover {
+  backdrop-filter: blur(16px) saturate(250%) contrast(115%) brightness(112%);
+  -webkit-backdrop-filter: blur(16px) saturate(250%) contrast(115%) brightness(112%);
+  box-shadow: 
+    inset 0 2px 2.5px 0 rgba(255, 255, 255, 1),
+    inset 0 -1.5px 3px 0 rgba(0, 0, 0, 0.12),
+    0 16px 40px -4px rgba(0, 0, 0, 0.16),
+    0 6px 16px -2px rgba(0, 0, 0, 0.1);
+}
+
 

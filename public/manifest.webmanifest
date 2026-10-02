@@ -1,0 +1,23 @@
+{
+  "name": "GoaMitra — Goa Companion",
+  "short_name": "GoaMitra",
+  "description": "Your ultimate Goan travel & culture companion",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F7F5",
+  "theme_color": "#177F91",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

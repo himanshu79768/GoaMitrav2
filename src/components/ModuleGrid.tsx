@@ -90,6 +90,7 @@ interface ModuleGridProps {
   onOpenStay?: () => void;
   onOpenDestinations?: () => void;
   onOpenFood?: () => void;
+  onOpenCulture?: () => void;
   onOpenCoupons?: () => void;
   onOpenEmergency?: () => void;
 }
@@ -98,6 +99,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenStay,
   onOpenDestinations,
   onOpenFood,
+  onOpenCulture,
   onOpenCoupons,
   onOpenEmergency,
 }) => {
@@ -176,6 +178,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
           title="Culture"
           description={"Music, \nfestivals, and \nevents"}
           bgColor="#F5F3FF"
+          onClick={onOpenCulture}
           illustration={<CultureIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#7C3AED]">

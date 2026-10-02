@@ -44,15 +44,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         {/* Location Pill */}
         <motion.button
           type="button"
-          whileHover={{ y: -1 }}
+          whileHover={{ y: -1, scale: 1.02 }}
           whileTap={{ scale: 0.96 }}
           onClick={onOpenProfile}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/75 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] hover:bg-white/90 transition-colors cursor-pointer min-w-0"
+          className="water-drop-lens flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 border border-white/60 transition-all cursor-pointer min-w-0"
           aria-label="Current trip preferences"
         >
           {/* Blue SVG Map Pin */}
           <svg
-            className="w-4 h-4 text-[#0B72E3] shrink-0"
+            className="w-4 h-4 text-[#0B72E3] shrink-0 z-10"
             viewBox="0 0 20 20"
             fill="currentColor"
             aria-hidden="true"
@@ -65,13 +65,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </svg>
 
           {/* Location Text */}
-          <span className="text-[12.5px] font-semibold text-[#18232D] tracking-tight truncate">
-            North Goa <span className="font-normal text-[#64748B]">·</span> {tripTag}
+          <span className="text-[12.5px] font-bold text-[#18232D] tracking-tight truncate z-10 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]">
+            North Goa <span className="font-normal text-[#475569]">·</span> {tripTag}
           </span>
 
           {/* Chevron Down */}
           <svg
-            className="w-3.5 h-3.5 text-[#5A6876] ml-0.5 shrink-0"
+            className="w-3.5 h-3.5 text-[#475569] ml-0.5 shrink-0 z-10"
             viewBox="0 0 16 16"
             fill="none"
             stroke="currentColor"
@@ -91,16 +91,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Profile Button */}
           <motion.button
             type="button"
-            whileHover={{ scale: 1.06 }}
+            whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.92 }}
             transition={{ type: 'spring', stiffness: 500, damping: 25 }}
             onClick={onOpenProfile}
-            className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_4px_20px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#1E293B] cursor-pointer"
+            className="water-drop-lens w-10 h-10 rounded-full bg-white/20 border border-white/60 flex items-center justify-center text-[#1E293B] transition-all cursor-pointer"
             aria-label="User profile"
           >
             {/* SVG User Silhouette Icon */}
             <svg
-              className="w-5 h-5"
+              className="w-5 h-5 z-10"
               viewBox="0 0 20 20"
               fill="currentColor"
               aria-hidden="true"
@@ -173,11 +173,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') onOpenChat();
             }}
-            className="flex items-center justify-between p-2 pl-3 rounded-full backdrop-blur-2xl bg-white/20 sm:bg-white/25 border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85),0_8px_32px_rgba(0,0,0,0.04)] hover:bg-white/35 active:scale-[0.99] transition-all cursor-pointer"
+            className="water-drop-lens flex items-center justify-between p-2 pl-3 rounded-full bg-white/10 sm:bg-white/12 border border-white/50 active:scale-[0.99] transition-all cursor-pointer"
           >
             {/* Left: Search Button */}
-            <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="w-10 h-10 rounded-full bg-white/65 backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-white/50 flex items-center justify-center text-[#222E3A] shrink-0">
+            <div className="flex items-center gap-3 min-w-0 flex-1 z-10">
+              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85)] flex items-center justify-center text-[#222E3A] shrink-0">
                 <svg
                   className="w-5 h-5 text-[#2B3540]"
                   viewBox="0 0 24 24"
@@ -195,10 +195,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
               {/* Prompt Texts */}
               <div className="flex flex-col min-w-0 pr-2">
-                <span className="text-[15.5px] font-bold text-[#141C24] tracking-tight leading-tight truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
+                <span className="text-[15.5px] font-bold text-[#141C24] tracking-tight leading-tight truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
                   Ask GAI anything...
                 </span>
-                <span className="text-[12px] text-[#4A5562] font-medium tracking-normal truncate mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.6)]">
+                <span className="text-[12px] text-[#374151] font-semibold tracking-normal truncate mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]">
                   Find places, food, routes, safety info...
                 </span>
               </div>
@@ -206,7 +206,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
             {/* Right: Circular Arrow Action Button */}
             <div
-              className="w-10 h-10 rounded-full bg-white/80 backdrop-blur-md shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-white/60 flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all shrink-0 ml-1"
+              className="w-10 h-10 rounded-full bg-white/28 backdrop-blur-md border border-white/60 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.9)] flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all shrink-0 ml-1 z-10"
               aria-label="Open GAI Chat"
             >
               <svg
