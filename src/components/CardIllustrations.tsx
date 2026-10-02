@@ -254,91 +254,76 @@ export const CultureIllustration: React.FC<{ className?: string }> = ({ classNam
     className={`pointer-events-none select-none ${className}`}
     aria-hidden="true"
   >
-    {/* Courtyard base in Old Goa purple (No trees) */}
+    {/* Ground ripples in rich Goan festival purple */}
     <path
       d="M-10 94 C30 88, 75 92, 170 84 L170 115 L-10 115 Z"
-      fill="#6B21A8"
+      fill="#7C3AED"
       fillOpacity="0.1"
     />
     <path
       d="M20 100 C65 94, 110 96, 170 92 L170 115 L20 115 Z"
-      fill="#6B21A8"
+      fill="#7C3AED"
       fillOpacity="0.18"
     />
 
-    {/* Accurate Basilica of Bom Jesus, Old Goa (World Heritage Red Laterite Baroque Monument) */}
-    <g transform="translate(56, 10)">
-      {/* Tier 1: Grand Lower Level with 3 Rounded Arched Portals */}
-      <rect x="6" y="46" width="76" height="34" fill="#6B21A8" fillOpacity="0.32" rx="1" />
-      {/* Central Grand Doorway with Basalt Arch & Pediment */}
-      <path d="M37 80 C37 60, 51 60, 51 80 Z" fill="#3B0764" fillOpacity="0.5" />
-      <path d="M34 60 L44 54 L54 60 Z" fill="#4A044E" fillOpacity="0.5" />
-      {/* Side Portals */}
-      <path d="M14 80 C14 67, 24 67, 24 80 Z" fill="#3B0764" fillOpacity="0.45" />
-      <path d="M64 80 C64 67, 74 67, 74 80 Z" fill="#3B0764" fillOpacity="0.45" />
-      {/* Lower Pilasters */}
-      <rect x="10" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="28" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="57" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="75" y="46" width="3" height="34" fill="#4A044E" fillOpacity="0.4" />
+    {/* Goan Cultural Ghumot Drum, Mandovi Acoustic Guitar & Music Beats Artwork */}
+    <g transform="translate(58, 6)">
+      {/* 1. Goan Heritage Mandovi Guitar / Viola */}
+      <g transform="translate(24, 6)">
+        {/* Guitar Neck & Headstock */}
+        <line x1="8" y1="2" x2="38" y2="44" stroke="#4C1D95" strokeWidth="3.2" strokeOpacity="0.6" strokeLinecap="round" />
+        {/* Tuning pegs */}
+        <circle cx="8" cy="2" r="1.8" fill="#4C1D95" fillOpacity="0.7" />
+        <circle cx="11" cy="5" r="1.8" fill="#4C1D95" fillOpacity="0.7" />
+        
+        {/* Guitar Body (Harmonic acoustic curves) */}
+        <path
+          d="M32 36 C24 30, 26 22, 38 24 C50 26, 56 46, 44 54 C34 60, 26 50, 32 36 Z"
+          fill="#7C3AED"
+          fillOpacity="0.45"
+        />
+        {/* Soundhole */}
+        <circle cx="38" cy="38" r="4.2" fill="#4C1D95" fillOpacity="0.6" />
+        {/* Strings subtle line */}
+        <line x1="10" y1="5" x2="40" y2="46" stroke="#EDE9FE" strokeWidth="1" strokeOpacity="0.8" />
+      </g>
 
-      {/* Horizontal Entablature 1 */}
-      <rect x="4" y="43" width="80" height="3.5" fill="#4A044E" fillOpacity="0.5" rx="0.5" />
+      {/* 2. Traditional Goan Ghumot / Earthen Percussion Drum */}
+      <g transform="translate(2, 36)">
+        {/* Clay Ghumot pot body */}
+        <path
+          d="M12 20 C-4 25, -4 42, 12 48 L34 48 C50 42, 50 25, 34 20 Z"
+          fill="#6B21A8"
+          fillOpacity="0.48"
+        />
+        {/* Drum Top Membrane Head */}
+        <ellipse cx="23" cy="20" rx="12" ry="4.5" fill="#5B21B6" fillOpacity="0.65" />
+        {/* Neck ring */}
+        <rect x="16" y="15" width="14" height="5" rx="1.5" fill="#7C3AED" fillOpacity="0.55" />
+        {/* Base resonance hole */}
+        <ellipse cx="23" cy="48" rx="7" ry="2.2" fill="#4C1D95" fillOpacity="0.5" />
+      </g>
 
-      {/* Tier 2: Middle Level with 3 Large Rectangular Windows & Classical Pilasters */}
-      <rect x="12" y="24" width="64" height="19" fill="#6B21A8" fillOpacity="0.36" rx="1" />
-      {/* 3 Windows with Carved Stone Frames */}
-      <rect x="18" y="27" width="8" height="12" fill="#3B0764" fillOpacity="0.45" rx="1" />
-      <rect x="40" y="27" width="8" height="12" fill="#3B0764" fillOpacity="0.5" rx="1" />
-      <rect x="62" y="27" width="8" height="12" fill="#3B0764" fillOpacity="0.45" rx="1" />
-      {/* Window Triangular Pediments */}
-      <path d="M17 27 L22 23 L27 27 Z" fill="#4A044E" fillOpacity="0.45" />
-      <path d="M39 27 L44 23 L49 27 Z" fill="#4A044E" fillOpacity="0.55" />
-      <path d="M61 27 L66 23 L71 27 Z" fill="#4A044E" fillOpacity="0.45" />
-      {/* Paired Pilasters on Tier 2 */}
-      <rect x="13" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="30" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="35" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="51" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="56" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
-      <rect x="73" y="24" width="2.5" height="19" fill="#4A044E" fillOpacity="0.4" />
+      {/* 3. Floating Musical Notes, Beats & Sound Waves */}
+      <g opacity="0.7">
+        {/* Single Eighth Note 1 */}
+        <circle cx="8" cy="18" r="3.2" fill="#6D28D9" />
+        <path d="M11 18 L11 6 L18 8 L18 12" stroke="#6D28D9" strokeWidth="2" fill="none" strokeLinecap="round" />
 
-      {/* Horizontal Entablature 2 */}
-      <rect x="10" y="21" width="68" height="3.5" fill="#4A044E" fillOpacity="0.5" rx="0.5" />
+        {/* Double Beamed Note 2 */}
+        <circle cx="48" cy="8" r="2.8" fill="#6D28D9" />
+        <circle cx="58" cy="11" r="2.8" fill="#6D28D9" />
+        <path d="M50.5 8 L50.5 -1 L60.5 2 L60.5 11" stroke="#6D28D9" strokeWidth="2" fill="none" strokeLinejoin="round" />
+        <line x1="50.5" y1="1" x2="60.5" y2="4" stroke="#6D28D9" strokeWidth="2" />
 
-      {/* Tier 3: Classic Baroque Gable with Authentic Volute Scrolls (S-Curves) */}
-      <path
-        d="M26 21 C26 9, 44 5, 44 5 C44 5, 62 9, 62 21 Z"
-        fill="#6B21A8"
-        fillOpacity="0.45"
-      />
-      {/* Left Volute Scroll */}
-      <path
-        d="M26 21 C18 19, 16 11, 22 9 C27 8, 28 14, 26 21 Z"
-        fill="#4A044E"
-        fillOpacity="0.45"
-      />
-      {/* Right Volute Scroll */}
-      <path
-        d="M62 21 C70 19, 72 11, 66 9 C61 8, 60 14, 62 21 Z"
-        fill="#4A044E"
-        fillOpacity="0.45"
-      />
-
-     
-
-      {/* Historic Crowning Latin Cross on Apex */}
-      <rect x="43" y="0" width="2" height="7.5" fill="#3B0764" fillOpacity="0.65" />
-      <rect x="40.5" y="2" width="7" height="2" fill="#3B0764" fillOpacity="0.65" />
-
-      {/* Old Goa Belfry Tower adjacent */}
-      <rect x="-6" y="26" width="14" height="54" fill="#6B21A8" fillOpacity="0.28" rx="1" />
-      <path d="M-6 26 L1 16 L8 26 Z" fill="#4A044E" fillOpacity="0.45" />
-      <rect x="-1" y="32" width="4.5" height="10" fill="#3B0764" fillOpacity="0.4" rx="2" />
-
-      {/* Stepped Laterite Stone Plaza */}
-      <rect x="-10" y="80" width="102" height="3" fill="#6B21A8" fillOpacity="0.3" />
-      <rect x="-14" y="83" width="110" height="3.5" fill="#4A044E" fillOpacity="0.25" />
+        {/* Sixteenth Rhythmic Beats */}
+        <circle cx="16" cy="38" r="2" fill="#7C3AED" />
+        <circle cx="2" cy="28" r="1.6" fill="#8B5CF6" />
+        
+        {/* Sound Wave Curves */}
+        <path d="M56 26 C60 22, 60 14, 56 10" stroke="#7C3AED" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.5" />
+        <path d="M60 29 C66 23, 66 11, 60 5" stroke="#7C3AED" strokeWidth="1.8" strokeLinecap="round" fill="none" opacity="0.4" />
+      </g>
     </g>
   </svg>
 );

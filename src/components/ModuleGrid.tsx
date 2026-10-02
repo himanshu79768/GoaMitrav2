@@ -144,7 +144,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         {/* 3. Food Card - Food Dish / Culinary Platter */}
         <ModuleCard
           title="Food"
-          description={"Local cuisine,\ncafes and more"}
+          description={"Local cuisine,\ncafes and \nmore"}
           bgColor="#FDEEE9"
           onClick={onOpenFood}
           illustration={<FoodIllustration className="w-full h-full object-cover object-bottom-right" />}
@@ -163,22 +163,22 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
           }
         />
 
-        {/* 4. Culture Card - Goan Carnival Mask */}
+        {/* 4. Culture Card - Music, festivals & heritage */}
         <ModuleCard
           title="Culture"
-          description={"Music, festivals,\nand events"}
+          description={"Music, \nfestivals, and \nevents"}
           bgColor="#F5F3FF"
           illustration={<CultureIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-9 h-9 flex items-center justify-start text-[#7C3AED]">
-              {/* Goan Heritage Music / Mandovi Guitar & Feather Mask Icon */}
+              {/* Musical Note Icon */}
               <svg
                 className="w-7 h-7"
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 aria-hidden="true"
               >
-                <path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4a1 1 0 0 0 .7 1.6h13.9a1 1 0 0 0 .7-1.6l-.62-1.79A8.96 8.96 0 0 0 21 12c0-4.97-4.03-9-9-9zm-3 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" />
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" />
               </svg>
             </div>
           }
