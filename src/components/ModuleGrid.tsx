@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import {
   StayIllustration,
   DestinationsIllustration,
@@ -26,10 +27,13 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   onClick,
 }) => {
   return (
-    <div
+    <motion.div
       onClick={onClick}
+      whileHover={{ y: -2 }}
+      whileTap={{ scale: 0.975 }}
+      transition={{ type: 'spring', stiffness: 450, damping: 28 }}
       style={{ backgroundColor: bgColor }}
-      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[162px] transition-transform active:scale-[0.98] select-none cursor-pointer"
+      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[162px] select-none cursor-pointer"
     >
       {/* Background Subtle Thematic Illustration */}
       <div className="absolute right-0 bottom-0 w-[85%] h-[82%] pointer-events-none overflow-hidden">
@@ -51,14 +55,16 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         </div>
 
         {/* Circular Action Button */}
-        <button
+        <motion.button
           type="button"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
           onClick={(e) => {
             e.stopPropagation();
             onClick?.();
           }}
           aria-label={`Open ${title}`}
-          className="w-9 h-9 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#111111] shrink-0 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+          className="w-9 h-9 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#111111] shrink-0 transition-shadow cursor-pointer"
         >
           <svg
             className="w-3.5 h-3.5"
@@ -72,9 +78,9 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
           >
             <path d="M3 8h10M9 4l4 4-4 4" />
           </svg>
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

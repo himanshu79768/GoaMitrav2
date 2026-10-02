@@ -6,9 +6,9 @@ interface CouponsPageProps {
 
 export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack }) => {
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-start max-w-[430px] mx-auto select-none relative w-full">
-      {/* 1. Sticky Top Navigation Bar (Profile icon removed, balanced spacer on right) */}
-      <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+      {/* 1. 100% Pinned Sticky Top Navigation Bar */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
         <button
           type="button"
@@ -34,12 +34,12 @@ export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack }) => {
           Coupons
         </h1>
 
-        {/* Right Balance Spacer (Profile only on homescreen) */}
+        {/* Right Balance Spacer */}
         <div className="w-9 h-9" />
       </header>
 
-      {/* 2. Body Container (Centered text, natural full-page scrolling) */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center">
+      {/* 2. Body Container (Centered text) */}
+      <div className="flex-1 flex flex-col items-center justify-center px-6 py-24 text-center overflow-y-auto">
         {/* Empty coupon illustration */}
         <div className="w-16 h-16 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center text-gray-400 mb-4 shadow-2xs">
           <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">

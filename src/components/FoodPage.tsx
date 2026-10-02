@@ -635,9 +635,9 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
     ).sort((a, b) => getMinutesForRestaurant(a) - getMinutesForRestaurant(b)); // Sort closest to far!
 
     return (
-      <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-start max-w-[430px] mx-auto select-none relative w-full">
-        {/* Header */}
-        <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+      <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+        {/* 100% Pinned Sticky Header */}
+        <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
           <button
             type="button"
             onClick={() => setSelectedDishForFinder(null)}
@@ -669,8 +669,11 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
           <div className="w-9 h-9" />
         </header>
 
-        {/* Body */}
-        <div className="px-4 pt-3.5 pb-12 space-y-4 w-full flex-1">
+        {/* Scrollable Body (Header stays 100% fixed) */}
+        <div
+          className="flex-1 overflow-y-auto px-4 pt-3.5 pb-12 space-y-4 min-h-0 overscroll-contain touch-pan-y"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           {/* Dish Feature Card */}
           <div className="bg-white rounded-[24px] border border-gray-200/80 shadow-xs overflow-hidden">
             <div className="relative h-44 w-full bg-gray-100">
@@ -820,9 +823,9 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
 
   // --- SCREEN 1: MAIN FOOD DIRECTORY (DISHES & RESTAURANTS) ---
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-start max-w-[430px] mx-auto select-none relative w-full">
-      {/* 1. Sticky Top Navigation Bar */}
-      <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+      {/* 1. 100% Pinned Sticky Top Navigation Bar */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
         <button
           type="button"
@@ -848,12 +851,15 @@ export const FoodPage: React.FC<FoodPageProps> = ({ preferences, onBack, onAskGA
           Food
         </h1>
 
-        {/* Right Balance Spacer (Profile only on homescreen) */}
+        {/* Right Balance Spacer */}
         <div className="w-9 h-9" />
       </header>
 
-      {/* 2. Unified Scroll Body */}
-      <div className="px-4 pt-3 pb-10 space-y-3.5 w-full flex-1">
+      {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
+      <div
+        className="flex-1 overflow-y-auto px-4 pt-3 pb-10 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         {/* PILL 1: Primary Segmented Toggle: Dishes (Default) vs Restaurants */}
         <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner">
           <button

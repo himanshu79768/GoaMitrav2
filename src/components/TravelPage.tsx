@@ -145,9 +145,9 @@ export const TravelPage: React.FC<TravelPageProps> = ({
   const busMinutes = Math.round(km * 2.8 + 12);
 
   return (
-    <div className="min-h-screen bg-[#F7F7F5] flex flex-col justify-start max-w-[430px] mx-auto select-none relative w-full">
-      {/* 1. Sticky Top Navigation Bar (Profile icon removed, balanced right spacer) */}
-      <header className="sticky top-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+      {/* 1. 100% Pinned Sticky Top Navigation Bar */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
         <button
           type="button"
@@ -178,12 +178,15 @@ export const TravelPage: React.FC<TravelPageProps> = ({
           </span>
         </div>
 
-        {/* Right Balance Spacer (Profile only on homescreen) */}
+        {/* Right Balance Spacer */}
         <div className="w-9 h-9" />
       </header>
 
-      {/* 2. Unified Scroll Body Container */}
-      <div className="px-4 pt-3 pb-8 space-y-4 w-full flex-1">
+      {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
+      <div
+        className="flex-1 overflow-y-auto px-4 pt-3 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         {/* HERO CARD: Features the selected destination itself */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[185px] flex items-end p-5">
           {/* Real Photo of Target Destination */}
