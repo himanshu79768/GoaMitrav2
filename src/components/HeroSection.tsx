@@ -12,6 +12,7 @@ interface HeroSectionProps {
   onOpenMyGoa: () => void;
   onOpenNameDialog: () => void;
   onLogout: () => void;
+  isAwakened?: boolean;
 }
 
 const getHeroDetails = (monthStr: string = '') => {
@@ -140,6 +141,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenMyGoa,
   onOpenNameDialog,
   onLogout,
+  isAwakened = false,
 }) => {
   // Local state for profile dropdown menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -387,11 +389,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </p>
       </div>
 
-      {/* AI Search / GAI Bar with Slow Soft Border & iOS Liquid Glass Effect (Redirects to GAI Chat) */}
+      {/* AI Search / GAI Bar with Dynamic Awake State (Gradient Fill Colors & Pulsating Border Rings when Awakened) */}
       <div className="relative mt-6">
-        {/* Soft, Slow Animated Non-Harsh Border (No colorful gradient) */}
-        <div className="relative p-[1.5px] rounded-full gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
-          {/* Inner iOS Liquid Glassmorphism Pill: Click opens Chatbot */}
+        <div
+          className={`relative rounded-full transition-all duration-300 ${
+            isAwakened
+              ? 'p-[2.5px] gai-active-gradient-border scale-[1.01]'
+              : 'p-[1.5px] gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]'
+          }`}
+        >
+          {/* Inner iOS Liquid Glassmorphism Pill: Click opens Chatbot / Bottomsheet */}
           <div
             onClick={onOpenChat}
             role="button"
@@ -399,54 +406,96 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') onOpenChat();
             }}
-            className="water-drop-lens flex items-center justify-between p-2 pl-3 rounded-full bg-white/10 sm:bg-white/12 border border-white/50 active:scale-[0.99] transition-all cursor-pointer"
+            className={`water-drop-lens flex items-center justify-between p-2 pl-3 rounded-full border transition-all cursor-pointer ${
+              isAwakened
+                ? 'bg-white/90 border-[#FF6B4A]/60 shadow-[0_4px_20px_rgba(255,107,74,0.3)]'
+                : 'bg-white/10 sm:bg-white/12 border-white/50 active:scale-[0.99]'
+            }`}
           >
-            {/* Left: Search Button */}
+            {/* Left: Search / Mic Icon */}
             <div className="flex items-center gap-3 min-w-0 flex-1 z-10">
-              <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md border border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85)] flex items-center justify-center text-[#222E3A] shrink-0">
-                <svg
-                  className="w-5 h-5 text-[#2B3540]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="m20 20-3.5-3.5" />
-                </svg>
+              <div
+                className={`w-10 h-10 rounded-full border flex items-center justify-center shrink-0 transition-all ${
+                  isAwakened
+                    ? 'bg-gradient-to-tr from-[#FF6B4A] to-[#FF8C66] text-white border-transparent shadow-[0_0_12px_rgba(255,107,74,0.6)] animate-pulse'
+                    : 'bg-white/20 backdrop-blur-md border-white/50 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.85)] text-[#222E3A]'
+                }`}
+              >
+                {isAwakened ? (
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                    <line x1="12" y1="19" x2="12" y2="22" />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5 text-[#2B3540]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m20 20-3.5-3.5" />
+                  </svg>
+                )}
               </div>
 
               {/* Prompt Texts */}
               <div className="flex flex-col min-w-0 pr-2">
-                <span className="text-[15.5px] font-bold text-[#141C24] tracking-tight leading-tight truncate drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
-                  Ask GAI anything...
+                <span
+                  className={`text-[15.5px] font-bold tracking-tight leading-tight truncate ${
+                    isAwakened
+                      ? 'text-[#FF6B4A]'
+                      : 'text-[#141C24] drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]'
+                  }`}
+                >
+                  {isAwakened ? 'GAI is listening...' : 'Ask GAI anything...'}
                 </span>
-                <span className="text-[12px] text-[#374151] font-semibold tracking-normal truncate mt-0.5 drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]">
-                  Find places, food, routes, safety info...
+                <span
+                  className={`text-[12px] font-semibold tracking-normal truncate mt-0.5 ${
+                    isAwakened
+                      ? 'text-gray-700'
+                      : 'text-[#374151] drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]'
+                  }`}
+                >
+                  {isAwakened ? 'Say your question or say "Hey GAI!"' : 'Find places, food, routes, safety info...'}
                 </span>
               </div>
             </div>
 
-            {/* Right: Circular Arrow Action Button */}
+            {/* Right: Action Button */}
             <div
-              className="w-10 h-10 rounded-full bg-white/28 backdrop-blur-md border border-white/60 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.9)] flex items-center justify-center text-[#111111] hover:scale-105 active:scale-95 transition-all shrink-0 ml-1 z-10"
-              aria-label="Open GAI Chat"
+              className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 ml-1 z-10 ${
+                isAwakened
+                  ? 'bg-[#FF6B4A] text-white shadow-[0_0_12px_rgba(255,107,74,0.5)]'
+                  : 'bg-white/28 backdrop-blur-md border border-white/60 shadow-[inset_0_1px_1.5px_rgba(255,255,255,0.9)] text-[#111111] hover:scale-105 active:scale-95'
+              }`}
+              aria-label="Open GAI Assistant"
             >
-              <svg
-                className="w-4 h-4 text-[#111111]"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M3 8h10M9 4l4 4-4 4" />
-              </svg>
+              {isAwakened ? (
+                <div className="flex items-center gap-0.5">
+                  <span className="w-1 h-3.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1 h-4.5 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1 h-3 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              ) : (
+                <svg
+                  className="w-4 h-4 text-[#111111]"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              )}
             </div>
           </div>
         </div>

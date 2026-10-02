@@ -57,6 +57,45 @@
   animation: softLiquidBorder 9s ease-in-out infinite;
 }
 
+/* Radiant Animated Gradient Fill Colors Border & Pulsating Rings for GAI Awake Pill */
+@keyframes gaiActiveGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gaiPulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 74, 0.6), 0 0 0 0 rgba(23, 127, 145, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(255, 107, 74, 0.3), 0 0 0 14px rgba(23, 127, 145, 0.15);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 107, 74, 0), 0 0 0 0 rgba(23, 127, 145, 0);
+  }
+}
+
+.gai-active-gradient-border {
+  background: linear-gradient(
+    115deg,
+    #FF6B4A 0%,
+    #FFA24C 20%,
+    #177F91 40%,
+    #3B82F6 60%,
+    #8B5CF6 80%,
+    #FF6B4A 100%
+  );
+  background-size: 300% 300%;
+  animation: gaiActiveGradient 2.5s linear infinite, gaiPulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Water Drop Liquid Glass Magnifying Effect */
 .water-drop-lens {
   position: relative;
