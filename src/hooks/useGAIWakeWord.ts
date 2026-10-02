@@ -15,225 +15,187 @@ export function useGAIWakeWord({ onWake, isHomeScreen }: UseGAIWakeWordOptions) 
   const isHomeScreenRef = useRef(isHomeScreen);
   isHomeScreenRef.current = isHomeScreen;
 
-  const mediaStreamRef = useRef<MediaStream | null>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
+  const recognitionRef = useRef<any>(null);
+  const isRunningRef = useRef(false);
+  const restartTimerRef = useRef<any>(null);
   const lastWakeTimeRef = useRef(0);
 
-  // Manage silent, pure Web Audio wake-word acoustic cadence detection strictly on Homescreen
+  // Initialize SpeechRecognition instance and continuous listener
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const cleanupAudio = () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
-      }
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-      if (mediaStreamRef.current) {
-        mediaStreamRef.current.getTracks().forEach((track) => {
-          try {
-            track.stop();
-          } catch {}
-        });
-        mediaStreamRef.current = null;
-      }
-
-      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-        try {
-          audioContextRef.current.close();
-        } catch {}
-        audioContextRef.current = null;
-      }
-
-      setIsListening(false);
-    };
-
-    // If NOT on homescreen, shut down microphone completely (zero background listening)
-    if (!isHomeScreen) {
-      cleanupAudio();
+    if (!SpeechRecognition) {
+      console.warn('SpeechRecognition API is not supported in this browser.');
       return;
     }
 
-    let isCancelled = false;
+    let recognition: any;
+    try {
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-IN';
+      recognition.maxAlternatives = 3;
+    } catch (err) {
+      console.warn('Could not initialize SpeechRecognition:', err);
+      return;
+    }
 
-    const startSilentAcousticDetector = async () => {
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+    recognitionRef.current = recognition;
 
+    const safeStart = () => {
+      if (!isHomeScreenRef.current || isRunningRef.current || !recognitionRef.current) {
+        return;
+      }
       try {
-        // Request clean media stream with built-in browser hardware acoustic echo cancellation & noise suppression
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true,
-          },
-        });
-
-        if (isCancelled || !isHomeScreenRef.current) {
-          stream.getTracks().forEach((t) => t.stop());
-          return;
-        }
-
-        mediaStreamRef.current = stream;
-        setHasMicPermission(true);
+        recognitionRef.current.start();
+        isRunningRef.current = true;
         setIsListening(true);
-
-        const AudioContextClass =
-          window.AudioContext || (window as any).webkitAudioContext;
-        if (!AudioContextClass) return;
-
-        const audioCtx = new AudioContextClass();
-        if (audioCtx.state === 'suspended') {
-          await audioCtx.resume();
-        }
-        audioContextRef.current = audioCtx;
-
-        // Bandpass Filtering: Human voice fundamental and vowel formant range (130Hz - 3400Hz)
-        // Eliminates low-frequency AC/fan rumbles and high-frequency clicks/squeaks
-        const highPass = audioCtx.createBiquadFilter();
-        highPass.type = 'highpass';
-        highPass.frequency.value = 130;
-
-        const lowPass = audioCtx.createBiquadFilter();
-        lowPass.type = 'lowpass';
-        lowPass.frequency.value = 3400;
-
-        const source = audioCtx.createMediaStreamSource(stream);
-        source.connect(highPass);
-        highPass.connect(lowPass);
-
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 256;
-        analyser.smoothingTimeConstant = 0.25;
-        lowPass.connect(analyser);
-
-        const dataArray = new Uint8Array(analyser.frequencyBinCount);
-
-        // Acoustic Cadence State Machine for "Hey GAI"
-        // Pattern: [Syllable 1: "Hey" (120-400ms)] -> [Dip/Valley (30-220ms)] -> [Syllable 2: "GAI" (140-480ms)]
-        let state: 'IDLE' | 'SYLLABLE_1' | 'VALLEY' | 'SYLLABLE_2' = 'IDLE';
-        let syllable1Start = 0;
-        let valleyStart = 0;
-        let syllable2Start = 0;
-        let noiseFloor = 10;
-
-        const processAudioFrame = () => {
-          if (isCancelled || !isHomeScreenRef.current || !analyser) return;
-
-          analyser.getByteFrequencyData(dataArray);
-
-          // Calculate energy in speech frequency bins (approx 150Hz - 3000Hz)
-          let speechSum = 0;
-          let count = 0;
-          const maxBin = Math.min(dataArray.length, 36); // Focus on human speech spectrum
-          for (let i = 2; i < maxBin; i++) {
-            speechSum += dataArray[i];
-            count++;
-          }
-          const currentEnergy = count > 0 ? speechSum / count : 0;
-
-          // Adaptive dynamic noise floor tracking (adapts to ambient room sound)
-          noiseFloor = noiseFloor * 0.96 + currentEnergy * 0.04;
-
-          // Speech threshold: Must be distinctly above the moving noise floor
-          const speechThreshold = Math.max(14, noiseFloor * 1.85 + 6);
-          const isSpeech = currentEnergy > speechThreshold;
-          const now = Date.now();
-
-          // Prevent double wakes within 2.5 seconds
-          if (now - lastWakeTimeRef.current > 2500) {
-            switch (state) {
-              case 'IDLE':
-                if (isSpeech) {
-                  state = 'SYLLABLE_1';
-                  syllable1Start = now;
-                }
-                break;
-
-              case 'SYLLABLE_1':
-                if (isSpeech) {
-                  // If continuous sound is too long (> 420ms), it's continuous background noise or long sentence
-                  if (now - syllable1Start > 420) {
-                    state = 'IDLE';
-                  }
-                } else {
-                  // Syllable 1 ended
-                  const syl1Duration = now - syllable1Start;
-                  if (syl1Duration >= 100 && syl1Duration <= 400) {
-                    state = 'VALLEY';
-                    valleyStart = now;
-                  } else {
-                    state = 'IDLE';
-                  }
-                }
-                break;
-
-              case 'VALLEY':
-                if (isSpeech) {
-                  const valleyDuration = now - valleyStart;
-                  if (valleyDuration >= 25 && valleyDuration <= 230) {
-                    state = 'SYLLABLE_2';
-                    syllable2Start = now;
-                  } else {
-                    state = 'IDLE';
-                  }
-                } else {
-                  // Valley gap too long (> 250ms), reset
-                  if (now - valleyStart > 250) {
-                    state = 'IDLE';
-                  }
-                }
-                break;
-
-              case 'SYLLABLE_2':
-                if (isSpeech) {
-                  if (now - syllable2Start > 520) {
-                    state = 'IDLE';
-                  }
-                } else {
-                  // Syllable 2 ended -> Check total phrase length for "Hey GAI"
-                  const syl2Duration = now - syllable2Start;
-                  const totalDuration = now - syllable1Start;
-
-                  if (
-                    syl2Duration >= 110 &&
-                    syl2Duration <= 480 &&
-                    totalDuration >= 340 &&
-                    totalDuration <= 1150
-                  ) {
-                    // WAKE TRIGGERED!
-                    lastWakeTimeRef.current = now;
-                    state = 'IDLE';
-                    onWakeRef.current(undefined);
-                  } else {
-                    state = 'IDLE';
-                  }
-                }
-                break;
-            }
-          }
-
-          animationFrameRef.current = requestAnimationFrame(processAudioFrame);
-        };
-
-        animationFrameRef.current = requestAnimationFrame(processAudioFrame);
+        setHasMicPermission(true);
       } catch (err: any) {
-        console.warn('Acoustic wake detector notice:', err?.name);
-        setHasMicPermission(false);
+        // Recognition might already be starting or active
+        if (err?.name === 'InvalidStateError') {
+          isRunningRef.current = true;
+          setIsListening(true);
+        }
       }
     };
 
-    startSilentAcousticDetector();
+    const safeStop = () => {
+      if (restartTimerRef.current) {
+        clearTimeout(restartTimerRef.current);
+        restartTimerRef.current = null;
+      }
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      isRunningRef.current = false;
+      setIsListening(false);
+    };
+
+    recognition.onstart = () => {
+      isRunningRef.current = true;
+      setIsListening(true);
+      setHasMicPermission(true);
+    };
+
+    recognition.onresult = (event: any) => {
+      if (!isHomeScreenRef.current) return;
+
+      const now = Date.now();
+      if (now - lastWakeTimeRef.current < 2000) return; // Prevent double wake within 2s
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        for (let a = 0; a < result.length; a++) {
+          const transcript = (result[a]?.transcript || '').trim().toLowerCase();
+
+          // Regex matching: "hey gai", "hey guy", "hey goa", "ok gai", "hello gai", "gai", "hi gai", etc.
+          const wakeMatch = transcript.match(
+            /(?:hey|hi|hello|ok|okay|yo|listen|namaste)?\s*(?:gai|guy|gae|goa|guide|guyz|g\s*a\s*i|geye|gaay|gaai)\b/i
+          );
+
+          if (wakeMatch) {
+            lastWakeTimeRef.current = now;
+
+            // Extract any follow-up query spoken directly after the wake phrase
+            const afterWake = transcript
+              .slice(wakeMatch.index! + wakeMatch[0].length)
+              .replace(/^[,\s.?!]+/, '')
+              .trim();
+
+            safeStop();
+            onWakeRef.current(afterWake || undefined);
+            return;
+          }
+        }
+      }
+    };
+
+    recognition.onerror = (e: any) => {
+      if (e.error === 'not-allowed') {
+        setHasMicPermission(false);
+        isRunningRef.current = false;
+        setIsListening(false);
+        return;
+      }
+      // For 'no-speech' or 'aborted' or 'network', onend will handle smooth restart if still on homescreen
+      isRunningRef.current = false;
+    };
+
+    recognition.onend = () => {
+      isRunningRef.current = false;
+      setIsListening(false);
+
+      // If still on homescreen, gracefully restart continuous listening after slight delay
+      if (isHomeScreenRef.current) {
+        if (restartTimerRef.current) clearTimeout(restartTimerRef.current);
+        restartTimerRef.current = setTimeout(() => {
+          if (isHomeScreenRef.current) {
+            safeStart();
+          }
+        }, 400);
+      }
+    };
+
+    if (isHomeScreen) {
+      safeStart();
+    }
 
     return () => {
-      isCancelled = true;
-      cleanupAudio();
+      safeStop();
     };
+  }, []);
+
+  // React to screen changes (Start when entering homescreen, stop when leaving)
+  useEffect(() => {
+    if (!recognitionRef.current) return;
+
+    if (restartTimerRef.current) {
+      clearTimeout(restartTimerRef.current);
+      restartTimerRef.current = null;
+    }
+
+    if (isHomeScreen) {
+      // Delay start slightly to allow screen transition animations to settle smoothly
+      restartTimerRef.current = setTimeout(() => {
+        if (isHomeScreenRef.current && !isRunningRef.current && recognitionRef.current) {
+          try {
+            recognitionRef.current.start();
+            isRunningRef.current = true;
+            setIsListening(true);
+          } catch (err: any) {
+            if (err?.name === 'InvalidStateError') {
+              isRunningRef.current = true;
+              setIsListening(true);
+            }
+          }
+        }
+      }, 350);
+    } else {
+      // Exiting homescreen -> Stop immediately
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+      isRunningRef.current = false;
+      setIsListening(false);
+    }
   }, [isHomeScreen]);
 
   const manuallyTriggerWake = useCallback((extraPrompt?: string) => {
     lastWakeTimeRef.current = Date.now();
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+    }
+    isRunningRef.current = false;
+    setIsListening(false);
     onWakeRef.current(extraPrompt);
   }, []);
 

@@ -13,6 +13,7 @@ interface HeroSectionProps {
   onOpenNameDialog: () => void;
   onLogout: () => void;
   isAwakened?: boolean;
+  hasNewProfileItem?: boolean;
 }
 
 const getHeroDetails = (monthStr: string = '') => {
@@ -142,6 +143,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenNameDialog,
   onLogout,
   isAwakened = false,
+  hasNewProfileItem = false,
 }) => {
   // Local state for profile dropdown menu
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -273,7 +275,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 e.stopPropagation();
                 setIsMenuOpen(!isMenuOpen);
               }}
-              className="water-drop-lens w-10 h-10 rounded-full bg-white/20 border border-white/60 flex items-center justify-center text-[#1E293B] cursor-pointer"
+              className="water-drop-lens w-10 h-10 rounded-full bg-white/20 border border-white/60 flex items-center justify-center text-[#1E293B] cursor-pointer relative"
               aria-label="User profile"
             >
               {/* SVG User Silhouette Icon */}
@@ -289,6 +291,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   clipRule="evenodd"
                 />
               </svg>
+
+              {/* Notification Badge Mark for New Liked Place / Itinerary */}
+              {hasNewProfileItem && (
+                <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 z-20">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF6B4A] opacity-80" />
+                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-gradient-to-tr from-[#FF6B4A] to-[#FF3819] border-2 border-white shadow-xs" />
+                </span>
+              )}
             </motion.button>
 
             {/* Translucent Small Dropdown Menu Box - Fixed below profile icon without hover scale */}
@@ -309,7 +319,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: -4 }}
                     transition={{ duration: 0.15, ease: 'easeOut' }}
-                    className="liquid-glass-menu top-12 right-0 z-50 w-40 rounded-2xl p-1 flex flex-col gap-0.5 select-none overflow-hidden"
+                    className="liquid-glass-menu top-12 right-0 z-50 w-44 rounded-2xl p-1 flex flex-col gap-0.5 select-none overflow-hidden"
                   >
                     {/* Option 1: Name */}
                     <button
@@ -326,19 +336,26 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       <span>Name</span>
                     </button>
 
-                    {/* Option 2: My Goa */}
+                    {/* Option 2: My Goa with Dynamic New Badge */}
                     <button
                       type="button"
                       onClick={() => {
                         setIsMenuOpen(false);
                         onOpenMyGoa();
                       }}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
+                      className="flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
                     >
-                      <svg className="w-3.5 h-3.5 text-[#177F91] shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                      </svg>
-                      <span>My Goa</span>
+                      <div className="flex items-center gap-2">
+                        <svg className="w-3.5 h-3.5 text-[#177F91] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                        </svg>
+                        <span>My Goa</span>
+                      </div>
+                      {hasNewProfileItem && (
+                        <span className="px-1.5 py-0.5 rounded-full bg-[#FF6B4A] text-white text-[9px] font-extrabold uppercase tracking-wide shadow-xs">
+                          NEW
+                        </span>
+                      )}
                     </button>
 
                     <div className="h-[1px] bg-white/40 my-0.5 z-10" />

@@ -28,6 +28,7 @@ const ONBOARDING_COMPLETED_KEY = 'goamitra_onboarding_completed';
 const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 const SAVED_PLACES_KEY = 'goamitra_saved_places';
 const SAVED_ITINERARIES_KEY = 'goamitra_saved_itineraries';
+const UNSEEN_PROFILE_ITEMS_KEY = 'goamitra_unseen_profile_items';
 
 type ScreenType =
   | 'onboarding_step_1'
@@ -109,6 +110,14 @@ export default function App() {
     return [];
   });
 
+  // Unseen additions indicator badge state (shows dot on profile icon until user views My Goa)
+  const [hasNewProfileItem, setHasNewProfileItem] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(UNSEEN_PROFILE_ITEMS_KEY) === 'true';
+    } catch {}
+    return false;
+  });
+
   const handleToggleSavePlace = (place: SavedPlaceItem) => {
     setSavedPlaces((prev) => {
       const exists = prev.some((p) => p.id === place.id);
@@ -116,6 +125,13 @@ export default function App() {
       try {
         localStorage.setItem(SAVED_PLACES_KEY, JSON.stringify(updated));
       } catch {}
+      // When a new place is liked/saved, show notification badge on profile
+      if (!exists) {
+        setHasNewProfileItem(true);
+        try {
+          localStorage.setItem(UNSEEN_PROFILE_ITEMS_KEY, 'true');
+        } catch {}
+      }
       return updated;
     });
   };
@@ -136,6 +152,11 @@ export default function App() {
       const updated = [itinerary, ...prev];
       try {
         localStorage.setItem(SAVED_ITINERARIES_KEY, JSON.stringify(updated));
+      } catch {}
+      // When a new itinerary is added, show notification badge on profile
+      setHasNewProfileItem(true);
+      try {
+        localStorage.setItem(UNSEEN_PROFILE_ITEMS_KEY, 'true');
       } catch {}
       return updated;
     });
@@ -182,6 +203,25 @@ export default function App() {
   };
 
   const [myGoaInitialTab, setMyGoaInitialTab] = useState<'itineraries' | 'saved_places'>('itineraries');
+
+  // Auto-hide notification badge as soon as user opens or views My Goa screen
+  useEffect(() => {
+    if (currentScreen === 'my_goa') {
+      setHasNewProfileItem(false);
+      try {
+        localStorage.setItem(UNSEEN_PROFILE_ITEMS_KEY, 'false');
+      } catch {}
+    }
+  }, [currentScreen]);
+
+  const handleOpenMyGoa = (tab?: 'itineraries' | 'saved_places') => {
+    if (tab) setMyGoaInitialTab(tab);
+    setHasNewProfileItem(false);
+    try {
+      localStorage.setItem(UNSEEN_PROFILE_ITEMS_KEY, 'false');
+    } catch {}
+    navigateForward('my_goa');
+  };
 
   const handleUpdateName = (newName: string) => {
     setName(newName);
@@ -330,8 +370,9 @@ export default function App() {
             <HeroSection
               preferences={savedPreferences}
               isAwakened={isGAIAwakened}
+              hasNewProfileItem={hasNewProfileItem}
               onOpenChat={() => handleOpenChat()}
-              onOpenMyGoa={() => navigateForward('my_goa')}
+              onOpenMyGoa={() => handleOpenMyGoa()}
               onOpenNameDialog={handleOpenNameDialog}
               onLogout={handleLogout}
             />
