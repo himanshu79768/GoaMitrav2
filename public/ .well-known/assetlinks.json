@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.goamitra.twa",
+        "sha256_cert_fingerprints": ["09:93:76:1C:C4:D5:1A:AA:65:1A:3E:A7:32:ED:FC:B2:D6:D4:F6:10:3E:85:38:A6:06:3A:3F:97:73:F3:93:AA"]
+      }
+    }]
