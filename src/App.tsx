@@ -17,6 +17,7 @@ import { FoodPage } from './components/FoodPage';
 import { CulturePage } from './components/CulturePage';
 import { CouponsPage } from './components/CouponsPage';
 import { EmergencyPage } from './components/EmergencyPage';
+import { MyGoaPage } from './components/MyGoaPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, DEFAULT_PREFERENCES } from './types/onboarding';
 import { preloadAllAppImages } from './utils/imagePreloader';
@@ -25,6 +26,20 @@ import { OfflineIndicator } from './components/OfflineIndicator';
 const ONBOARDING_COMPLETED_KEY = 'goamitra_onboarding_completed';
 const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 
+type ScreenType =
+  | 'onboarding_step_1'
+  | 'onboarding_step_2'
+  | 'homepage'
+  | 'gai_chat'
+  | 'stay'
+  | 'destinations'
+  | 'travel'
+  | 'food'
+  | 'culture'
+  | 'coupons'
+  | 'emergency'
+  | 'my_goa';
+
 export default function App() {
   // Preload all app photography and assets immediately on boot
   useEffect(() => {
@@ -32,9 +47,7 @@ export default function App() {
   }, []);
 
   // Check localStorage: if onboarding completed once, show homepage directly on refresh
-  const [currentScreen, setCurrentScreen] = useState<
-    'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'coupons' | 'emergency'
-  >(() => {
+  const [currentScreen, setCurrentScreen] = useState<ScreenType>(() => {
     try {
       const isCompleted = localStorage.getItem(ONBOARDING_COMPLETED_KEY);
       if (isCompleted === 'true') {
@@ -50,17 +63,13 @@ export default function App() {
   const [navDirection, setNavDirection] = useState<'forward' | 'backward'>('forward');
 
   // Helper forward navigation
-  const navigateForward = (
-    screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'coupons' | 'emergency'
-  ) => {
+  const navigateForward = (screen: ScreenType) => {
     setNavDirection('forward');
     setCurrentScreen(screen);
   };
 
   // Helper backward navigation
-  const navigateBack = (
-    screen: 'onboarding_step_1' | 'onboarding_step_2' | 'homepage' | 'gai_chat' | 'stay' | 'destinations' | 'travel' | 'food' | 'culture' | 'coupons' | 'emergency'
-  ) => {
+  const navigateBack = (screen: ScreenType) => {
     setNavDirection('backward');
     setCurrentScreen(screen);
   };
@@ -86,9 +95,6 @@ export default function App() {
   const [memberCount, setMemberCount] = useState<number>(() => savedPreferences.memberCount || 2);
   const [travelType, setTravelType] = useState<string>(() => savedPreferences.travelType || 'Couple / Duo');
 
-  // Profile Modal state on Homepage
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-
   // Selected Destination for Travel Page
   const [selectedDestinationForTravel, setSelectedDestinationForTravel] = useState<DestinationItem>(ALL_DESTINATIONS[0]);
 
@@ -101,6 +107,42 @@ export default function App() {
         ? prev.filter((i) => i !== interest)
         : [...prev, interest]
     );
+  };
+
+  // Name Change Floating Dialog state
+  const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
+  const [tempNameInput, setTempNameInput] = useState('');
+
+  const handleOpenNameDialog = () => {
+    setTempNameInput(savedPreferences.name || '');
+    setIsNameDialogOpen(true);
+  };
+
+  const handleUpdateName = (newName: string) => {
+    setName(newName);
+    const updated = { ...savedPreferences, name: newName };
+    setSavedPreferences(updated);
+    try {
+      localStorage.setItem(USER_PREFERENCES_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to update name in localStorage', e);
+    }
+  };
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem(ONBOARDING_COMPLETED_KEY);
+      localStorage.removeItem(USER_PREFERENCES_KEY);
+    } catch (e) {
+      console.error('Failed to remove stored items', e);
+    }
+    setSavedPreferences(DEFAULT_PREFERENCES);
+    setName('');
+    setSelectedInterests([]);
+    setSelectedMonth('');
+    setMemberCount(2);
+    setTravelType('Couple / Duo');
+    navigateBack('onboarding_step_1');
   };
 
   const handleFinishOnboarding = () => {
@@ -176,8 +218,10 @@ export default function App() {
           <div className="w-full h-[100dvh] max-h-[100dvh] overflow-y-auto flex flex-col justify-start pb-6 absolute inset-0 z-0 bg-[#F7F7F5]">
             <HeroSection
               preferences={savedPreferences}
-              onOpenProfile={() => setIsProfileOpen(true)}
               onOpenChat={() => handleOpenChat()}
+              onOpenMyGoa={() => navigateForward('my_goa')}
+              onOpenNameDialog={handleOpenNameDialog}
+              onLogout={handleLogout}
             />
 
             <ModuleGrid
@@ -187,16 +231,6 @@ export default function App() {
               onOpenCulture={() => navigateForward('culture')}
               onOpenCoupons={() => navigateForward('coupons')}
               onOpenEmergency={() => navigateForward('emergency')}
-            />
-
-            <UserProfileModal
-              isOpen={isProfileOpen}
-              onClose={() => setIsProfileOpen(false)}
-              preferences={savedPreferences}
-              onEditPreferences={() => {
-                setIsProfileOpen(false);
-                navigateForward('onboarding_step_1');
-              }}
             />
           </div>
         )}
@@ -402,6 +436,104 @@ export default function App() {
                 }}
               />
             </motion.div>
+          )}
+
+          {/* Step 11: My Goa Screen */}
+          {currentScreen === 'my_goa' && (
+            <motion.div
+              key="my_goa"
+              custom={navDirection}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+            >
+              <MyGoaPage
+                preferences={savedPreferences}
+                onBack={() => navigateBack('homepage')}
+                onEditPreferences={() => navigateForward('onboarding_step_1')}
+                onAskGAI={(prompt) => handleOpenChat(prompt)}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Root-Level Floating Dialog Box for Changing Name (z-[9999] guarantees it renders ABOVE ModuleGrid) */}
+        <AnimatePresence>
+          {isNameDialogOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 select-none">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsNameDialogOpen(false)}
+                className="absolute inset-0 bg-black/50 backdrop-blur-xs z-0"
+              />
+
+              {/* Floating Dialog Box */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 12 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 380 }}
+                className="w-full max-w-[340px] bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl p-5 shadow-2xl relative z-10"
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                  <h3 className="text-base font-extrabold text-gray-900 tracking-tight">Change Name</h3>
+                  <button
+                    type="button"
+                    onClick={() => setIsNameDialogOpen(false)}
+                    className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors text-xs font-bold cursor-pointer"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    value={tempNameInput}
+                    onChange={(e) => setTempNameInput(e.target.value)}
+                    placeholder="Enter your name"
+                    autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && tempNameInput.trim()) {
+                        handleUpdateName(tempNameInput.trim());
+                        setIsNameDialogOpen(false);
+                      }
+                    }}
+                    className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm font-semibold text-gray-900 outline-none focus:border-[#FF6B4A] focus:ring-2 focus:ring-[#FF6B4A]/15 transition-all"
+                  />
+                </div>
+
+                <div className="mt-5 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsNameDialogOpen(false)}
+                    className="px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (tempNameInput.trim()) {
+                        handleUpdateName(tempNameInput.trim());
+                        setIsNameDialogOpen(false);
+                      }
+                    }}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#FF6B4A] text-white shadow-md hover:bg-[#FF5436] active:scale-95 transition-all cursor-pointer"
+                  >
+                    Save
+                  </button>
+                </div>
+              </motion.div>
+            </div>
           )}
         </AnimatePresence>
       </div>

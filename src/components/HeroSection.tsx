@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import heroSummerImage from '../assets/images/hero.png';
 import heroWinterImage from '../assets/images/divar_paddy_winter_1790959654093.jpg';
 import heroRainyImage from '../assets/images/dudhsagar_rainy_1790959667095.jpg';
@@ -8,8 +8,10 @@ import { PWAInstallButton } from './PWAInstallButton';
 
 interface HeroSectionProps {
   preferences: UserPreferences;
-  onOpenProfile: () => void;
   onOpenChat: () => void;
+  onOpenMyGoa: () => void;
+  onOpenNameDialog: () => void;
+  onLogout: () => void;
 }
 
 const getHeroDetails = (monthStr: string = '') => {
@@ -134,9 +136,14 @@ const renderSeasonIcon = (season: 'summer' | 'winter' | 'rainy') => {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
   preferences,
-  onOpenProfile,
   onOpenChat,
+  onOpenMyGoa,
+  onOpenNameDialog,
+  onLogout,
 }) => {
+  // Local state for profile dropdown menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   // Derive trip label from preferences
   const primaryInterest = preferences.tourismTypes[0] || 'Adventure';
   const tripTag = primaryInterest.replace(' Tourism', '');
@@ -204,13 +211,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* Top Bar: Location Pill, PWA Install & Profile Button */}
-      <div className="flex items-center justify-between pt-1 gap-2">
+      <div className="flex items-center justify-between pt-1 gap-2 relative z-30">
         {/* Location Pill */}
         <motion.button
           type="button"
           whileHover={{ y: -1, scale: 1.02 }}
           whileTap={{ scale: 0.96 }}
-          onClick={onOpenProfile}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(!isMenuOpen);
+          }}
           className="water-drop-lens flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/20 border border-white/60 transition-all cursor-pointer min-w-0"
           aria-label="Current trip preferences"
         >
@@ -252,30 +262,104 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* In-App PWA Install Prompt Button */}
           <PWAInstallButton />
 
-          {/* Profile Button */}
-          <motion.button
-            type="button"
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-            transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-            onClick={onOpenProfile}
-            className="water-drop-lens w-10 h-10 rounded-full bg-white/20 border border-white/60 flex items-center justify-center text-[#1E293B] transition-all cursor-pointer"
-            aria-label="User profile"
-          >
-            {/* SVG User Silhouette Icon */}
-            <svg
-              className="w-5 h-5 z-10"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              aria-hidden="true"
+          {/* Fixed-size Profile Button Wrapper to guarantee zero icon shifting */}
+          <div className="relative w-10 h-10 shrink-0">
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.92 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMenuOpen(!isMenuOpen);
+              }}
+              className="water-drop-lens w-10 h-10 rounded-full bg-white/20 border border-white/60 flex items-center justify-center text-[#1E293B] cursor-pointer"
+              aria-label="User profile"
             >
-              <path
-                fillRule="evenodd"
-                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </motion.button>
+              {/* SVG User Silhouette Icon */}
+              <svg
+                className="w-5 h-5 z-10"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </motion.button>
+
+            {/* Translucent Small Dropdown Menu Box - Fixed below profile icon without hover scale */}
+            <AnimatePresence>
+              {isMenuOpen && (
+                <>
+                  {/* Transparent Backdrop to dismiss on click outside */}
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsMenuOpen(false);
+                    }}
+                  />
+
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: -4 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -4 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                    className="liquid-glass-menu top-12 right-0 z-50 w-40 rounded-2xl p-1 flex flex-col gap-0.5 select-none overflow-hidden"
+                  >
+                    {/* Option 1: Name */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        onOpenNameDialog();
+                      }}
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
+                    >
+                      <svg className="w-3.5 h-3.5 text-gray-700 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                      <span>Name</span>
+                    </button>
+
+                    {/* Option 2: My Goa */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        onOpenMyGoa();
+                      }}
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
+                    >
+                      <svg className="w-3.5 h-3.5 text-[#177F91] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
+                      <span>My Goa</span>
+                    </button>
+
+                    <div className="h-[1px] bg-white/40 my-0.5 z-10" />
+
+                    {/* Option 3: Logout (Red Text) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        onLogout();
+                      }}
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-red-600 hover:bg-red-500/20 active:bg-red-500/30 transition-colors text-left w-full cursor-pointer z-10"
+                    >
+                      <svg className="w-3.5 h-3.5 text-red-600 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
+                      </svg>
+                      <span>Logout</span>
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
