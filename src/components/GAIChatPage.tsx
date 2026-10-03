@@ -53,10 +53,6 @@ interface GAIChatPageProps {
   ) => void;
   onUpdateName?: (newName: string) => void;
   onUpdatePreferences?: (partial: Partial<UserPreferences>) => void;
-  isBottomSheet?: boolean;
-  onCloseBottomSheet?: () => void;
-  onExpandToFullScreen?: () => void;
-  autoStartMic?: boolean;
 }
 
 const QUICK_PROMPTS = [
@@ -713,10 +709,6 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
   onNavigateScreen,
   onUpdateName,
   onUpdatePreferences,
-  isBottomSheet = false,
-  onCloseBottomSheet,
-  onExpandToFullScreen,
-  autoStartMic = false,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
@@ -732,11 +724,9 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
   const inputRef = useRef(input);
   inputRef.current = input;
 
-  const [showTextInput, setShowTextInput] = useState(false);
   const [attachedImage, setAttachedImage] = useState<AttachedImage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [speechError, setSpeechError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isAttachmentSheetOpen, setIsAttachmentSheetOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -810,8 +800,6 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
   });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef<any>(null);
-  const silenceTimeoutRef = useRef<any>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -891,100 +879,6 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     );
   }, []);
 
-  // Initialize Speech Recognition if supported
-  useEffect(() => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (SpeechRecognition) {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.lang = 'en-IN';
-
-      recognition.onstart = () => {
-        setIsListening(true);
-        setSpeechError(null);
-        triggerHaptic(15);
-      };
-
-      recognition.onresult = (event: any) => {
-        const transcript = Array.from(event.results)
-          .map((result: any) => result[0].transcript)
-          .join('');
-        setInput(transcript);
-
-        // In bottomsheet mode, if final speech result or speech pause, auto-send query
-        const isFinal = Array.from(event.results).some((res: any) => res.isFinal);
-        if (isFinal && transcript.trim().length > 2 && isBottomSheet) {
-          if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
-          silenceTimeoutRef.current = setTimeout(() => {
-            if (transcript.trim().length > 0) {
-              handleSendMessage(transcript.trim());
-            }
-          }, 1100);
-        }
-      };
-
-      recognition.onerror = () => {
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognitionRef.current = recognition;
-    }
-
-    return () => {
-      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch {}
-      }
-    };
-  }, [isBottomSheet]);
-
-  // Auto-start microphone when GAI awakens in bottomsheet mode
-  useEffect(() => {
-    if (autoStartMic) {
-      const timer = setTimeout(() => {
-        if (recognitionRef.current && !isListening) {
-          try {
-            recognitionRef.current.start();
-          } catch (e) {
-            console.warn('Auto-start mic on wake:', e);
-          }
-        }
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [autoStartMic]);
-
-  const toggleListening = () => {
-    triggerHaptic(12);
-    if (!recognitionRef.current) {
-      setSpeechError('Voice input not supported in this browser');
-      setTimeout(() => setSpeechError(null), 3000);
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current.stop();
-      if (input.trim() && isBottomSheet) {
-        handleSendMessage(input.trim());
-      }
-    } else {
-      try {
-        recognitionRef.current.start();
-      } catch (e) {
-        console.warn('Recognition start error', e);
-      }
-    }
-  };
-
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -996,8 +890,8 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
       setIsAttachmentSheetOpen(false);
     } catch (err) {
       console.error('Image processing failed', err);
-      setSpeechError('Failed to process image file');
-      setTimeout(() => setSpeechError(null), 3000);
+      setErrorMessage('Failed to process image file');
+      setTimeout(() => setErrorMessage(null), 3000);
     } finally {
       e.target.value = '';
     }
@@ -1046,10 +940,6 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     if ((!text && !attachedImage) || isLoading) return;
 
     triggerHaptic(15);
-
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
 
     const userTime = format12HourTime();
     const currentAttachment = attachedImage;
@@ -1565,7 +1455,7 @@ CRITICAL RULES:
   };
 
   return (
-    <div className={`${isBottomSheet ? 'h-full max-h-full rounded-t-[32px]' : 'h-[100dvh] max-h-[100dvh]'} w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden font-sans`}>
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden font-sans">
       {/* Hidden File Inputs for Camera and Gallery */}
       <input
         type="file"
@@ -1583,98 +1473,44 @@ CRITICAL RULES:
         className="hidden"
       />
 
-      {/* Top Bar: Sticky Header on Full Screen vs Floating Grab Handle on BottomSheet (without header) */}
-      {!isBottomSheet ? (
-        <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={() => {
-              triggerHaptic(10);
-              onBack();
-            }}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="Back to Homepage"
+      {/* Top Bar: Sticky Header */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+        {/* Back Button */}
+        <button
+          type="button"
+          onClick={() => {
+            triggerHaptic(10);
+            onBack();
+          }}
+          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+          aria-label="Back to Homepage"
+        >
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12.5 15L7.5 10L12.5 5" />
-            </svg>
-          </button>
+            <path d="M12.5 15L7.5 10L12.5 5" />
+          </svg>
+        </button>
 
-          {/* Title & Subtitle */}
-          <div className="flex flex-col items-center">
-            <h1 className="text-[19px] font-black text-gray-900 tracking-tight leading-tight">
-              GAI
-            </h1>
-            <span className="text-[11.5px] font-medium text-gray-500 leading-tight">
-              Your Goa Travel Assistant
-            </span>
-          </div>
-
-          {/* Balance spacer */}
-          <div className="w-9 h-9" />
-        </header>
-      ) : (
-        /* Floating Bottomsheet Grab Bar (No Header) */
-        <div className="shrink-0 z-30 pt-3 pb-2 px-4 flex items-center justify-between bg-[#F7F7F5] border-b border-gray-100/80">
-          <div className="flex items-center gap-1.5 min-w-0">
-            <span className="relative flex h-2.5 w-2.5 shrink-0">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
-            <span className="text-[11.5px] font-black text-gray-800 tracking-tight truncate">
-              {isListening ? 'GAI is listening...' : 'GAI Voice Assistant'}
-            </span>
-          </div>
-
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
-
-          <div className="flex items-center gap-1.5 shrink-0">
-            {onExpandToFullScreen && (
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(10);
-                  onExpandToFullScreen();
-                }}
-                className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-all cursor-pointer"
-                title="Expand to Full Chat"
-                aria-label="Expand to full chat"
-              >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 3 21 3 21 9" />
-                  <polyline points="9 21 3 21 3 15" />
-                  <line x1="21" y1="3" x2="14" y2="10" />
-                  <line x1="3" y1="21" x2="10" y2="14" />
-                </svg>
-              </button>
-            )}
-
-            {onCloseBottomSheet && (
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(10);
-                  onCloseBottomSheet();
-                }}
-                className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 text-xs font-bold transition-all cursor-pointer"
-                title="Close sheet"
-                aria-label="Close sheet"
-              >
-                ✕
-              </button>
-            )}
-          </div>
+        {/* Title & Subtitle */}
+        <div className="flex flex-col items-center">
+          <h1 className="text-[19px] font-black text-gray-900 tracking-tight leading-tight">
+            GAI
+          </h1>
+          <span className="text-[11.5px] font-medium text-gray-500 leading-tight">
+            Your Goa Travel Assistant
+          </span>
         </div>
-      )}
+
+        {/* Balance spacer */}
+        <div className="w-9 h-9" />
+      </header>
 
       {/* Messages Feed */}
       <div
@@ -1917,10 +1753,10 @@ CRITICAL RULES:
           ))}
         </div>
 
-        {/* Speech / File Error Banner */}
-        {speechError && (
+        {/* File / General Error Banner */}
+        {errorMessage && (
           <div className="text-[11px] text-red-500 font-medium bg-red-50 border border-red-200 px-3 py-1 rounded-full text-center">
-            {speechError}
+            {errorMessage}
           </div>
         )}
 
@@ -1963,238 +1799,74 @@ CRITICAL RULES:
           )}
         </AnimatePresence>
 
-        {/* 
-          BOTTOM CONTROLS:
-          - BottomSheet mode (!showTextInput):
-              PRIMARY is the large voice mic button (center), pulsating when active.
-              SECONDARY is text ("Type" button on right) and attachment clip (left).
-          - Full Chat mode or when text is toggled:
-              PRIMARY is chat input + send button.
-              SECONDARY is mic.
-        */}
-        {isBottomSheet && !showTextInput ? (
-          <div className="flex flex-col items-center gap-1.5 pt-0.5 pb-1">
-            {/* Live voice state indicator & Transcript */}
-            <div className="w-full text-center px-2 min-h-[24px] flex items-center justify-center">
-              {isListening ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-bold animate-pulse shadow-xs">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-                  <span className="truncate max-w-[280px]">{input ? `"${input}"` : 'Listening... Speak your question now'}</span>
-                </div>
-              ) : input ? (
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold shadow-xs">
-                  <span className="truncate max-w-[240px]">"{input}"</span>
-                  <button
-                    type="button"
-                    onClick={() => handleSendMessage(input)}
-                    className="underline text-[#FF6B4A] hover:text-[#FF5436] cursor-pointer shrink-0"
-                  >
-                    Send →
-                  </button>
-                </div>
-              ) : (
-                <span className="text-[12px] font-semibold text-gray-500">
-                  Tap microphone to speak or choose Type below
-                </span>
-              )}
-            </div>
-
-            {/* Bottom Controls Row: Photo Clip (Left), PRIMARY Big Mic Button (Center), Secondary Text (Right) */}
-            <div className="w-full flex items-center justify-between px-3 pt-0.5">
-              {/* Secondary: Attachment Clip (Left) */}
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(12);
-                  setIsAttachmentSheetOpen(true);
-                }}
-                className="w-10 h-10 rounded-full bg-white border border-gray-200 shadow-xs hover:bg-[#FFE7E0] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center shrink-0 transition-all cursor-pointer active:scale-95"
-                title="Attach photo"
-                aria-label="Attach photo"
-              >
-                <svg
-                  className="w-4.5 h-4.5 rotate-[45deg]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-                </svg>
-              </button>
-
-              {/* PRIMARY BUTTON: Large Glowing Voice Mic Button (Center) */}
-              <div className="relative flex items-center justify-center">
-                {isListening && (
-                  <motion.div
-                    initial={{ scale: 0.85, opacity: 0.6 }}
-                    animate={{ scale: [1, 1.4, 1], opacity: [0.6, 0.1, 0.6] }}
-                    transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-                    className="absolute inset-0 -m-2 rounded-full bg-[#FF6B4A]"
-                  />
-                )}
-                <button
-                  type="button"
-                  onClick={toggleListening}
-                  className={`relative z-10 w-16 h-16 rounded-full flex items-center justify-center text-white transition-all cursor-pointer shadow-lg active:scale-95 ${
-                    isListening
-                      ? 'bg-gradient-to-tr from-red-600 to-rose-500 shadow-[0_0_24px_rgba(239,68,68,0.6)] scale-105'
-                      : 'bg-gradient-to-tr from-[#FF6B4A] to-[#FF8C66] hover:brightness-105 shadow-[0_6px_20px_rgba(255,107,74,0.4)]'
-                  }`}
-                  aria-label={isListening ? 'Stop listening' : 'Start speaking'}
-                  title={isListening ? 'Stop listening' : 'Speak to GAI'}
-                >
-                  <svg
-                    className={`w-7 h-7 ${isListening ? 'animate-pulse' : ''}`}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                    <line x1="12" y1="19" x2="12" y2="22" />
-                  </svg>
-                </button>
-              </div>
-
-              {/* SECONDARY BUTTON: Type Text Button (Right) */}
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(12);
-                  setShowTextInput(true);
-                }}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white border border-gray-200 shadow-xs hover:bg-gray-50 text-gray-700 text-xs font-bold transition-all cursor-pointer active:scale-95 shrink-0"
-                title="Switch to typing"
-              >
-                <svg className="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                </svg>
-                <span>Type</span>
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* Text-First Controls (Full Chat Screen or when user clicks Type in bottomsheet) */
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="flex items-center gap-2"
-          >
-            {/* Input Pill Container */}
-            <div className="flex-1 rounded-full bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3 py-1.5 flex items-center gap-2 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
-              {/* PAPERCLIP / ATTACHMENT CLIP BUTTON */}
-              <button
-                type="button"
-                onClick={() => {
-                  triggerHaptic(12);
-                  setIsAttachmentSheetOpen(true);
-                }}
-                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#FFE7E0] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center shrink-0 transition-all cursor-pointer"
-                title="Attach photo or take picture"
-                aria-label="Attach photo or camera"
-              >
-                <svg
-                  className="w-4.5 h-4.5 rotate-[45deg]"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-                </svg>
-              </button>
-
-              {/* Input Text Field */}
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                autoFocus={isBottomSheet && showTextInput}
-                placeholder={
-                  isListening
-                    ? 'Listening... speak now'
-                    : attachedImage
-                    ? 'Ask about this photo...'
-                    : 'Ask GAI anything...'
-                }
-                className="w-full bg-transparent text-[14.5px] font-medium text-gray-900 placeholder-gray-400 outline-none"
-              />
-
-              {/* Microphone Button (Secondary in full chat) */}
-              <button
-                type="button"
-                onClick={toggleListening}
-                className={`w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer shrink-0 ${
-                  isListening
-                    ? 'bg-red-500 text-white animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]'
-                    : 'text-gray-400 hover:text-[#FF6B4A] hover:bg-gray-50'
-                }`}
-                title={isListening ? 'Stop listening' : 'Speak your question'}
-                aria-label="Voice input"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-                  <line x1="12" y1="19" x2="12" y2="22" />
-                </svg>
-              </button>
-
-              {/* In bottomsheet when typing, option to toggle back to Voice Mic */}
-              {isBottomSheet && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    triggerHaptic(10);
-                    setShowTextInput(false);
-                  }}
-                  className="px-2 py-0.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 text-[11px] font-bold cursor-pointer transition-all"
-                  title="Return to voice mic"
-                >
-                  Mic
-                </button>
-              )}
-            </div>
-
-            {/* Send Button (PRIMARY in chat screen) */}
+        {/* Input Bar */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendMessage();
+          }}
+          className="flex items-center gap-2"
+        >
+          {/* Input Pill Container */}
+          <div className="flex-1 rounded-full bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3 py-1.5 flex items-center gap-2 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
+            {/* PAPERCLIP / ATTACHMENT CLIP BUTTON */}
             <button
-              type="submit"
-              disabled={(!input.trim() && !attachedImage) || isLoading}
-              className={`w-11 h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-md transition-all ${
-                (input.trim() || attachedImage) && !isLoading
-                  ? 'bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] hover:brightness-105 active:scale-95 cursor-pointer shadow-[0_4px_12px_rgba(255,107,74,0.35)]'
-                  : 'bg-gray-300 text-gray-100 cursor-not-allowed shadow-none'
-              }`}
-              aria-label="Send message"
+              type="button"
+              onClick={() => {
+                triggerHaptic(12);
+                setIsAttachmentSheetOpen(true);
+              }}
+              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#FFE7E0] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center shrink-0 transition-all cursor-pointer"
+              title="Attach photo or take picture"
+              aria-label="Attach photo or camera"
             >
               <svg
-                className="w-4 h-4 translate-x-0.5"
+                className="w-4.5 h-4.5 rotate-[45deg]"
                 viewBox="0 0 24 24"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48" />
               </svg>
             </button>
-          </form>
-        )}
+
+            {/* Input Text Field */}
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={
+                attachedImage
+                  ? 'Ask about this photo...'
+                  : 'Ask GAI anything about Goa...'
+              }
+              className="w-full bg-transparent text-[14.5px] font-medium text-gray-900 placeholder-gray-400 outline-none"
+            />
+          </div>
+
+          {/* Send Button */}
+          <button
+            type="submit"
+            disabled={(!input.trim() && !attachedImage) || isLoading}
+            className={`w-11 h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-md transition-all ${
+              (input.trim() || attachedImage) && !isLoading
+                ? 'bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] hover:brightness-105 active:scale-95 cursor-pointer shadow-[0_4px_12px_rgba(255,107,74,0.35)]'
+                : 'bg-gray-300 text-gray-100 cursor-not-allowed shadow-none'
+            }`}
+            aria-label="Send message"
+          >
+            <svg
+              className="w-4 h-4 translate-x-0.5"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </form>
       </div>
 
       {/* ATTACHMENT OPTIONS BOTTOM SHEET (WITH CLEAN SVG ICONS) */}

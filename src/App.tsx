@@ -22,7 +22,6 @@ import { UserProfileModal } from './components/UserProfileModal';
 import { UserPreferences, SavedPlaceItem, SavedItineraryItem, DEFAULT_PREFERENCES } from './types/onboarding';
 import { preloadAllAppImages } from './utils/imagePreloader';
 import { OfflineIndicator } from './components/OfflineIndicator';
-import { useGAIWakeWord } from './hooks/useGAIWakeWord';
 
 const ONBOARDING_COMPLETED_KEY = 'goamitra_onboarding_completed';
 const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
@@ -293,36 +292,8 @@ export default function App() {
 
   const isOnboarding = currentScreen === 'onboarding_step_1' || currentScreen === 'onboarding_step_2';
 
-  // Wake-word & Smooth Floating Half-Screen Bottomsheet states (Homescreen only)
-  const [isGAIAwakened, setIsGAIAwakened] = useState(false);
-  const [isGAIBottomSheetOpen, setIsGAIBottomSheetOpen] = useState(false);
-  const [wakeDetectedPrompt, setWakeDetectedPrompt] = useState<string | undefined>();
-
-  // Silent Voice Wake-word Listener strictly on Homescreen
-  const { hasMicPermission } = useGAIWakeWord({
-    onWake: (detectedPrompt) => {
-      if (typeof window !== 'undefined' && 'vibrate' in navigator) {
-        try {
-          navigator.vibrate([30, 50, 30]);
-        } catch {}
-      }
-
-      // Open floating bottomsheet on homescreen with awakened glowing gradient pill
-      setIsGAIAwakened(true);
-      setIsGAIBottomSheetOpen(true);
-      if (detectedPrompt) {
-        setWakeDetectedPrompt(detectedPrompt);
-      }
-    },
-    // Strictly active on homescreen only; completely turned off across all other screens
-    isHomeScreen: currentScreen === 'homepage' && !isGAIBottomSheetOpen && !isOnboarding,
-  });
-
   const handleOpenChat = (prompt?: string) => {
-    // When pill is tapped on homescreen (or Ask GAI is tapped in other pages),
-    // open the same default previous full GAI Chat screen
-    setIsGAIAwakened(false);
-    setIsGAIBottomSheetOpen(false);
+    // Open full GAI Chat screen
     setChatInitialPrompt(prompt);
     navigateForward('gai_chat');
   };
@@ -369,7 +340,6 @@ export default function App() {
           <div className="w-full h-[100dvh] max-h-[100dvh] overflow-y-auto flex flex-col justify-start pb-6 absolute inset-0 z-0 bg-[#F7F7F5]">
             <HeroSection
               preferences={savedPreferences}
-              isAwakened={isGAIAwakened}
               hasNewProfileItem={hasNewProfileItem}
               onOpenChat={() => handleOpenChat()}
               onOpenMyGoa={() => handleOpenMyGoa()}
@@ -710,73 +680,6 @@ export default function App() {
                     Save
                   </button>
                 </div>
-              </motion.div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Smooth Floating Half-Screen GAI BottomSheet (Appears ONLY on homescreen when user says 'Hey GAI!') */}
-        <AnimatePresence>
-          {currentScreen === 'homepage' && isGAIBottomSheetOpen && (
-            <div className="fixed inset-0 z-[9990] flex items-end justify-center pointer-events-none select-none">
-              {/* Dimmed Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => {
-                  setIsGAIBottomSheetOpen(false);
-                  setIsGAIAwakened(false);
-                  setWakeDetectedPrompt(undefined);
-                }}
-                className="absolute inset-0 bg-black/40 backdrop-blur-xs pointer-events-auto cursor-pointer"
-              />
-
-              {/* Floating Half-Screen Bottomsheet Container */}
-              <motion.div
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 28, stiffness: 320 }}
-                className="w-full max-w-[430px] h-[58dvh] max-h-[62dvh] bg-[#F7F7F5] rounded-t-[32px] shadow-[0_-14px_50px_rgba(0,0,0,0.28)] border-t border-white/80 pointer-events-auto flex flex-col overflow-hidden relative z-10"
-              >
-                <GAIChatPage
-                  preferences={savedPreferences}
-                  initialPrompt={wakeDetectedPrompt}
-                  isBottomSheet={true}
-                  autoStartMic={true}
-                  onCloseBottomSheet={() => {
-                    setIsGAIBottomSheetOpen(false);
-                    setIsGAIAwakened(false);
-                    setWakeDetectedPrompt(undefined);
-                  }}
-                  onExpandToFullScreen={() => {
-                    setIsGAIBottomSheetOpen(false);
-                    setIsGAIAwakened(false);
-                    setChatInitialPrompt(wakeDetectedPrompt);
-                    navigateForward('gai_chat');
-                  }}
-                  onBack={() => {
-                    setIsGAIBottomSheetOpen(false);
-                    setIsGAIAwakened(false);
-                  }}
-                  savedItineraries={savedItineraries}
-                  onSaveItinerary={handleSaveItinerary}
-                  onRemoveItinerary={handleRemoveItinerary}
-                  savedPlaces={savedPlaces}
-                  onToggleSavePlace={handleToggleSavePlace}
-                  onNavigateScreen={(screen, initialTab) => {
-                    setIsGAIBottomSheetOpen(false);
-                    setIsGAIAwakened(false);
-                    if (screen === 'my_goa' && initialTab) {
-                      setMyGoaInitialTab(initialTab);
-                    }
-                    navigateForward(screen as any);
-                  }}
-                  onUpdateName={handleUpdateName}
-                  onUpdatePreferences={handleUpdatePreferences}
-                />
               </motion.div>
             </div>
           )}
