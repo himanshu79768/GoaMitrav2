@@ -58,6 +58,48 @@ const getHeroDetails = (monthStr: string = '') => {
   };
 };
 
+export interface GreetingInfo {
+  greeting: string;
+  subtitle: string;
+  timePeriod: 'morning' | 'afternoon' | 'evening' | 'night';
+}
+
+const getTimeBasedGreeting = (travelMonth?: string): GreetingInfo => {
+  const hour = new Date().getHours();
+  const month = travelMonth || 'today';
+
+  // 04:00 - 11:59 -> Morning
+  if (hour >= 4 && hour < 12) {
+    return {
+      greeting: 'Good morning,',
+      subtitle: `Ready to explore sunny Goa in ${month}?\nLet’s plan your morning adventure.`,
+      timePeriod: 'morning',
+    };
+  }
+  // 12:00 - 16:59 -> Afternoon
+  if (hour >= 12 && hour < 17) {
+    return {
+      greeting: 'Good afternoon,',
+      subtitle: `Ready for beach cafes & heritage in ${month}?\nLet’s plan your afternoon stroll.`,
+      timePeriod: 'afternoon',
+    };
+  }
+  // 17:00 - 20:59 -> Evening
+  if (hour >= 17 && hour < 21) {
+    return {
+      greeting: 'Good evening,',
+      subtitle: `Catching the golden sunset in ${month}?\nLet’s find the best twilight spots.`,
+      timePeriod: 'evening',
+    };
+  }
+  // 21:00 - 03:59 -> Night
+  return {
+    greeting: 'Good night,',
+    subtitle: `Enjoying Goa’s night breeze in ${month}?\nStargazing & calm waves await.`,
+    timePeriod: 'night',
+  };
+};
+
 const renderSeasonIcon = (season: 'summer' | 'winter' | 'rainy') => {
   if (season === 'rainy') {
     return (
@@ -152,6 +194,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   // Dynamic seasonal hero image selection based on travel month
   const currentHero = getHeroDetails(preferences.travelMonth);
+
+  // Dynamic real-time greeting state with periodic minute refresh
+  const [greetingInfo, setGreetingInfo] = useState<GreetingInfo>(() =>
+    getTimeBasedGreeting(preferences.travelMonth)
+  );
+
+  useEffect(() => {
+    setGreetingInfo(getTimeBasedGreeting(preferences.travelMonth));
+    const timer = setInterval(() => {
+      setGreetingInfo(getTimeBasedGreeting(preferences.travelMonth));
+    }, 60000);
+    return () => clearInterval(timer);
+  }, [preferences.travelMonth]);
 
   return (
     <div className="relative isolate pt-5 pb-5 px-5 select-none">
@@ -380,27 +435,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       </div>
 
-      {/* Greeting Area */}
+      {/* Greeting Area with Real-Time Dynamic Salutation */}
       <div className="mt-7 mb-5">
         <h2 className="text-[23px] font-semibold text-[#111111] tracking-tight leading-snug">
-          Good morning,
+          {greetingInfo.greeting}
         </h2>
 
         {/* User Name with Dynamic Seasonal Icon */}
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-[35px] font-extrabold text-[#111111] tracking-tight truncate max-w-[280px]">
-            {preferences.name || 'User'}
+            {preferences.name || 'Explorer'}
           </span>
 
           {/* Dynamic Season Icon (Summer Sun, Winter Cold Snowflake, Rainy Rain Cloud) */}
           {renderSeasonIcon(currentHero.season)}
         </div>
 
-        {/* Subtitle with Travel Month context */}
-        <p className="mt-2 text-[14.5px] font-medium text-[#4B5763] leading-[1.38]">
-          Ready to explore Goa in {preferences.travelMonth || 'today'}?
-          <br />
-          Let’s plan something amazing.
+        {/* Subtitle with Real-Time & Travel Month context */}
+        <p className="mt-2 text-[14.5px] font-medium text-[#4B5763] leading-[1.38] whitespace-pre-line">
+          {greetingInfo.subtitle}
         </p>
       </div>
 

@@ -726,9 +726,12 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
 
   const [attachedImage, setAttachedImage] = useState<AttachedImage | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isAttachmentSheetOpen, setIsAttachmentSheetOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const recognitionRef = useRef<any>(null);
 
   // Message Interaction States
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -879,6 +882,81 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     );
   }, []);
 
+  // Cleanup Speech Recognition on unmount
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+    };
+  }, []);
+
+  const toggleVoiceInput = () => {
+    triggerHaptic(12);
+
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      setErrorMessage('Voice typing is not supported in this browser.');
+      setTimeout(() => setErrorMessage(null), 3500);
+      return;
+    }
+
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-IN';
+
+      recognition.onstart = () => {
+        setIsListening(true);
+        setErrorMessage(null);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = Array.from(event.results)
+          .map((result: any) => result[0].transcript)
+          .join('');
+        if (transcript) {
+          setInput(transcript);
+        }
+      };
+
+      recognition.onerror = (e: any) => {
+        if (e.error === 'not-allowed') {
+          setErrorMessage('Microphone access denied. Please enable microphone permissions in your browser.');
+        } else if (e.error !== 'no-speech' && e.error !== 'aborted') {
+          setErrorMessage('Voice input error. Please try again.');
+        }
+        setIsListening(false);
+        setTimeout(() => setErrorMessage(null), 3500);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.warn('SpeechRecognition start error:', err);
+      setIsListening(false);
+    }
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -940,6 +1018,13 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     if ((!text && !attachedImage) || isLoading) return;
 
     triggerHaptic(15);
+
+    if (isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+      setIsListening(false);
+    }
 
     const userTime = format12HourTime();
     const currentAttachment = attachedImage;
@@ -1846,6 +1931,33 @@ CRITICAL RULES:
               className="w-full bg-transparent text-[14.5px] font-medium text-gray-900 placeholder-gray-400 outline-none"
             />
           </div>
+
+          {/* Voice Microphone Button (Directly next to Send button) */}
+          <button
+            type="button"
+            onClick={toggleVoiceInput}
+            className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all cursor-pointer shadow-xs active:scale-95 ${
+              isListening
+                ? 'bg-gradient-to-tr from-red-500 to-rose-600 text-white animate-pulse shadow-[0_0_14px_rgba(239,68,68,0.5)] border-transparent'
+                : 'bg-white border border-gray-200 text-gray-700 hover:text-[#FF6B4A] hover:bg-[#FFF2EE] hover:border-[#FF6B4A]/40'
+            }`}
+            title={isListening ? 'Stop listening' : 'Voice typing'}
+            aria-label={isListening ? 'Stop listening' : 'Start voice input'}
+          >
+            <svg
+              className={`w-5 h-5 ${isListening ? 'animate-pulse' : ''}`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="22" />
+            </svg>
+          </button>
 
           {/* Send Button */}
           <button
