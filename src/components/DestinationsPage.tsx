@@ -50,7 +50,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Restored 16th-century river fortress overlooking the Mandovi estuary. High laterite stone ramparts and historic brass cannons.',
     warningNote: 'Closed on Mondays. Last entry at 5:00 PM.',
     tags: ['Historic fort', 'Sea ramparts', 'Uncrowded'],
-    image: 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=700&auto=format&fit=crop&q=80',
+    image: 'https://media.assettype.com/deccanherald%2F2024-05%2F43de3cf9-97d2-4a57-9d99-16b75841ee2d%2Ffile7v4ykn10tol18133slbx.jpg?rect=0%2C0%2C3884%2C2185&w=900&auto=format%2Ccompress&fit=max',
     timings: '9:30 AM – 5:30 PM (Tuesday to Sunday, Closed Mondays)',
     photographyRules: 'Handheld cameras & phones allowed. Drones require prior GSIDC permit.',
     entryFee: '₹50 for adults, ₹25 for students, Free for kids under 10',
@@ -73,7 +73,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Dramatic red laterite cliffside fort offering uninterrupted 360-degree views of Vagator Beach, Ozran cove, and Chapora river.',
     warningNote: 'Steep cobblestone incline; wear supportive walking shoes.',
     tags: ['Sunset panorama', 'Red laterite', 'Scenic view'],
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRs9XuaGRZEyDHlGsBFK_Kn8tUkboP680ONAg54kRXc5A&s=10',
     timings: 'Open 24 hours (Recommended sunrise to sunset)',
     photographyRules: 'Photography allowed everywhere. Sunset tripod setups welcome.',
     entryFee: 'Free entry',
@@ -96,7 +96,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'UNESCO World Heritage 16th-century baroque monument housing the sacred relics of St. Francis Xavier. Exemplary stone architecture.',
     warningNote: 'Modest dress code required: shoulders and knees must be covered.',
     tags: ['UNESCO Heritage', 'Baroque architecture', 'Historic monument'],
-    image: 'https://images.unsplash.com/photo-1548013146-72479768bbaa?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKMJ_DUcCIEgzzaT5y9BnbhrHmZPBKnPV05ngT3ooXjA&s=10',
     timings: '9:00 AM – 6:30 PM (Sunday open from 10:30 AM after Mass)',
     photographyRules: 'Photography allowed in courtyard. No flash or selfie sticks inside the main altar and relic chapel.',
     entryFee: 'Free entry (Museum ticket ₹20)',
@@ -107,7 +107,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
   },
   {
     id: 'dest-cabo-de-rama',
-    name: 'Cabo de Rama Fort & Cliff Edge',
+    name: 'Cabo de Rama Fort & Beach',
     category: 'fort',
     tourismType: 'Heritage Tourism',
     matchBadge: 'Scenic pick',
@@ -119,7 +119,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Ancient coastal fortress perched 50 meters above turquoise waves where Lord Rama and Sita were believed to stay during exile.',
     warningNote: 'No railings on sheer sea cliff edges; exercise caution with children.',
     tags: ['Wild cliff', 'Sea fortress', 'Uncrowded'],
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXk_BLnRDZOud5fHPuE8nagVcIMuLlvYB53UfxNFb2mg&s=10',
     timings: '9:00 AM – 5:30 PM (All days)',
     photographyRules: 'Open photography permitted. Drone flights prohibited due to naval air corridors.',
     entryFee: 'Free entry',
@@ -144,7 +144,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'A ferry-only river island where old Goan village life still moves slowly. Emerald paddy fields, ancestral Portuguese villas, and hill chapels.',
     warningNote: 'Vehicle ferry operates every 15 minutes; free for pedestrians and scooters.',
     tags: ['Ferry ride', 'Village culture', 'Uncrowded'],
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk1dCYTxIxIH6mPBdAoAHGZ9fL9Zrx68tDIVYfOmxmU58xjC2bkWX9Hqeo&s=10',
     timings: 'Ferries run from 6:00 AM to 11:30 PM daily',
     photographyRules: 'Street and landscape photography welcomed. Respect privacy when photographing villagers’ courtyards.',
     entryFee: 'Free (Vehicle ferry ₹10 for cars, free for scooters and passengers)',
@@ -167,7 +167,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Immersive guided walking tour through 130 acres of betel nut, vanilla, cardamom, and cinnamon trees followed by an authentic Goan buffet lunch.',
     warningNote: 'Wear flat shoes suitable for red earthen farm pathways.',
     tags: ['Spice tasting', 'Folk culture', 'Goan thali'],
-    image: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIUyveEhEJc5vkBySEHkiSn_cULHPjnJGaG-L3ijFeWg&s=10',
     timings: '9:00 AM – 4:30 PM daily',
     photographyRules: 'Photography allowed across all plantation trails and traditional lunch dining hall.',
     entryFee: '₹500 per person (Includes herbal welcome drink, guided tour, and buffet lunch)',
@@ -190,7 +190,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Walk through narrow cobblestone alleys framed by centuries-old heritage homes painted in indigo, ochre, and terracotta, with warm aroma of Goan bakeries.',
     warningNote: 'Residential area; speak softly and avoid blocking doorway access.',
     tags: ['Latin architecture', 'Bakery trail', 'Art galleries'],
-    image: 'https://images.unsplash.com/photo-1569388330292-79cc1ec67270?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGruvdlZpsZHqTMvPlz30Z9XRGyEkFyryoqZQksy0ZZw&s=10',
     timings: 'Best explored between 8:00 AM – 11:00 AM or 4:00 PM – 7:00 PM',
     photographyRules: 'Photography permitted on public alleys. Do not point cameras through private open home windows.',
     entryFee: 'Free to walk (Heritage gallery visits free)',
@@ -213,7 +213,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Premier ethnographic museum housing over 4,000 indigenous agrarian tools, antique cane carts, and colonial artisanal implements collected from old Goan families.',
     warningNote: 'Guided audio tours recommended to appreciate each ancient implement.',
     tags: ['Tribal heritage', 'Craft history', 'Artisanal tools'],
-    image: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSetPEyxFF7KmpZWIgdr-oVZsrt5ZMz8JlpzzNwIduptA&s=10',
     timings: '9:00 AM – 6:00 PM (All days)',
     photographyRules: 'Photography allowed without flash.',
     entryFee: '₹300 for adults, ₹150 for students',
@@ -238,7 +238,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Trek through a dense evergreen wildlife sanctuary in the Western Ghats to a cascading jungle waterfall and natural plunge pool that most tourists never find.',
     warningNote: 'Forest checkpost entry closes at 3:30 PM.',
     tags: ['Forest trek', 'Jungle waterfall', 'Uncrowded'],
-    image: 'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv6e96ErV9Uy6WDDxz2zG6t_DkV792n32E9BSxC8q7aA&s=10',
     timings: '9:00 AM – 4:00 PM (Entry permits issued at gate until 3:30 PM)',
     photographyRules: 'Nature photography allowed. Carry waterproof camera covers.',
     entryFee: '₹100 forest entry fee + ₹50 camera charge',
@@ -261,7 +261,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Cool misty mountain highway winding up to 800 meters elevation into the sub-tropical Sahyadri cloud forests. Panoramic canyon viewpoints and twin roaring waterfalls.',
     warningNote: 'Mountain fog can reduce road visibility; drive carefully on hairpin curves.',
     tags: ['Cloud forest', 'Misty hills', 'Bird watching'],
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfirU-IQVUZYVAqI0nbpRmEHg-BQnvveVpM0I1v9HB_g&s=10',
     timings: 'Highway open 24 hours (Day travel strongly recommended)',
     photographyRules: 'Landscape and wildlife photography permitted across forest lookouts.',
     entryFee: 'Free highway access',
@@ -286,7 +286,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'A serene nesting sanctuary for endangered Olive Ridley turtles. Zero loud beach shacks, zero commercial water sports—just whispering casuarina pine trees and golden surf.',
     warningNote: 'Strictly protected turtle nesting zone. No loud music or bright lights permitted.',
     tags: ['Secluded beach', 'Turtle nesting', 'Uncrowded'],
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtRS8DuIp869LP6p56lZSXpb9S2-2CWobRjqB__hXyCg&s=10',
     timings: 'Open sunrise to sunset (Night access restricted in nesting season)',
     photographyRules: 'Landscape photography allowed. Flash photography strictly banned near turtle enclosures.',
     entryFee: 'Free entry',
@@ -309,7 +309,7 @@ export const ALL_DESTINATIONS: DestinationItem[] = [
     description: 'Monolithic 6th-century laterite rock-cut caverns carved by ancient Buddhist and Vedic monks with Sanskrit inscriptions, located right beside a 50-meter waterfall.',
     warningNote: 'Water flow at falls is strongest during and immediately following the monsoon months.',
     tags: ['6th-century caves', 'Laterite rock-cut', 'Scenic waterfall'],
-    image: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=700&auto=format&fit=crop&q=80',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQRT8AdLZ5xXKqdGfbIrEkDVQ26K_njFpmxEMuW00VbqA&s=10',
     timings: '9:00 AM – 1:00 PM, 2:00 PM – 5:30 PM daily',
     photographyRules: 'Handheld photography permitted. Respect archaeological boundaries inside cave chambers.',
     entryFee: 'Free entry',
@@ -482,7 +482,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
         {/* Hero Card: "Beyond the obvious." */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[175px] flex items-end p-5">
           <img
-            src="https://images.unsplash.com/photo-1587474260584-136574528ed5?w=900&auto=format&fit=crop&q=80"
+            src="https://media.assettype.com/deccanherald%2F2024-05%2F43de3cf9-97d2-4a57-9d99-16b75841ee2d%2Ffile7v4ykn10tol18133slbx.jpg?rect=0%2C0%2C3884%2C2185&w=900&auto=format%2Ccompress&fit=max"
             alt="Reis Magos Fort Sunset"
             className="absolute inset-0 w-full h-full object-cover object-center"
           />
@@ -654,7 +654,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                 </div>
 
                 {/* Bottom Tag Specs: e.g. Ferry ride · Heritage · Uncrowded */}
-                <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-gray-500 text-[11px] font-semibold">
+                <div className="mt-2.5 pt-2 flex items-center justify-between text-gray-500 text-[11px] font-semibold">
                   <div className="flex items-center gap-2.5 truncate pr-2">
                     {item.tags.map((tag, idx) => (
                       <span key={idx} className="flex items-center gap-1 shrink-0">
