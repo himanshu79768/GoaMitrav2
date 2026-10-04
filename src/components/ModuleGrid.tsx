@@ -153,7 +153,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         {/* 3. Food Card - Fork & Spoon / Culinary Coral Color */}
         <ModuleCard
           title="Food"
-          description={"Local cuisine,\ncafes and more"}
+          description={"Local cuisine,\ncafes and \nmore"}
           bgColor="#FDECE8"
           onClick={onOpenFood}
           illustration={<FoodIllustration className="w-full h-full object-cover object-bottom-right" />}
