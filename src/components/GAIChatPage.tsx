@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI } from '@google/genai';
+import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { UserPreferences, SavedItineraryItem, SavedPlaceItem } from '../types/onboarding';
 import { ALL_DESTINATIONS } from './DestinationsPage';
 import { ACCURATE_VERIFIED_STAYS } from './StayPage';
@@ -199,13 +199,13 @@ function renderMarkdownTable(tableLines: string[]): React.ReactNode {
   const bodyRows = dataLines.slice(1).map((line) => splitCells(line));
 
   return (
-    <div className="my-2.5 overflow-x-auto rounded-xl border border-gray-200/90 shadow-2xs bg-white max-w-full">
+    <div className="my-2.5 overflow-x-auto rounded-[16px] bg-black/[0.03] border border-black/[0.04] p-1 shadow-2xs max-w-full">
       <table className="w-full text-left border-collapse text-[12.5px]">
         {headerCells.length > 0 && (
-          <thead className="bg-gray-100/90 border-b border-gray-200 text-gray-900 font-extrabold">
+          <thead className="bg-black/[0.04] text-gray-900 font-bold rounded-t-[12px]">
             <tr>
               {headerCells.map((cell, idx) => (
-                <th key={idx} className="px-3 py-2 border-r last:border-r-0 border-gray-200/80 whitespace-nowrap">
+                <th key={idx} className="px-3 py-2 border-r last:border-r-0 border-black/[0.04] whitespace-nowrap">
                   {renderInlineMarkdown(cell)}
                 </th>
               ))}
@@ -213,11 +213,11 @@ function renderMarkdownTable(tableLines: string[]): React.ReactNode {
           </thead>
         )}
         {bodyRows.length > 0 && (
-          <tbody className="divide-y divide-gray-100 text-gray-800">
+          <tbody className="divide-y divide-black/[0.03] text-gray-800">
             {bodyRows.map((row, rIdx) => (
-              <tr key={rIdx} className="hover:bg-gray-50/80 transition-colors">
+              <tr key={rIdx} className="hover:bg-white/60 transition-colors">
                 {row.map((cell, cIdx) => (
-                  <td key={cIdx} className="px-3 py-2 border-r last:border-r-0 border-gray-100 font-medium">
+                  <td key={cIdx} className="px-3 py-2 border-r last:border-r-0 border-black/[0.03] font-normal">
                     {renderInlineMarkdown(cell)}
                   </td>
                 ))}
@@ -368,7 +368,7 @@ const FormattedMessage: React.FC<{
         <ul key={key} className="my-2 space-y-1.5 pl-1">
           {currentBullets.map((b, idx) => (
             <li key={idx} className="flex items-start gap-2 text-[14px] leading-relaxed text-gray-800">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B4A] mt-2 shrink-0" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#007AFF] mt-2 shrink-0" />
               <span>{renderInlineMarkdown(b)}</span>
             </li>
           ))}
@@ -487,13 +487,13 @@ const FormattedMessage: React.FC<{
     <div className="space-y-1">
       {renderedElements}
 
-      {/* Structured Transport & Location Card */}
+      {/* Structured Transport & Location Card: iOS Card */}
       {hasTransportCard && (
-        <div className="my-2.5 bg-white rounded-2xl p-3.5 border border-gray-200/90 shadow-xs space-y-2.5">
+        <div className="my-2.5 bg-black/[0.03] rounded-[18px] p-3.5 border border-black/[0.04] shadow-2xs space-y-2.5">
           {/* Car / Scooter Row */}
           {carInfo && (
             <div className="flex items-start gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+              <div className="w-8 h-8 rounded-full bg-white border border-black/[0.04] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                 <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
                   <circle cx="7" cy="17" r="2" />
@@ -503,7 +503,7 @@ const FormattedMessage: React.FC<{
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[12.5px] font-bold text-gray-900 leading-tight">By Car / Scooter</div>
-                <div className="text-[12px] text-gray-500 leading-snug mt-0.5">
+                <div className="text-[12px] text-gray-600 leading-snug mt-0.5">
                   {renderInlineMarkdown(carInfo)}
                 </div>
               </div>
@@ -512,8 +512,8 @@ const FormattedMessage: React.FC<{
 
           {/* Bus / Ferry Row */}
           {busInfo && (
-            <div className="flex items-start gap-2.5 pt-2 border-t border-gray-100">
-              <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 mt-0.5">
+            <div className="flex items-start gap-2.5 pt-2 border-t border-black/[0.04]">
+              <div className="w-8 h-8 rounded-full bg-white border border-black/[0.04] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
                 <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M8 6v6" />
                   <path d="M16 6v6" />
@@ -525,7 +525,7 @@ const FormattedMessage: React.FC<{
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[12.5px] font-bold text-gray-900 leading-tight">By Bus / Ferry</div>
-                <div className="text-[12px] text-gray-500 leading-snug mt-0.5">
+                <div className="text-[12px] text-gray-600 leading-snug mt-0.5">
                   {renderInlineMarkdown(busInfo)}
                 </div>
               </div>
@@ -534,8 +534,8 @@ const FormattedMessage: React.FC<{
 
           {/* Location row */}
           {locationInfo && (
-            <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
-              <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-2 pt-2 border-t border-black/[0.04]">
+              <div className="w-8 h-8 rounded-full bg-white border border-black/[0.04] flex items-center justify-center shrink-0 shadow-2xs">
                 <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
@@ -543,13 +543,13 @@ const FormattedMessage: React.FC<{
               </div>
               <div className="min-w-0 flex-1">
                 <div className="text-[12px] font-bold text-gray-900 truncate">Destination</div>
-                <div className="text-[11.5px] text-gray-500 truncate">{locationInfo}</div>
+                <div className="text-[11.5px] text-gray-600 truncate">{locationInfo}</div>
               </div>
             </div>
           )}
 
           {/* Interactive Action Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-gray-100">
+          <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-black/[0.04]">
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${targetPlace}, Goa`)}${
                 userCoords ? `&origin=${userCoords.lat},${userCoords.lng}` : ''
@@ -557,7 +557,7 @@ const FormattedMessage: React.FC<{
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => triggerHaptic(10)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all shadow-xs"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#007AFF] text-white hover:brightness-105 active:scale-95 transition-all shadow-xs"
             >
               <span>🧭 Directions</span>
               <span>↗</span>
@@ -570,7 +570,7 @@ const FormattedMessage: React.FC<{
                   triggerHaptic(12);
                   onQuickAction(`Best food and cafes near ${targetPlace}?`);
                 }}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-95 transition-all cursor-pointer border border-gray-200/60"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-white text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-black/[0.04] shadow-2xs"
               >
                 <span>🍴 Food nearby</span>
               </button>
@@ -583,7 +583,7 @@ const FormattedMessage: React.FC<{
                   triggerHaptic(12);
                   onQuickAction(`Best time of day and photo spots at ${targetPlace}?`);
                 }}
-                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-[11px] font-semibold bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:scale-95 transition-all cursor-pointer border border-gray-200/60"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-white text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-black/[0.04] shadow-2xs"
               >
                 <span>📸 Photo tips</span>
               </button>
@@ -688,9 +688,9 @@ const TypewriterFormattedMessage: React.FC<{
         onQuickAction={onQuickAction}
       />
       {isTyping && (
-        <span className="inline-flex items-center gap-1.5 mt-2 text-[#FF6B4A] text-[11px] font-bold">
-          <span className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-ping" />
-          <span className="text-[#FF6B4A]/90 italic">GAI typing...</span>
+        <span className="inline-flex items-center gap-1.5 mt-2 text-[#177F91] text-[11px] font-bold">
+          <span className="w-2 h-2 rounded-full bg-[#177F91] animate-ping" />
+          <span className="text-[#177F91]/90 italic">GAI typing...</span>
         </span>
       )}
     </div>
@@ -714,7 +714,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Hello ${preferences.name || 'there'}! 🌴 I'm GAI, your autonomous Goa travel companion with full app control powers.\n\nAsk me for real-time recommendations, or say **"Prepare 3-Day Itinerary"**. Once I create it, you can simply say **"save it"** and I will do the work automatically on your behalf!\n\nYou can also tell me **"Save Curlies"**, **"Take me to hotels"**, or **"Change my name"** anytime.`,
+      content: `Hello ${preferences.name || 'there'}! 👋 I am GAI, your personal travel assistant for Goa.\n\nAsk me for real-time recommendations, or say **"Prepare 3-Day Itinerary"**. Once created, you can simply say **"save it"** and I will store it for you in **My Goa**.\n\nYou can also ask me to **"Save Curlies"**, **"Take me to stays"**, or **"Change my name"** anytime.`,
       timestamp: format12HourTime(),
     },
   ]);
@@ -1093,7 +1093,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
 - Currently at: ${locationState.placeName} (Lat: ${locationState.lat}, Lng: ${locationState.lng})
 - Note: User is planning their Goa trip from ${locationState.placeName}. Provide distances assuming their arrival at Goa or answer distance from their city to Goa if asked.`;
 
-      const systemInstruction = `You are GAI (Goa Artificial Intelligence), a smart, hyper-local AI travel companion for Goa, India with REAL-TIME GOOGLE SEARCH GROUNDING and MULTIMODAL VISION ANALYSIS.
+      const systemInstruction = `You are GAI (Goa Artificial Intelligence), a smart, hyper-local AI travel companion for Goa, India with real-time location grounding and multimodal vision analysis.
 User profile:
 - Name: ${userName}
 - Visiting in: ${travelMonth}
@@ -1103,65 +1103,51 @@ User profile:
 SITUATIONAL & TIME AWARENESS:
 ${locationPrompt}
 - Current Local Time: ${currentTimeStr} (${timeOfDay})
-- When the user asks for "nearby food", "sunset spots", "live events", "comparison", or "places to visit", use this exact time of day and location to suggest spots that are open right now with realistic distances in km and driving times!
 
-FORMATTING RULES (TABLES & HEADINGS):
-- When comparing places, beaches, hotels, transport options, or prices, ALWAYS render a Markdown Table! (e.g. | Beach | Vibe | Sunset Rating |).
-- Use H1 (#), H2 (##), H3 (###), and H4 (####) for headings depending on topic importance to make key sections clear and scannable!
-- Use bullet points (- ) and numbered lists (1. ) for step-by-step guides.
+CRITICAL RESPONSE RULES:
+1. LIGHTNING FAST & CONCISE (AVOID LENGTHY PARAGRAPHS):
+   - Keep all responses short, sweet, crisp, and to the point.
+   - Avoid long, dense blocks of text. Use 2–4 clean bullet points or 1–2 brief paragraphs (2-3 sentences max).
+   - Answer directly and immediately without unnecessary fluff.
 
-IMAGE & VISION ANALYSIS:
-- If the user attaches an image, analyze it thoroughly! Identify Goan dishes, restaurant menus, beach signs, historic architecture, Portuguese villas, churches, maps, or scooter rental agreements.
+2. SWEET & FORMAL TONE:
+   - Maintain a courteous, warm, refined, and sweet formal tone throughout.
+   - Be polite and helpful (e.g., "Certainly, here is the recommendation for you...", "It is a pleasure to assist you...").
 
-REAL-TIME GOOGLE SEARCH:
-- Use Google Search to fetch up-to-the-minute info on Goa event schedules, current road conditions, ferry timings, restaurant opening status, and live weather.
+3. LANGUAGE & SCRIPT RULES (STRICT):
+   - If the user asks in English (or Roman script / Roman English): **ALWAYS STICK TO ROMAN ENGLISH.** Do NOT use Devanagari script for English queries.
+   - ONLY use Devanagari script if the user explicitly asks or writes in Hindi, Marathi, or Konkani:
+     * Hindi (हिन्दी / Hinglish): Reply in sweet, formal **Devanagari Hindi (देवनागरी हिन्दी)**.
+     * Marathi (मराठी): Reply in polite, formal **Devanagari Marathi (देवनागरी मराठी)**.
+     * Konkani (कोंकणी): Reply in authentic, sweet **Devanagari Konkani (देवनागरी कोंकणी)**.
 
-CRITICAL RULES:
-1. BREVITY & SMARTNESS: Keep responses punchy, concise, and scannable!
-2. GREETINGS: Do NOT start responses with "Dev Borem Korum" or repeated greetings.
-3. LANGUAGE RULE: ALWAYS reply in the EXACT SAME LANGUAGE and SCRIPT that the user writes to you in (English, Marathi, Konkani, Hindi, Romanized Hinglish).
-4. IDENTITY: If asked who you are or who created you, reply ONLY with: "I am GAI (Goa AI), created by GoaMitra. I'm a prototype specifically designed and structured by Khethana, Himanshu, Siddhi and Abhishekkumar."
-5. STRUCTURED DIRECTIONS:
-   By Car/Auto/Scooter: <approximate time and km distance from user's location, route advice>
-   By Bus/Ferry: <bus routes, stops or ferry crossing>
-   Location: <Exact Place Name in Goa>
-6. PREPARED ITINERARIES & TRIP PLANS:
-   - When the user asks for an itinerary, trip plan, multi-day schedule, or customized travel schedule:
-     * START your message with a clear top header: # Itinerary: <Trip Title>
-     * Break the itinerary down into day-by-day sections (e.g. ### Day 1: <Area/Theme>, ### Day 2: <Area/Theme>) with Morning, Afternoon, and Evening activities.
-   - For all regular questions, recommendations, food tips, taxi rates, or casual conversation, DO NOT format or label it as an itinerary. Answer directly, concisely, and helpfully.
-7. AUTONOMOUS APP POWERS (EXECUTE ACTIONS ON USER'S BEHALF):
-   You have executive control powers over the GoaMitra app to do work automatically on behalf of the user.
-   When the user asks you to save an itinerary (e.g. "save it", "save this plan", "add to my goa"), bookmark a place, open a screen, or change their name/preferences, you can execute the action automatically by appending the appropriate action command tag on its own line at the very end of your response:
+4. TABLES & CLEAN FORMATTING:
+   - When comparing multiple beaches, stays, or transportation options, render a clean Markdown table.
+   - Use bold titles and structured bullet points for readability.
 
-   [ACTION:SAVE_ITINERARY] -> Automatically saves the generated itinerary to My Goa.
-   [ACTION:SAVE_PLACE:Exact Place Name] -> Automatically bookmarks any fort, beach, landmark, stay/hotel, or restaurant into My Goa (Liked Places).
-   [ACTION:REMOVE_PLACE:Exact Place Name] -> Removes a place from My Goa liked places.
-   [ACTION:REMOVE_ITINERARY] -> Removes the latest saved itinerary from My Goa.
-   [ACTION:NAVIGATE:my_goa] -> Automatically redirects to My Goa dashboard.
-   [ACTION:NAVIGATE:stay] -> Automatically redirects to the Stays & Hotels section.
-   [ACTION:NAVIGATE:destinations] -> Automatically redirects to Destinations & Forts.
-   [ACTION:NAVIGATE:travel] -> Automatically redirects to Travel & Cab/Scooter transit.
-   [ACTION:NAVIGATE:food] -> Automatically redirects to Food & Dining.
-   [ACTION:NAVIGATE:culture] -> Automatically redirects to Culture & Festivals.
-   [ACTION:NAVIGATE:emergency] -> Automatically redirects to Emergency Helplines.
-   [ACTION:NAVIGATE:coupons] -> Automatically redirects to Discount Coupons.
-   [ACTION:NAVIGATE:homepage] -> Automatically redirects to Homepage.
-   [ACTION:UPDATE_NAME:NewName] -> Updates the user's name across the app.
-   [ACTION:UPDATE_PREF:month=December;group=4;style=Adventure] -> Updates user's trip preferences.
+5. IDENTITY:
+   - If asked who you are or who created you, reply with: "I am GAI (Goa AI), created by GoaMitra. I'm a prototype specifically designed and structured by Khethana, Himanshu, Siddhi and Abhishekkumar."
 
-   - When user says "save it" after receiving an itinerary:
-     Acknowledge: "I've saved your custom itinerary directly to your **My Goa** dashboard! 🌴 It is now stored under your Saved Itineraries. Would you like me to open My Goa now, or customize anything else?"
-     Tag: [ACTION:SAVE_ITINERARY]
-   - When user says "save [place name]" or "bookmark [place name]":
-     Acknowledge: "I've added **[Place Name]** to your liked places in **My Goa**! ❤️"
-     Tag: [ACTION:SAVE_PLACE:<Place Name>]
-   - When user says "open my goa" or "take me to my goa":
-     Acknowledge: "Opening your **My Goa** personal dashboard now! 🌴"
-     Tag: [ACTION:NAVIGATE:my_goa]
-   - When user says "take me to stays" or "show hotels":
-     Acknowledge: "Taking you to Goa's verified stays & beachfront resorts now! 🏨"
-     Tag: [ACTION:NAVIGATE:stay]`;
+6. PREPARED ITINERARIES:
+   - When the user specifically requests an itinerary or multi-day trip plan:
+     * Header: # Itinerary: <Trip Title>
+     * Keep each day concise (Morning, Afternoon, Evening bullets).
+   - For all standard questions, keep answers direct and short without labeling as an itinerary.
+
+7. AUTONOMOUS APP POWERS (ACTION TAGS):
+   Append action command tags on their own line at the very end when user intends:
+   [ACTION:SAVE_ITINERARY] -> Saves generated itinerary to My Goa.
+   [ACTION:SAVE_PLACE:Exact Place Name] -> Bookmarks place to My Goa.
+   [ACTION:REMOVE_PLACE:Exact Place Name] -> Removes place from My Goa.
+   [ACTION:NAVIGATE:my_goa] -> Opens My Goa.
+   [ACTION:NAVIGATE:stay] -> Opens Stays & Hotels.
+   [ACTION:NAVIGATE:destinations] -> Opens Destinations.
+   [ACTION:NAVIGATE:travel] -> Opens Travel transit.
+   [ACTION:NAVIGATE:food] -> Opens Food & Dining.
+   [ACTION:NAVIGATE:culture] -> Opens Culture & Festivals.
+   [ACTION:NAVIGATE:emergency] -> Opens Emergency.
+   [ACTION:NAVIGATE:coupons] -> Opens Coupons.
+   [ACTION:UPDATE_NAME:NewName] -> Updates user name.`;
 
       // Construct Gemini Contents Array
       const historyContents: any[] = [];
@@ -1196,22 +1182,23 @@ CRITICAL RULES:
       let response;
       try {
         response = await ai.models.generateContent({
-          model: 'gemini-3.5-flash-lite',
+          model: 'gemini-3.1-flash-lite',
           contents: historyContents,
           config: {
-            tools: [{ googleSearch: {} }],
             systemInstruction,
-            temperature: 0.6,
+            temperature: 0.4,
+            thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
           },
         });
-      } catch (searchErr) {
-        console.warn('Fallback standard generateContent without search tool', searchErr);
+      } catch (liteErr) {
+        console.warn('Fallback standard generateContent', liteErr);
         response = await ai.models.generateContent({
-          model: 'gemini-3.5-flash',
+          model: 'gemini-3.8-flash',
           contents: historyContents,
           config: {
             systemInstruction,
-            temperature: 0.7,
+            temperature: 0.4,
+            thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
           },
         });
       }
@@ -1540,7 +1527,7 @@ CRITICAL RULES:
   };
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden font-sans">
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F1F1F1] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden font-sans">
       {/* Hidden File Inputs for Camera and Gallery */}
       <input
         type="file"
@@ -1558,8 +1545,8 @@ CRITICAL RULES:
         className="hidden"
       />
 
-      {/* Top Bar: Sticky Header */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.04)]">
+      {/* Top Bar: Borderless iOS Header */}
+      <header className="shrink-0 z-30 bg-[#F1F1F1]/80 backdrop-blur-2xl px-4 py-2.5 flex items-center justify-between">
         {/* Back Button */}
         <button
           type="button"
@@ -1567,11 +1554,11 @@ CRITICAL RULES:
             triggerHaptic(10);
             onBack();
           }}
-          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+          className="w-9 h-9 rounded-full bg-black/[0.04] hover:bg-black/[0.07] active:scale-95 flex items-center justify-center text-gray-800 transition-all cursor-pointer shadow-2xs"
           aria-label="Back to Homepage"
         >
           <svg
-            className="w-5 h-5"
+            className="w-5 h-5 text-gray-700"
             viewBox="0 0 20 20"
             fill="none"
             stroke="currentColor"
@@ -1583,13 +1570,13 @@ CRITICAL RULES:
           </svg>
         </button>
 
-        {/* Title & Subtitle */}
+        {/* Title & Subtitle (No green dot) */}
         <div className="flex flex-col items-center">
-          <h1 className="text-[19px] font-black text-gray-900 tracking-tight leading-tight">
-            GAI
+          <h1 className="text-[17px] font-bold text-gray-900 tracking-[-0.01em] leading-tight">
+            GAI Assistant
           </h1>
-          <span className="text-[11.5px] font-medium text-gray-500 leading-tight">
-            Your Goa Travel Assistant
+          <span className="text-[11px] font-medium text-gray-500 leading-tight">
+            Goa Travel Intelligence
           </span>
         </div>
 
@@ -1597,9 +1584,12 @@ CRITICAL RULES:
         <div className="w-9 h-9" />
       </header>
 
+      {/* Top Fading Gradient: Smooth sinking effect behind header */}
+      <div className="pointer-events-none absolute top-[52px] left-0 right-0 h-10 bg-gradient-to-b from-[#F1F1F1] via-[#F1F1F1]/85 to-transparent z-20" />
+
       {/* Messages Feed */}
       <div
-        className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-3 pb-5 space-y-4 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {/* Render Chat Messages */}
@@ -1609,12 +1599,12 @@ CRITICAL RULES:
           if (isUser) {
             return (
               <div key={msg.id} className="flex items-end justify-end gap-2 pl-8">
-                {/* User Message Bubble */}
+                {/* User Message Bubble: Ultra-Premium iOS iMessage Gradient */}
                 <div className="flex flex-col items-end">
-                  <div className="px-4 py-2.5 rounded-2xl rounded-tr-xs bg-[#FFE7E0] border border-[#FFD8CE] shadow-xs max-w-[285px] space-y-2">
+                  <div className="px-4.5 py-3 rounded-[22px] rounded-br-[4px] bg-gradient-to-b from-[#007AFF] to-[#0062E0] text-white shadow-[0_4px_16px_rgba(0,122,255,0.25)] max-w-[290px] space-y-2">
                     {/* User Attached Image Preview */}
                     {msg.imagePreview && (
-                      <div className="rounded-xl overflow-hidden border border-black/10 max-h-48 w-full bg-black/5">
+                      <div className="rounded-[16px] overflow-hidden border border-white/20 max-h-48 w-full bg-black/10">
                         <img
                           src={msg.imagePreview}
                           alt="User attachment"
@@ -1623,21 +1613,21 @@ CRITICAL RULES:
                       </div>
                     )}
                     {msg.content && (
-                      <p className="text-[14px] font-medium text-gray-900 leading-relaxed whitespace-pre-wrap">
+                      <p className="text-[14.5px] font-normal text-white leading-relaxed whitespace-pre-wrap">
                         {msg.content}
                       </p>
                     )}
                   </div>
-                  {/* Timestamp in 12h format (NO double ticks) */}
+                  {/* Timestamp in 12h format */}
                   <div className="flex items-center gap-1 mt-1 pr-1">
-                    <span className="text-[11px] text-gray-400 font-medium">
+                    <span className="text-[10.5px] text-gray-400 font-medium">
                       {msg.timestamp}
                     </span>
                   </div>
                 </div>
 
                 {/* User Avatar */}
-                <div className="w-8 h-8 rounded-full bg-[#FEE2D8] border border-[#FFD0C0] text-[#9A3412] flex items-center justify-center shrink-0 shadow-xs mb-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-b from-gray-200 to-gray-300 text-gray-700 flex items-center justify-center shrink-0 shadow-xs mb-3">
                   <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
                       fillRule="evenodd"
@@ -1650,14 +1640,11 @@ CRITICAL RULES:
             );
           }
 
-          // Assistant (GAI) Bubble
-          const isItinerary = isItineraryContent(msg.content);
-          const isItinerarySaved = savedItineraries?.some((i) => i.id === msg.id);
-
+          // Assistant (GAI) Bubble: Frosted Pearl Glass Card with Soft Glow
           return (
             <div key={msg.id} className="flex items-start gap-2.5 pr-2">
-              {/* Bot Avatar */}
-              <div className="w-8 h-8 rounded-full bg-[#E0F2FE] border border-[#BAE6FD] text-[#0284C7] flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+              {/* Bot Avatar: Gradient Teal iOS Badge */}
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#177F91] to-[#25A7BD] text-white flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(23,127,145,0.28)] mt-0.5 font-bold">
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72V7h4a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h4V5.72c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2zm-3 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm6 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-6 5h6a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z" />
                 </svg>
@@ -1665,7 +1652,7 @@ CRITICAL RULES:
 
               {/* Bot Message Bubble with Animated Typewriter Effect */}
               <div className="flex flex-col items-start max-w-[325px] min-w-0 flex-1">
-                <div className="px-4 py-3 rounded-3xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs text-gray-900 w-full">
+                <div className="px-4.5 py-3.5 rounded-[22px] rounded-tl-[4px] bg-white/95 backdrop-blur-xl border border-black/[0.04] shadow-[0_2px_14px_rgba(0,0,0,0.04)] text-gray-900 w-full">
                   <TypewriterFormattedMessage
                     msg={msg}
                     isLatestBot={msg.id === latestBotMessageId}
@@ -1675,24 +1662,24 @@ CRITICAL RULES:
                   />
                 </div>
 
-                {/* Autonomous Executed Action Card (Rendered when GAI has performed work automatically on behalf of the user) */}
+                {/* Autonomous Executed Action Card: Soft Fading Gradient */}
                 {msg.executedAction && (
                   <motion.div
                     initial={{ opacity: 0, y: 4, scale: 0.98 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    className="mt-2 w-full bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-300/80 rounded-2xl p-3 shadow-xs flex items-center justify-between gap-2.5"
+                    className="mt-2 w-full bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/20 backdrop-blur-md rounded-[18px] p-3 shadow-xs flex items-center justify-between gap-2.5"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white flex items-center justify-center text-sm shrink-0 font-black shadow-xs">
-                        ⚡
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm shrink-0 font-black shadow-xs">
+                        ✓
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-200/70 px-1.5 py-0.5 rounded-md">
+                          <span className="text-[9.5px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-200/60 px-1.5 py-0.5 rounded-md">
                             Done on your behalf
                           </span>
                         </div>
-                        <div className="text-[12.5px] font-black text-gray-900 truncate mt-0.5">
+                        <div className="text-[12.5px] font-bold text-gray-900 truncate mt-0.5">
                           {msg.executedAction.title}
                         </div>
                         <div className="text-[11px] text-gray-600 font-medium truncate">
@@ -1705,7 +1692,7 @@ CRITICAL RULES:
                       <button
                         type="button"
                         onClick={msg.executedAction.onButtonClick}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-extrabold shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:brightness-105 text-white text-[11px] font-bold shrink-0 shadow-xs active:scale-95 transition-all cursor-pointer"
                       >
                         <span>{msg.executedAction.buttonText}</span>
                         <span>→</span>
@@ -1714,9 +1701,9 @@ CRITICAL RULES:
                   </motion.div>
                 )}
 
-                {/* Footer Bar: 12h Timestamp + Small Working Action Buttons (Copy, Share, Like, Dislike) */}
-                <div className="flex items-center justify-between w-full mt-1 px-1">
-                  <span className="text-[11px] text-gray-400 font-medium">
+                {/* Footer Bar: 12h Timestamp + Action Buttons */}
+                <div className="flex items-center justify-between w-full mt-1.5 px-1">
+                  <span className="text-[10.5px] text-gray-400 font-medium">
                     {msg.timestamp}
                   </span>
 
@@ -1725,8 +1712,8 @@ CRITICAL RULES:
                     <button
                       type="button"
                       onClick={() => handleCopy(msg.id, msg.content)}
-                      className={`p-1 rounded-md hover:bg-gray-100 transition-all text-xs flex items-center gap-1 cursor-pointer ${
-                        copiedId === msg.id ? 'text-green-600 font-bold' : 'hover:text-gray-700'
+                      className={`p-1 rounded-md hover:bg-black/[0.04] transition-all text-xs flex items-center gap-1 cursor-pointer ${
+                        copiedId === msg.id ? 'text-[#007AFF] font-bold' : 'hover:text-gray-700'
                       }`}
                       title="Copy text"
                     >
@@ -1744,7 +1731,7 @@ CRITICAL RULES:
                     <button
                       type="button"
                       onClick={() => handleShare(msg.content)}
-                      className="p-1 rounded-md hover:bg-gray-100 hover:text-gray-700 transition-all text-xs cursor-pointer"
+                      className="p-1 rounded-md hover:bg-black/[0.04] hover:text-gray-700 transition-all text-xs cursor-pointer"
                       title="Share advice"
                     >
                       <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -1760,8 +1747,8 @@ CRITICAL RULES:
                     <button
                       type="button"
                       onClick={() => toggleLike(msg.id)}
-                      className={`p-1 rounded-md hover:bg-gray-100 transition-all text-xs cursor-pointer ${
-                        likedIds.includes(msg.id) ? 'text-[#FF6B4A] fill-[#FF6B4A]' : 'hover:text-gray-700'
+                      className={`p-1 rounded-md hover:bg-black/[0.04] transition-all text-xs cursor-pointer ${
+                        likedIds.includes(msg.id) ? 'text-[#007AFF] fill-[#007AFF]' : 'hover:text-gray-700'
                       }`}
                       title="Helpful"
                     >
@@ -1774,7 +1761,7 @@ CRITICAL RULES:
                     <button
                       type="button"
                       onClick={() => toggleDislike(msg.id)}
-                      className={`p-1 rounded-md hover:bg-gray-100 transition-all text-xs cursor-pointer ${
+                      className={`p-1 rounded-md hover:bg-black/[0.04] transition-all text-xs cursor-pointer ${
                         dislikedIds.includes(msg.id) ? 'text-gray-800 fill-gray-800' : 'hover:text-gray-700'
                       }`}
                       title="Not helpful"
@@ -1790,24 +1777,24 @@ CRITICAL RULES:
           );
         })}
 
-        {/* Loading Indicator */}
+        {/* Loading Indicator: Frosted Glass iOS Pill */}
         {isLoading && (
           <div className="flex items-start gap-2.5 pr-6">
-            <div className="w-8 h-8 rounded-full bg-[#E0F2FE] border border-[#BAE6FD] text-[#0284C7] flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#177F91] to-[#25A7BD] text-white flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(23,127,145,0.28)]">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72V7h4a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h4V5.72c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2zm-3 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm6 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-6 5h6a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z" />
               </svg>
             </div>
-            <div className="px-4 py-2.5 rounded-2xl rounded-tl-xs bg-[#F4F4F6] border border-gray-200/60 shadow-xs flex items-center gap-2">
-              <span className="text-xs font-semibold text-gray-600">GAI is searching & analyzing...</span>
+            <div className="px-4 py-2.5 rounded-[20px] rounded-tl-[4px] bg-white/95 backdrop-blur-md border border-black/[0.04] shadow-xs flex items-center gap-2">
+              <span className="text-xs font-semibold text-gray-700">GAI is analyzing...</span>
               <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-bounce" />
+                <span className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce" />
                 <span
-                  className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-bounce"
+                  className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce"
                   style={{ animationDelay: '0.15s' }}
                 />
                 <span
-                  className="w-2 h-2 rounded-full bg-[#FF6B4A] animate-bounce"
+                  className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce"
                   style={{ animationDelay: '0.3s' }}
                 />
               </div>
@@ -1818,8 +1805,11 @@ CRITICAL RULES:
         <div ref={messagesEndRef} className="h-1 shrink-0" />
       </div>
 
-      {/* Bottom Bar: Quick Chips, Attachment Preview & Input Bar */}
-      <div className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/50 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] px-4 space-y-2">
+      {/* Bottom Fading Gradient: Smooth sinking effect above suggestions dock */}
+      <div className="pointer-events-none absolute bottom-[108px] left-0 right-0 h-10 bg-gradient-to-t from-[#F1F1F1] via-[#F1F1F1]/85 to-transparent z-20" />
+
+      {/* Bottom Bar: Floating Borderless iOS Glass Dock */}
+      <div className="shrink-0 z-30 bg-[#F1F1F1]/85 backdrop-blur-2xl pt-2 pb-[max(1rem,env(safe-area-inset-bottom))] px-4 space-y-2">
         {/* Quick Suggestion Chips */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
           {QUICK_PROMPTS.map((chip) => (
@@ -1830,7 +1820,7 @@ CRITICAL RULES:
                 triggerHaptic(12);
                 handleSendMessage(chip.prompt);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200/80 shadow-xs hover:border-[#FF6B4A]/50 hover:bg-[#FFF5F2] active:scale-95 transition-all text-xs font-semibold text-gray-700 whitespace-nowrap cursor-pointer shrink-0"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-black/[0.04] shadow-[0_1px_4px_rgba(0,0,0,0.03)] hover:bg-white hover:border-black/10 active:scale-95 transition-all text-xs font-semibold text-gray-800 whitespace-nowrap cursor-pointer shrink-0"
             >
               <span>{chip.icon}</span>
               <span>{chip.label}</span>
@@ -1840,7 +1830,7 @@ CRITICAL RULES:
 
         {/* File / General Error Banner */}
         {errorMessage && (
-          <div className="text-[11px] text-red-500 font-medium bg-red-50 border border-red-200 px-3 py-1 rounded-full text-center">
+          <div className="text-[11px] text-rose-600 font-medium bg-rose-50 border border-rose-200 px-3 py-1 rounded-full text-center">
             {errorMessage}
           </div>
         )}
@@ -1852,10 +1842,10 @@ CRITICAL RULES:
               initial={{ opacity: 0, y: 10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
-              className="p-2 bg-white rounded-2xl border border-gray-200/90 shadow-xs flex items-center justify-between gap-3"
+              className="p-2.5 bg-white/95 backdrop-blur-md rounded-[20px] border border-black/[0.06] shadow-xs flex items-center justify-between gap-3"
             >
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-12 h-12 rounded-xl overflow-hidden border border-gray-200 shrink-0 bg-gray-100">
+                <div className="w-12 h-12 rounded-[14px] overflow-hidden border border-black/[0.06] shrink-0 bg-gray-100">
                   <img
                     src={attachedImage.dataUrl}
                     alt="Attachment thumbnail"
@@ -1875,7 +1865,7 @@ CRITICAL RULES:
                   triggerHaptic(10);
                   setAttachedImage(null);
                 }}
-                className="w-7 h-7 rounded-full bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-500 flex items-center justify-center text-xs font-bold transition-all cursor-pointer shrink-0"
+                className="w-7 h-7 rounded-full bg-black/[0.05] hover:bg-rose-100 hover:text-rose-600 text-gray-500 flex items-center justify-center text-xs font-bold transition-all cursor-pointer shrink-0"
                 title="Remove photo"
               >
                 ✕
@@ -1893,15 +1883,15 @@ CRITICAL RULES:
           className="flex items-center gap-2"
         >
           {/* Input Pill Container */}
-          <div className="flex-1 rounded-full bg-white border border-gray-200 shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-3 py-1.5 flex items-center gap-2 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
-            {/* PAPERCLIP / ATTACHMENT CLIP BUTTON */}
+          <div className="flex-1 rounded-full bg-black/[0.04] focus-within:bg-white border border-black/[0.04] focus-within:border-[#007AFF]/40 focus-within:ring-2 focus-within:ring-[#007AFF]/15 px-3.5 py-1.5 flex items-center gap-2 transition-all shadow-inner-xs">
+            {/* Attachment Button */}
             <button
               type="button"
               onClick={() => {
                 triggerHaptic(12);
                 setIsAttachmentSheetOpen(true);
               }}
-              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#FFE7E0] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center shrink-0 transition-all cursor-pointer"
+              className="w-8 h-8 rounded-full bg-black/[0.05] hover:bg-black/[0.09] text-gray-700 flex items-center justify-center shrink-0 transition-all cursor-pointer"
               title="Attach photo or take picture"
               aria-label="Attach photo or camera"
             >
@@ -1928,18 +1918,18 @@ CRITICAL RULES:
                   ? 'Ask about this photo...'
                   : 'Ask GAI anything about Goa...'
               }
-              className="w-full bg-transparent text-[14.5px] font-medium text-gray-900 placeholder-gray-400 outline-none"
+              className="w-full bg-transparent text-[14.5px] font-normal text-gray-900 placeholder-gray-400 outline-none"
             />
           </div>
 
-          {/* Voice Microphone Button (Directly next to Send button) */}
+          {/* Voice Microphone Button */}
           <button
             type="button"
             onClick={toggleVoiceInput}
-            className={`w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-all cursor-pointer shadow-xs active:scale-95 ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all cursor-pointer active:scale-95 ${
               isListening
-                ? 'bg-gradient-to-tr from-red-500 to-rose-600 text-white animate-pulse shadow-[0_0_14px_rgba(239,68,68,0.5)] border-transparent'
-                : 'bg-white border border-gray-200 text-gray-700 hover:text-[#FF6B4A] hover:bg-[#FFF2EE] hover:border-[#FF6B4A]/40'
+                ? 'bg-gradient-to-tr from-rose-500 to-red-600 text-white shadow-[0_0_16px_rgba(244,63,94,0.4)] animate-pulse'
+                : 'bg-black/[0.04] hover:bg-black/[0.07] text-gray-700'
             }`}
             title={isListening ? 'Stop listening' : 'Voice typing'}
             aria-label={isListening ? 'Stop listening' : 'Start voice input'}
@@ -1959,14 +1949,14 @@ CRITICAL RULES:
             </svg>
           </button>
 
-          {/* Send Button */}
+          {/* Send Button: Signature iOS Blue */}
           <button
             type="submit"
             disabled={(!input.trim() && !attachedImage) || isLoading}
-            className={`w-11 h-11 rounded-full flex items-center justify-center text-white shrink-0 shadow-md transition-all ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0 shadow-xs transition-all ${
               (input.trim() || attachedImage) && !isLoading
-                ? 'bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] hover:brightness-105 active:scale-95 cursor-pointer shadow-[0_4px_12px_rgba(255,107,74,0.35)]'
-                : 'bg-gray-300 text-gray-100 cursor-not-allowed shadow-none'
+                ? 'bg-gradient-to-b from-[#007AFF] to-[#0062E0] shadow-[0_2px_10px_rgba(0,122,255,0.35)] active:scale-95 cursor-pointer'
+                : 'bg-black/[0.06] text-gray-400 cursor-not-allowed shadow-none'
             }`}
             aria-label="Send message"
           >
@@ -1981,7 +1971,7 @@ CRITICAL RULES:
         </form>
       </div>
 
-      {/* ATTACHMENT OPTIONS BOTTOM SHEET (WITH CLEAN SVG ICONS) */}
+      {/* ATTACHMENT OPTIONS BOTTOM SHEET: iOS Sheet Style */}
       <AnimatePresence>
         {isAttachmentSheetOpen && (
           <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-4 select-none">
@@ -1994,7 +1984,7 @@ CRITICAL RULES:
                 triggerHaptic(10);
                 setIsAttachmentSheetOpen(false);
               }}
-              className="absolute inset-0 bg-black/50 backdrop-blur-xs"
+              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             />
 
             {/* Bottom Sheet Menu */}
@@ -2002,14 +1992,14 @@ CRITICAL RULES:
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl relative z-10 space-y-4"
+              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
+              className="w-full max-w-[430px] bg-white/95 backdrop-blur-2xl rounded-t-[30px] sm:rounded-[26px] p-5 shadow-2xl relative z-10 space-y-4 border-t border-black/[0.04]"
             >
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto" />
 
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+              <div className="flex items-center justify-between pb-2 border-b border-black/[0.05]">
                 <div>
-                  <h3 className="text-base font-extrabold text-gray-900">Attach Photo for GAI</h3>
+                  <h3 className="text-base font-bold text-gray-900">Attach Photo for GAI</h3>
                   <p className="text-xs text-gray-500">Analyze menus, beach landmarks, or maps</p>
                 </div>
                 <button
@@ -2018,13 +2008,13 @@ CRITICAL RULES:
                     triggerHaptic(10);
                     setIsAttachmentSheetOpen(false);
                   }}
-                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center text-xs cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-black/[0.05] text-gray-500 font-bold flex items-center justify-center text-xs cursor-pointer hover:bg-black/[0.08]"
                 >
                   ✕
                 </button>
               </div>
 
-              {/* Action Buttons: Camera & Upload (Using clean SVG Icons) */}
+              {/* Action Buttons: Camera & Upload */}
               <div className="grid grid-cols-2 gap-3 pt-1">
                 {/* 1. Camera Option */}
                 <button
@@ -2033,17 +2023,17 @@ CRITICAL RULES:
                     triggerHaptic(12);
                     cameraInputRef.current?.click();
                   }}
-                  className="p-4 rounded-2xl bg-[#FFF3EE] border border-[#FFD0C0] hover:bg-[#FFE7DF] active:scale-98 transition-all flex flex-col items-center gap-2 text-center cursor-pointer shadow-2xs"
+                  className="p-4 rounded-[20px] bg-gradient-to-b from-sky-50 to-blue-50/60 border border-sky-100 hover:brightness-98 active:scale-98 transition-all flex flex-col items-center gap-2 text-center cursor-pointer shadow-2xs"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-[#FF6B4A] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-b from-[#007AFF] to-[#0062E0] text-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,122,255,0.3)]">
                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14.5 4h-5L7 7H4a2 2 0 0 1-2 2v9a2 2 0 0 1 2 2h16a2 2 0 0 1 2-2V9a2 2 0 0 1-2-2h-3l-2.5-3z" />
                       <circle cx="12" cy="13" r="3" />
                     </svg>
                   </div>
                   <div>
-                    <div className="text-sm font-black text-gray-900">Take Photo</div>
-                    <div className="text-[11px] font-semibold text-gray-500 mt-0.5">Use device camera</div>
+                    <div className="text-sm font-bold text-gray-900">Take Photo</div>
+                    <div className="text-[11px] font-medium text-gray-500 mt-0.5">Use device camera</div>
                   </div>
                 </button>
 
@@ -2054,9 +2044,9 @@ CRITICAL RULES:
                     triggerHaptic(12);
                     galleryInputRef.current?.click();
                   }}
-                  className="p-4 rounded-2xl bg-[#F0F9FF] border border-[#BAE6FD] hover:bg-[#E0F2FE] active:scale-98 transition-all flex flex-col items-center gap-2 text-center cursor-pointer shadow-2xs"
+                  className="p-4 rounded-[20px] bg-gradient-to-b from-gray-50 to-slate-50 border border-gray-100 hover:brightness-98 active:scale-98 transition-all flex flex-col items-center gap-2 text-center cursor-pointer shadow-2xs"
                 >
-                  <div className="w-12 h-12 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center shadow-xs">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-b from-gray-800 to-gray-900 text-white flex items-center justify-center shadow-xs">
                     <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
                       <circle cx="8.5" cy="8.5" r="1.5" />
@@ -2064,8 +2054,8 @@ CRITICAL RULES:
                     </svg>
                   </div>
                   <div>
-                    <div className="text-sm font-black text-gray-900">Upload Photo</div>
-                    <div className="text-[11px] font-semibold text-gray-500 mt-0.5">Choose from gallery</div>
+                    <div className="text-sm font-bold text-gray-900">Upload Photo</div>
+                    <div className="text-[11px] font-medium text-gray-500 mt-0.5">Choose from gallery</div>
                   </div>
                 </button>
               </div>
@@ -2081,9 +2071,9 @@ CRITICAL RULES:
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2.5 rounded-full bg-[#111111]/90 backdrop-blur-md text-white text-xs font-extrabold shadow-2xl border border-white/20 flex items-center gap-2 select-none"
+            className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] px-4.5 py-2.5 rounded-full bg-gray-900/90 backdrop-blur-xl text-white text-xs font-bold shadow-2xl border border-white/10 flex items-center gap-2 select-none"
           >
-            <span className="text-sm">✨</span>
+            <span className="text-sm">🌴</span>
             <span>{toastMessage}</span>
           </motion.div>
         )}
