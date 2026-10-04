@@ -21,13 +21,23 @@
     scrollbar-width: none !important; /* Firefox */
   }
 
+  html,
+  body,
+  #root {
+    background-color: #F7F7F5;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     font-family: var(--font-ios);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    background-color: #E5E5DF;
     color: #111111;
+    overflow-x: hidden;
   }
 }
 

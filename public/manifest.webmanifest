@@ -3,9 +3,10 @@
   "short_name": "GoaMitra",
   "description": "Your ultimate Goan travel & culture companion",
   "start_url": "/",
-  "display": "standalone",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "window-controls-overlay", "standalone"],
   "background_color": "#F7F7F5",
-  "theme_color": "#177F91",
+  "theme_color": "#F7F7F5",
   "icons": [
     {
       "src": "/icon.png",
