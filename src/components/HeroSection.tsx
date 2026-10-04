@@ -66,13 +66,13 @@ export interface GreetingInfo {
 
 const getTimeBasedGreeting = (travelMonth?: string): GreetingInfo => {
   const hour = new Date().getHours();
-  const month = travelMonth || 'today';
+  const timeDesc = travelMonth ? `in ${travelMonth}` : 'today';
 
   // 04:00 - 11:59 -> Morning
   if (hour >= 4 && hour < 12) {
     return {
       greeting: 'Good morning,',
-      subtitle: `Ready to explore sunny Goa in ${month}?\nLet’s plan your morning adventure.`,
+      subtitle: `Ready to explore Goa ${timeDesc}?\nLet’s plan something amazing.`,
       timePeriod: 'morning',
     };
   }
@@ -80,7 +80,7 @@ const getTimeBasedGreeting = (travelMonth?: string): GreetingInfo => {
   if (hour >= 12 && hour < 17) {
     return {
       greeting: 'Good afternoon,',
-      subtitle: `Ready for beach cafes & heritage in ${month}?\nLet’s plan your afternoon stroll.`,
+      subtitle: `Ready to explore Goa ${timeDesc}?\nLet’s plan something amazing.`,
       timePeriod: 'afternoon',
     };
   }
@@ -88,14 +88,14 @@ const getTimeBasedGreeting = (travelMonth?: string): GreetingInfo => {
   if (hour >= 17 && hour < 21) {
     return {
       greeting: 'Good evening,',
-      subtitle: `Catching the golden sunset in ${month}?\nLet’s find the best twilight spots.`,
+      subtitle: `Ready to explore Goa ${timeDesc}?\nLet’s plan something amazing.`,
       timePeriod: 'evening',
     };
   }
   // 21:00 - 03:59 -> Night
   return {
     greeting: 'Good night,',
-    subtitle: `Enjoying Goa’s night breeze in ${month}?\nStargazing & calm waves await.`,
+    subtitle: `Ready to explore Goa ${timeDesc}?\nLet’s plan something amazing.`,
     timePeriod: 'night',
   };
 };
@@ -209,9 +209,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   }, [preferences.travelMonth]);
 
   return (
-    <div className="relative isolate pt-5 pb-5 px-5 select-none">
+    <div className="relative isolate pt-5 pb-4 px-5 select-none">
       {/* Background Hero Photo Container extending through GAI pill */}
-      <div className="absolute inset-0 top-0 h-[495px] overflow-hidden pointer-events-none -z-10">
+      <div className="absolute inset-0 top-0 h-[535px] sm:h-[555px] overflow-hidden pointer-events-none -z-10">
         <img
           key={currentHero.src}
           src={currentHero.src}
@@ -436,14 +436,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* Greeting Area with Real-Time Dynamic Salutation */}
-      <div className="mt-7 mb-5">
-        <h2 className="text-[23px] font-semibold text-[#111111] tracking-tight leading-snug">
+      <div className="mt-6 mb-0">
+        <h2 className="text-[25px] font-semibold text-[#111111] tracking-tight leading-snug">
           {greetingInfo.greeting}
         </h2>
 
         {/* User Name with Dynamic Seasonal Icon */}
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[35px] font-extrabold text-[#111111] tracking-tight truncate max-w-[280px]">
+          <span className="text-[36px] font-black text-[#111111] tracking-tight truncate max-w-[280px]">
             {preferences.name || 'Explorer'}
           </span>
 
@@ -452,13 +452,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Subtitle with Real-Time & Travel Month context */}
-        <p className="mt-2 text-[14.5px] font-medium text-[#4B5763] leading-[1.38] whitespace-pre-line">
+        <p className="mt-2.5 text-[15px] font-medium text-[#4B5763] leading-[1.42] whitespace-pre-line">
           {greetingInfo.subtitle}
         </p>
       </div>
 
-      {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism pill, click opens full GAI screen */}
-      <div className="relative mt-6">
+      {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism pill, spacious gap to let user sink and avoid cluster */}
+      <div className="relative mt-12 sm:mt-14 mb-1">
         <div className="relative rounded-full p-[1.5px] gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
           {/* Inner iOS Liquid Glassmorphism Pill */}
           <div

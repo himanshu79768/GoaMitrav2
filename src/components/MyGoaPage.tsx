@@ -14,6 +14,267 @@ interface MyGoaPageProps {
   initialTab?: 'itineraries' | 'saved_places';
 }
 
+/** Helper to render inline markdown: **bold**, *italic*, and `code` */
+function renderInlineMarkdown(text: string): React.ReactNode {
+  const boldParts = text.split(/(\*\*.*?\*\*)/g);
+
+  return boldParts.map((bPart, bIdx) => {
+    if (bPart.startsWith('**') && bPart.endsWith('**') && bPart.length >= 4) {
+      const inner = bPart.slice(2, -2);
+      return (
+        <strong key={`b-${bIdx}`} className="font-extrabold text-gray-900">
+          {renderItalicAndCode(inner, bIdx)}
+        </strong>
+      );
+    }
+    return <React.Fragment key={`nb-${bIdx}`}>{renderItalicAndCode(bPart, bIdx)}</React.Fragment>;
+  });
+}
+
+function renderItalicAndCode(text: string, parentKey: number | string): React.ReactNode {
+  const codeParts = text.split(/(`.*?`)/g);
+  return codeParts.map((cPart, cIdx) => {
+    if (cPart.startsWith('`') && cPart.endsWith('`') && cPart.length >= 2) {
+      return (
+        <code key={`c-${parentKey}-${cIdx}`} className="px-1 py-0.5 rounded bg-gray-200/80 text-[11px] font-mono text-gray-800">
+          {cPart.slice(1, -1)}
+        </code>
+      );
+    }
+    const italicParts = cPart.split(/(\*.*?\*)/g);
+    return italicParts.map((iPart, iIdx) => {
+      if (iPart.startsWith('*') && iPart.endsWith('*') && iPart.length >= 2) {
+        return (
+          <em key={`i-${parentKey}-${cIdx}-${iIdx}`} className="italic text-gray-800">
+            {iPart.slice(1, -1)}
+          </em>
+        );
+      }
+      return iPart;
+    });
+  });
+}
+
+/** Parses markdown tables into clean styled cards */
+function renderMarkdownTable(tableLines: string[]): React.ReactNode {
+  if (tableLines.length === 0) return null;
+  const dataLines = tableLines.filter((line) => !line.match(/^\|?\s*:?-+:?\s*(\||\+)/));
+  if (dataLines.length === 0) return null;
+
+  const splitCells = (line: string) => {
+    const trimmed = line.replace(/^\||\|$/g, '').trim();
+    return trimmed.split('|').map((c) => c.trim());
+  };
+
+  const headerCells = splitCells(dataLines[0]);
+  const rowLines = dataLines.slice(1);
+
+  return (
+    <div className="my-2.5 overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-2xs">
+      <table className="w-full text-left text-[11.5px] border-collapse">
+        <thead className="bg-gray-50 border-b border-gray-200 text-gray-700 font-bold">
+          <tr>
+            {headerCells.map((h, i) => (
+              <th key={i} className="px-2.5 py-1.5 whitespace-nowrap">
+                {renderInlineMarkdown(h)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {rowLines.map((row, rIdx) => {
+            const cells = splitCells(row);
+            return (
+              <tr key={rIdx} className="hover:bg-gray-50/50">
+                {cells.map((cell, cIdx) => (
+                  <td key={cIdx} className="px-2.5 py-1.5 text-gray-700">
+                    {renderInlineMarkdown(cell)}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/** Complete Markdown Itinerary Renderer */
+function ItineraryMarkdownContent({ content, isExpanded }: { content: string; isExpanded: boolean }) {
+  const lines = content.split('\n');
+  const elements: React.ReactNode[] = [];
+  let currentBullets: string[] = [];
+  let currentTableLines: string[] = [];
+
+  const flushBullets = (key: string) => {
+    if (currentBullets.length > 0) {
+      elements.push(
+        <ul key={key} className="my-2 space-y-1.5 pl-1">
+          {currentBullets.map((b, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-[12.5px] leading-relaxed text-gray-800">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#177F91] mt-1.5 shrink-0" />
+              <span>{renderInlineMarkdown(b)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      currentBullets = [];
+    }
+  };
+
+  const flushTable = (key: string) => {
+    if (currentTableLines.length > 0) {
+      const table = renderMarkdownTable(currentTableLines);
+      if (table) elements.push(<React.Fragment key={key}>{table}</React.Fragment>);
+      currentTableLines = [];
+    }
+  };
+
+  lines.forEach((rawLine, index) => {
+    const line = rawLine.trim();
+
+    // Tables
+    if (line.includes('|')) {
+      flushBullets(`b-tbl-${index}`);
+      currentTableLines.push(line);
+      return;
+    } else {
+      flushTable(`tbl-${index}`);
+    }
+
+    if (!line) {
+      flushBullets(`b-empty-${index}`);
+      return;
+    }
+
+    // Horizontal Rule
+    if (/^[-*_]{3,}$/.test(line)) {
+      flushBullets(`b-hr-${index}`);
+      elements.push(<hr key={`hr-${index}`} className="my-3 border-gray-200" />);
+      return;
+    }
+
+    // Bullets
+    if (line.startsWith('- ') || line.startsWith('* ') || line.startsWith('• ')) {
+      currentBullets.push(line.replace(/^[-*•]\s+/, ''));
+      return;
+    }
+
+    // Numbered Lists
+    const numMatch = line.match(/^(\d+)\.\s+(.*)/);
+    if (numMatch) {
+      flushBullets(`b-num-${index}`);
+      elements.push(
+        <div key={`num-${index}`} className="flex items-start gap-2 my-1 text-[12.5px] leading-relaxed text-gray-800">
+          <span className="font-bold text-[#FF6B4A] text-xs shrink-0 mt-0.5">
+            {numMatch[1]}.
+          </span>
+          <span className="text-gray-800">{renderInlineMarkdown(numMatch[2])}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Blockquotes / Tips (> Tip: ...)
+    if (line.startsWith('>')) {
+      flushBullets(`b-quote-${index}`);
+      const quoteText = line.replace(/^>\s*/, '');
+      elements.push(
+        <div key={`quote-${index}`} className="my-2 p-2.5 bg-[#FFF7ED] rounded-xl border border-[#FFEDD5] text-[12px] text-[#9A3412] font-medium flex items-start gap-2">
+          <svg className="w-3.5 h-3.5 text-[#EA580C] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+          <span className="leading-snug">{renderInlineMarkdown(quoteText)}</span>
+        </div>
+      );
+      return;
+    }
+
+    // Headings: H1, H2, H3, H4
+    const headingMatch = line.match(/^(#{1,4})\s+(.*)$/);
+    if (headingMatch) {
+      flushBullets(`b-head-${index}`);
+      const level = headingMatch[1].length;
+      const headingText = headingMatch[2];
+
+      const dayMatch = headingText.match(/^(Day\s+\d+)\s*[:|-]?\s*(.*)$/i);
+      if (dayMatch) {
+        elements.push(
+          <div key={`day-${index}`} className="mt-3.5 mb-2 pt-2 border-t border-gray-200/80 first:border-0 first:pt-0 first:mt-0 flex flex-wrap items-center gap-2">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#177F91] text-white text-[11px] font-black tracking-wide uppercase shadow-2xs">
+              {dayMatch[1]}
+            </span>
+            {dayMatch[2] && (
+              <span className="text-[13.5px] font-extrabold text-gray-900 tracking-tight">
+                {renderInlineMarkdown(dayMatch[2])}
+              </span>
+            )}
+          </div>
+        );
+        return;
+      }
+
+      if (level === 1) {
+        elements.push(
+          <h2 key={`h1-${index}`} className="text-[16px] font-black text-gray-900 mt-3 mb-1.5 leading-snug">
+            {renderInlineMarkdown(headingText)}
+          </h2>
+        );
+        return;
+      }
+
+      if (level === 2) {
+        elements.push(
+          <h3 key={`h2-${index}`} className="text-[14.5px] font-extrabold text-gray-900 mt-2.5 mb-1 leading-snug">
+            {renderInlineMarkdown(headingText)}
+          </h3>
+        );
+        return;
+      }
+
+      if (level === 3) {
+        elements.push(
+          <h4 key={`h3-${index}`} className="text-[13.5px] font-bold text-gray-900 mt-2 mb-1 flex items-center gap-1.5">
+            <span className="w-1.5 h-3 rounded-full bg-[#FF6B4A]" />
+            <span>{renderInlineMarkdown(headingText)}</span>
+          </h4>
+        );
+        return;
+      }
+
+      elements.push(
+        <h5 key={`h4-${index}`} className="text-[12.5px] font-bold text-gray-800 mt-1.5 mb-0.5">
+          {renderInlineMarkdown(headingText)}
+        </h5>
+      );
+      return;
+    }
+
+    // Standard Paragraph
+    flushBullets(`b-p-${index}`);
+    elements.push(
+      <p key={`p-${index}`} className="text-[12.5px] leading-relaxed text-gray-700 font-medium mb-1.5 last:mb-0">
+        {renderInlineMarkdown(line)}
+      </p>
+    );
+  });
+
+  flushBullets('b-final');
+  flushTable('tbl-final');
+
+  return (
+    <div className={`space-y-1 relative ${!isExpanded ? 'max-h-48 overflow-hidden' : 'max-h-[500px] overflow-y-auto pr-1'}`}>
+      {elements}
+      {!isExpanded && (
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#F8FAFC] via-[#F8FAFC]/80 to-transparent pointer-events-none" />
+      )}
+    </div>
+  );
+}
+
 export const MyGoaPage: React.FC<MyGoaPageProps> = ({
   preferences,
   savedPlaces,
@@ -346,21 +607,30 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                       </button>
                     </div>
 
-                    {/* Preview / Full Content */}
-                    <div className="text-xs text-gray-700 whitespace-pre-line leading-relaxed font-medium bg-[#F8FAFC] p-3 rounded-2xl border border-gray-100 max-h-60 overflow-y-auto">
-                      {isExpanded ? itinerary.content : itinerary.content.slice(0, 220) + (itinerary.content.length > 220 ? '...' : '')}
+                    {/* Formatted Markdown Itinerary Content */}
+                    <div className="bg-[#F8FAFC] p-3.5 rounded-2xl border border-gray-100">
+                      <ItineraryMarkdownContent content={itinerary.content} isExpanded={isExpanded} />
                     </div>
 
                     <div className="flex items-center justify-between pt-1">
-                      {itinerary.content.length > 220 && (
-                        <button
-                          type="button"
-                          onClick={() => setExpandedItineraryId(isExpanded ? null : itinerary.id)}
-                          className="text-xs font-bold text-[#177F91] hover:underline cursor-pointer"
+                      <button
+                        type="button"
+                        onClick={() => setExpandedItineraryId(isExpanded ? null : itinerary.id)}
+                        className="text-xs font-bold text-[#177F91] hover:underline cursor-pointer flex items-center gap-1"
+                      >
+                        <span>{isExpanded ? 'Show less' : 'Read full itinerary'}</span>
+                        <svg
+                          className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                          {isExpanded ? 'Show less ▲' : 'Read full itinerary ▼'}
-                        </button>
-                      )}
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </button>
 
                       <button
                         type="button"
