@@ -414,7 +414,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Auto Rickshaw Left-Facing Cutout */}
                 <div className="w-16 h-16 rounded-2xl bg-amber-50/70 border border-amber-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
                   <img
-                    src="/src/assets/images/auto_rickshaw_left_transparent.png"
+                    src="https://i.ibb.co/0p7d3m6N/auto-rickshaw-left-transparent.png"
                     alt="Auto Rickshaw in Goa"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-contain filter drop-shadow-xs"
@@ -491,7 +491,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Scooter Left-Facing Cutout */}
                 <div className="w-16 h-16 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
                   <img
-                    src="/src/assets/images/scooter_left_transparent.png"
+                    src="https://i.ibb.co/99Vw95mx/scooter-left-transparent.png"
                     alt="Rental Scooter in Goa"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-contain filter drop-shadow-xs"
@@ -557,7 +557,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Taxi Left-Facing Cutout */}
                 <div className="w-16 h-16 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
                   <img
-                    src="/src/assets/images/taxi_left_transparent.png"
+                    src="https://i.ibb.co/gLxZ4kt4/taxi-left-transparent.png"
                     alt="Private Taxi in Goa"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-contain filter drop-shadow-xs"

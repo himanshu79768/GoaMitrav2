@@ -59,7 +59,7 @@ const MONTHLY_CULTURAL_TIPS: Record<number, string> = {
 };
 
 // Complete Dataset covering ALL events provided in user prompt (Jan - Dec)
-const CULTURAL_EVENTS: CulturalEventItem[] = [
+export const CULTURAL_EVENTS: CulturalEventItem[] = [
   // --- JANUARY ---
   {
     id: 'jan-1',
