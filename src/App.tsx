@@ -65,16 +65,82 @@ export default function App() {
   // Navigation direction tracker for pure slide transitions (forward: right-to-left, backward: left-to-right)
   const [navDirection, setNavDirection] = useState<'forward' | 'backward'>('forward');
 
-  // Helper forward navigation
+  // Name Change Floating Dialog state
+  const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
+  const [tempNameInput, setTempNameInput] = useState('');
+
+  // Keep track of current screen in a ref for popstate handling
+  const currentScreenRef = React.useRef<ScreenType>(currentScreen);
+  useEffect(() => {
+    currentScreenRef.current = currentScreen;
+  }, [currentScreen]);
+
+  // Synchronize browser history on boot
+  useEffect(() => {
+    if (!window.history.state || typeof window.history.state.screen !== 'string') {
+      try {
+        window.history.replaceState({ screen: currentScreen }, '');
+      } catch {}
+    }
+  }, []);
+
+  // System & Hardware Back Button Listener (popstate)
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // If Name Change dialog is open, close it
+      if (isNameDialogOpen) {
+        setIsNameDialogOpen(false);
+      }
+
+      const targetScreen = event.state?.screen as ScreenType | undefined;
+
+      if (targetScreen) {
+        setNavDirection('backward');
+        setCurrentScreen(targetScreen);
+      } else {
+        // If history ran out or was at root state, but user is in a sub-screen,
+        // navigate back to homepage instead of exiting the web app
+        const active = currentScreenRef.current;
+        if (active !== 'homepage' && active !== 'onboarding_step_1') {
+          setNavDirection('backward');
+          setCurrentScreen('homepage');
+          try {
+            window.history.pushState({ screen: 'homepage' }, '');
+          } catch {}
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [isNameDialogOpen]);
+
+  // Helper forward navigation (pushes state to HTML5 history)
   const navigateForward = (screen: ScreenType) => {
     setNavDirection('forward');
     setCurrentScreen(screen);
+    try {
+      window.history.pushState({ screen }, '');
+    } catch (e) {
+      console.error('Failed to push history state', e);
+    }
   };
 
   // Helper backward navigation
   const navigateBack = (screen: ScreenType) => {
-    setNavDirection('backward');
-    setCurrentScreen(screen);
+    if (window.history.state && window.history.state.screen) {
+      window.history.back();
+    } else {
+      setNavDirection('backward');
+      setCurrentScreen(screen);
+      try {
+        window.history.replaceState({ screen }, '');
+      } catch (e) {
+        console.error('Failed to replace history state', e);
+      }
+    }
   };
 
   // Persistent user preferences
@@ -191,10 +257,6 @@ export default function App() {
         : [...prev, interest]
     );
   };
-
-  // Name Change Floating Dialog state
-  const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
-  const [tempNameInput, setTempNameInput] = useState('');
 
   const handleOpenNameDialog = () => {
     setTempNameInput(savedPreferences.name || '');
