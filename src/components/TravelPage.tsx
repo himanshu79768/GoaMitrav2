@@ -2,6 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { DestinationItem } from './DestinationsPage';
 import { UserPreferences } from '../types/onboarding';
 
+export const TRAVEL_VEHICLE_IMAGES = {
+  auto: 'https://i.ibb.co/0p7d3m6N/auto-rickshaw-left-transparent.png',
+  scooter: 'https://i.ibb.co/99Vw95mx/scooter-left-transparent.png',
+  taxi: 'https://i.ibb.co/gLxZ4kt4/taxi-left-transparent.png',
+  bus: 'https://i.ibb.co/rKVDJxnf/bus-left-transparent.png',
+};
+
 interface TravelPageProps {
   destination: DestinationItem;
   preferences: UserPreferences;
@@ -417,6 +424,9 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                     src="https://i.ibb.co/0p7d3m6N/auto-rickshaw-left-transparent.png"
                     alt="Auto Rickshaw in Goa"
                     referrerPolicy="no-referrer"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full object-contain filter drop-shadow-xs"
                   />
                 </div>
@@ -494,6 +504,9 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                     src="https://i.ibb.co/99Vw95mx/scooter-left-transparent.png"
                     alt="Rental Scooter in Goa"
                     referrerPolicy="no-referrer"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full object-contain filter drop-shadow-xs"
                   />
                 </div>
@@ -560,6 +573,9 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                     src="https://i.ibb.co/gLxZ4kt4/taxi-left-transparent.png"
                     alt="Private Taxi in Goa"
                     referrerPolicy="no-referrer"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full object-contain filter drop-shadow-xs"
                   />
                 </div>
@@ -627,6 +643,9 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                     src="https://i.ibb.co/rKVDJxnf/bus-left-transparent.png"
                     alt="Kadamba Local Bus in Goa"
                     referrerPolicy="no-referrer"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
                     className="w-full h-full object-contain filter drop-shadow-xs"
                   />
                 </div>
