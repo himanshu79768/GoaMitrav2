@@ -333,30 +333,68 @@ const FormattedMessage: React.FC<{
   onQuickAction?: (prompt: string) => void;
 }> = ({ content, userCoords, groundingSources, onQuickAction }) => {
   const lines = content.split('\n');
-  const nonTransportLines: string[] = [];
+  let nonTransportLines: string[] = [];
   let carInfo: string | null = null;
   let busInfo: string | null = null;
   let locationInfo: string | null = null;
 
-  for (const line of lines) {
-    const trimmed = line.trim();
-    const carMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Car(?:\/Auto)?(?:\/Scooter)?):\s*(.*)/i);
-    const busMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:By\s+Bus(?:\/Bus)?):\s*(.*)/i);
-    const locMatch = trimmed.match(/^(?:[-*•]\s*)?(?:###\s*)?(?:Location|Place):\s*(.*)/i);
+  for (const rawLine of lines) {
+    const trimmed = rawLine.trim();
+    if (!trimmed) {
+      nonTransportLines.push(rawLine);
+      continue;
+    }
 
-    if (carMatch) {
-      carInfo = carMatch[1].replace(/^\*\*|\*\*$/g, '').trim();
-    } else if (busMatch) {
-      busInfo = busMatch[1].replace(/^\*\*|\*\*$/g, '').trim();
-    } else if (locMatch) {
-      locationInfo = locMatch[1].replace(/^\*\*|\*\*$/g, '').trim();
+    // Strip markdown bullets, numbers, pipe characters, hashtags and leading asterisks/underscores
+    const clean = trimmed
+      .replace(/^[|#*•\-\d.\s]+/, '')
+      .replace(/^[*_]+/, '')
+      .trim();
+
+    // Check for Car / Auto transit (matching bullets, bold, colons, or pipes)
+    const carMatch = clean.match(/^(?:(?:\*\*|\*)?(?:🚗|🚘)?\s*(?:By\s+)?(?:Car(?:\s*[\/|&]\s*(?:Auto|Cab|Taxi|Scooter))?|Auto|Cab|Taxi|Scooter|Drive|Road)(?:\s*[\/|&]\s*(?:Car|Auto|Cab|Taxi|Scooter))?)(?:\*\*|\*)?\s*[:|]\s*(.*)/i);
+
+    // Check for Bus / Public transit (matching bullets, bold, colons, or pipes)
+    const busMatch = clean.match(/^(?:(?:\*\*|\*)?(?:🚌|🚎|⛴|🚢)?\s*(?:By\s+)?(?:Bus(?:\s*[\/|&]\s*(?:Ferry|Auto))?|Ferry|Public\s*Transit|Local\s*Bus))(?:\*\*|\*)?\s*[:|]\s*(.*)/i);
+
+    // Check for Location / Destination (matching bullets, bold, colons, or pipes)
+    const locMatch = clean.match(/^(?:(?:\*\*|\*)?(?:📍|🏛|🏖|📌)?\s*(?:Location|Place|Destination|Address))(?:\*\*|\*)?\s*[:|]\s*(.*)/i);
+
+    if (carMatch && !carInfo) {
+      carInfo = carMatch[1].replace(/^[|*_]+|[|*_]+$/g, '').replace(/\|.*$/, '').trim();
+    } else if (busMatch && !busInfo) {
+      busInfo = busMatch[1].replace(/^[|*_]+|[|*_]+$/g, '').replace(/\|.*$/, '').trim();
+    } else if (locMatch && !locationInfo) {
+      locationInfo = locMatch[1].replace(/^[|*_]+|[|*_]+$/g, '').replace(/\|.*$/, '').trim();
     } else {
-      nonTransportLines.push(line);
+      nonTransportLines.push(rawLine);
     }
   }
 
   const hasTransportCard = Boolean(carInfo || busInfo || locationInfo);
-  const targetPlace = locationInfo || 'Goa';
+
+  // If a transport card was found, remove any lingering table header rows like "| Mode | Details |" or "|---|---|"
+  if (hasTransportCard) {
+    nonTransportLines = nonTransportLines.filter((l) => {
+      const text = l.trim().toLowerCase();
+      if (text.includes('|') && (text.includes('mode') || text.includes('transport') || text.includes('transit') || text.includes('route') || text.includes('details') || /^\|[-:\s|]+\|?$/.test(text))) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  // Deducing destination place for location row & View on map button
+  let targetPlace = locationInfo ? locationInfo.replace(/[.,]+$/, '').trim() : '';
+  if (!targetPlace) {
+    const introLine = nonTransportLines.find((l) => l.trim().length > 0) || '';
+    const match = introLine.match(/^([A-Za-z0-9\s'&]+?(?:Church|Beach|Fort|Temple|Waterfall|Market|Resort|Shack|Palace|Sanctuary|Lake|Caves)?(?:\s*\([^)]+\))?)/i);
+    if (match && match[1].length < 50) {
+      targetPlace = match[1].trim();
+    } else {
+      targetPlace = 'Goa';
+    }
+  }
 
   const renderedElements: React.ReactNode[] = [];
   let currentBullets: string[] = [];
@@ -487,14 +525,14 @@ const FormattedMessage: React.FC<{
     <div className="space-y-1">
       {renderedElements}
 
-      {/* Structured Transport & Location Card: iOS Card */}
+      {/* Structured Transport & Location Table Card (As in reference image) */}
       {hasTransportCard && (
-        <div className="my-2.5 bg-black/[0.03] rounded-[18px] p-3.5 border border-black/[0.04] shadow-2xs space-y-2.5">
-          {/* Car / Scooter Row */}
+        <div className="my-3 bg-white rounded-2xl p-3.5 border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.03)] space-y-3">
+          {/* Row 1: By Car / Auto */}
           {carInfo && (
-            <div className="flex items-start gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-white border border-black/[0.04] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
                   <circle cx="7" cy="17" r="2" />
                   <path d="M9 17h6" />
@@ -502,19 +540,19 @@ const FormattedMessage: React.FC<{
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[12.5px] font-bold text-gray-900 leading-tight">By Car / Scooter</div>
-                <div className="text-[12px] text-gray-600 leading-snug mt-0.5">
+                <div className="text-[13px] font-bold text-gray-900 leading-tight">By Car/Auto</div>
+                <div className="text-[12px] text-gray-500 leading-snug mt-0.5">
                   {renderInlineMarkdown(carInfo)}
                 </div>
               </div>
             </div>
           )}
 
-          {/* Bus / Ferry Row */}
+          {/* Row 2: By Bus */}
           {busInfo && (
-            <div className="flex items-start gap-2.5 pt-2 border-t border-black/[0.04]">
-              <div className="w-8 h-8 rounded-full bg-white border border-black/[0.04] flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
-                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className="flex items-start gap-3 pt-2.5 border-t border-gray-100/90">
+              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M8 6v6" />
                   <path d="M16 6v6" />
                   <path d="M4 12h16" />
@@ -524,32 +562,31 @@ const FormattedMessage: React.FC<{
                 </svg>
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-[12.5px] font-bold text-gray-900 leading-tight">By Bus / Ferry</div>
-                <div className="text-[12px] text-gray-600 leading-snug mt-0.5">
+                <div className="text-[13px] font-bold text-gray-900 leading-tight">By Bus</div>
+                <div className="text-[12px] text-gray-500 leading-snug mt-0.5">
                   {renderInlineMarkdown(busInfo)}
                 </div>
               </div>
             </div>
           )}
 
-          {/* Location row */}
-          {locationInfo && (
-            <div className="flex items-center gap-2 pt-2 border-t border-black/[0.04]">
-              <div className="w-8 h-8 rounded-full bg-white border border-black/[0.04] flex items-center justify-center shrink-0 shadow-2xs">
-                <svg className="w-4 h-4 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {/* Row 3: Location with Peach View on map button */}
+          <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-gray-100/90">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-gray-800" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                   <circle cx="12" cy="10" r="3" />
                 </svg>
               </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-[12px] font-bold text-gray-900 truncate">Destination</div>
-                <div className="text-[11.5px] text-gray-600 truncate">{locationInfo}</div>
+              <div className="min-w-0">
+                <div className="text-[13px] font-bold text-gray-900 leading-tight">Location</div>
+                <div className="text-[12px] text-gray-500 leading-snug mt-0.5 truncate">
+                  {locationInfo || targetPlace}
+                </div>
               </div>
             </div>
-          )}
 
-          {/* Interactive Action Buttons */}
-          <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-black/[0.04]">
             <a
               href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${targetPlace}, Goa`)}${
                 userCoords ? `&origin=${userCoords.lat},${userCoords.lng}` : ''
@@ -557,38 +594,39 @@ const FormattedMessage: React.FC<{
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => triggerHaptic(10)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-bold bg-[#007AFF] text-white hover:brightness-105 active:scale-95 transition-all shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-bold bg-[#FFECE6] hover:bg-[#FFE0D6] text-[#E05333] transition-all active:scale-95 shrink-0 cursor-pointer shadow-2xs"
             >
-              <span>🧭 Directions</span>
-              <span>↗</span>
+              <span>View on map</span>
+              <span className="text-[12px]">↗</span>
             </a>
+          </div>
 
-            {onQuickAction && (
+          {/* Contextual Quick Suggestions */}
+          {onQuickAction && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-2.5 border-t border-gray-100/90">
               <button
                 type="button"
                 onClick={() => {
                   triggerHaptic(12);
                   onQuickAction(`Best food and cafes near ${targetPlace}?`);
                 }}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-white text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-black/[0.04] shadow-2xs"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-gray-200/60 shadow-2xs"
               >
-                <span>🍴 Food nearby</span>
+                <span>🍴 Nearby food?</span>
               </button>
-            )}
 
-            {onQuickAction && (
               <button
                 type="button"
                 onClick={() => {
                   triggerHaptic(12);
-                  onQuickAction(`Best time of day and photo spots at ${targetPlace}?`);
+                  onQuickAction(`Best time to visit and photo spots at ${targetPlace}?`);
                 }}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-white text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-black/[0.04] shadow-2xs"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-gray-200/60 shadow-2xs"
               >
-                <span>📸 Photo tips</span>
+                <span>📷 Best time to visit?</span>
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -714,7 +752,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Hello ${preferences.name || 'there'}! 👋 I am GAI, your personal travel assistant for Goa.\n\nAsk me for real-time recommendations, or say **"Prepare 3-Day Itinerary"**. Once created, you can simply say **"save it"** and I will store it for you in **My Goa**.\n\nYou can also ask me to **"Save Curlies"**, **"Take me to stays"**, or **"Change my name"** anytime.`,
+      content: `Hello ${preferences.name || 'there'}! 🌴 Warm greetings and welcome to Goa. How may I help you today?`,
       timestamp: format12HourTime(),
     },
   ]);
@@ -1128,15 +1166,22 @@ CRITICAL RESPONSE RULES:
 5. IDENTITY:
    - If asked who you are or who created you, reply with: "I am GAI (Goa AI), created by GoaMitra. I'm a prototype specifically designed and structured by Khethana, Himanshu, Siddhi and Abhishekkumar."
 
-6. PREPARED ITINERARIES:
-   - When the user specifically requests an itinerary or multi-day trip plan:
-     * Header: # Itinerary: <Trip Title>
-     * Keep each day concise (Morning, Afternoon, Evening bullets).
-   - For all standard questions, keep answers direct and short without labeling as an itinerary.
+6. REFERENCE RESPONSE FORMAT (STRICTLY FOLLOW FOR ALL ANSWERS):
+   - When asked how to reach a landmark/beach/church (e.g., "Parra church kase jayche?", "How to get to Chapora Fort?"):
+     * CRITICAL: NEVER USE BULLET POINTS (* or -) OR NUMBERED LISTS! Do NOT format transit as bullet items.
+     * 1st sentence: State the place and region in one clear line (e.g. "Parra Church (St. Anne’s Church) is in Parra, North Goa.")
+     * Then immediately write these exact lines without bullets or asterisks around the labels:
+       By Car/Auto: <Time duration from prominent hub/landmark via specific road>
+       By Bus: <Specific bus routes & connecting local transit steps>
+       Location: <Exact place name and locality, Goa>
+   - When asked factual / entry / timing / tips questions (e.g., "Is there an entry fee? / तेथे प्रवेश फी आहे का ?"):
+     * 1st sentence: Direct, clear answer with relevant emoji (e.g., "No, Parra Church is open for all and there is no entry fee. ⛪")
+     * 2nd sentence: 1 concise tip or etiquette rule (e.g., "However, it’s a place of worship, so please maintain silence and dress modestly.")
+     * Keep the response under 2-3 short, crisp sentences. Zero fluff.
 
-7. AUTONOMOUS APP POWERS (ACTION TAGS):
-   Append action command tags on their own line at the very end when user intends:
-   [ACTION:SAVE_ITINERARY] -> Saves generated itinerary to My Goa.
+7. EXPLICIT ACTION TAGS (ONLY WHEN USER EXPLICITLY COMMANDS):
+   ONLY append action command tags at the very end when the user EXPLICITLY tells you to save or navigate (e.g. "save it", "save to my goa", "open food page", "take me to hotels"). Never append navigate or save tags for general questions or recommendations:
+   [ACTION:SAVE_ITINERARY] -> Saves generated itinerary to My Goa (only when user says "save it").
    [ACTION:SAVE_PLACE:Exact Place Name] -> Bookmarks place to My Goa.
    [ACTION:REMOVE_PLACE:Exact Place Name] -> Removes place from My Goa.
    [ACTION:NAVIGATE:my_goa] -> Opens My Goa.
@@ -1219,53 +1264,50 @@ CRITICAL RESPONSE RULES:
       // Autonomous Action Parsing and Execution on behalf of the user
       let executedAction: ExecutedAction | undefined = undefined;
 
-      // 1. SAVE ITINERARY AUTOMATICALLY ON BEHALF OF THE USER
+      // 1. SAVE ITINERARY ONLY WHEN USER EXPLICITLY ASKS FOR IT
       const isItineraryBotResponse = isItineraryContent(content);
-      if (isSaveItineraryIntent || isItineraryBotResponse || content.includes('[ACTION:SAVE_ITINERARY]')) {
+      if (isSaveItineraryIntent && onSaveItinerary) {
         const targetItinerary =
           preSavedItinerary ||
-          (isItineraryBotResponse
-            ? { id: `bot-${Date.now()}`, content }
-            : [...messages].reverse().find((m) => m.role === 'assistant' && isItineraryContent(m.content)));
+          [...messages].reverse().find((m) => m.role === 'assistant' && isItineraryContent(m.content)) ||
+          (isItineraryBotResponse ? { id: `bot-${Date.now()}`, content } : null);
 
-        const savedItem =
-          preSavedItinerary || (targetItinerary ? handleSaveItineraryFromMessage(targetItinerary) : null);
+        const savedItem = targetItinerary ? (preSavedItinerary || handleSaveItineraryFromMessage(targetItinerary)) : null;
 
         if (savedItem) {
-          const andOpenMyGoa =
-            /(?:open|show|take\s+me\s+to)\s+(?:my\s+goa|dashboard|itinerar)/i.test(text) ||
-            content.includes('[ACTION:NAVIGATE:my_goa]');
-
           executedAction = {
             type: 'saved_itinerary',
-            title: isItineraryBotResponse ? 'Itinerary Auto-Saved to My Goa' : 'Itinerary Saved to My Goa',
-            subtitle: andOpenMyGoa
-              ? `Saved "${savedItem.title}". Opening My Goa...`
-              : `Auto-saved "${savedItem.title}" to your dashboard`,
+            title: 'Itinerary Saved to My Goa',
+            subtitle: `Saved "${savedItem.title}" to your dashboard`,
             buttonText: 'Open My Goa',
             onButtonClick: () => {
               triggerHaptic(12);
               onNavigateScreen?.('my_goa', 'itineraries');
             },
           };
-
-          if (andOpenMyGoa && onNavigateScreen) {
-            setTimeout(() => {
-              onNavigateScreen('my_goa', 'itineraries');
-            }, 1200);
-          }
         }
+      } else if (isItineraryBotResponse) {
+        // If an itinerary was generated without explicit save request, show an interactive "Save to My Goa" button
+        executedAction = {
+          type: 'saved_itinerary',
+          title: 'Custom Itinerary Ready',
+          subtitle: 'Tap to save this itinerary to your My Goa dashboard',
+          buttonText: 'Save Itinerary',
+          onButtonClick: () => {
+            triggerHaptic([15, 30]);
+            handleSaveItineraryFromMessage({ id: `bot-${Date.now()}`, content });
+          },
+        };
       }
 
-      // 2. SAVE PLACE / STAY / RESTAURANT AUTOMATICALLY
+      // 2. SAVE PLACE / STAY / RESTAURANT (ONLY WHEN EXPLICITLY REQUESTED)
       const savePlaceTagMatch = content.match(/\[ACTION:SAVE_PLACE:([^\]]+)\]/i);
       const userSavePlaceMatch = text.match(
         /(?:^|\b)(?:save|bookmark|add|favorite)\s+([A-Za-z0-9\s'&]+?)(?:\s+to\s+(?:my\s+goa|favorites?|saved|places?)|$)/i
       );
 
       const placeNameToSave = (
-        savePlaceTagMatch?.[1] ||
-        (userSavePlaceMatch && !isSaveItineraryIntent ? userSavePlaceMatch[1] : '')
+        (userSavePlaceMatch && !isSaveItineraryIntent ? userSavePlaceMatch[1] : (userSavePlaceMatch ? savePlaceTagMatch?.[1] : '')) || ''
       ).trim();
 
       if (placeNameToSave && placeNameToSave.length > 2 && onToggleSavePlace && !executedAction) {
@@ -1350,13 +1392,12 @@ CRITICAL RESPONSE RULES:
         };
       }
 
-      // 5. NAVIGATE TO SCREENS AUTOMATICALLY
-      const navTagMatch = content.match(/\[ACTION:NAVIGATE:([a-z_]+)\]/i);
+      // 5. NAVIGATE TO SCREENS (ONLY IF USER EXPLICITLY ASKS FOR REDIRECT)
       const userNavMatch = text.match(
-        /(?:^|\b)(?:open|go\s+to|take\s+me\s+to|navigate\s+to|show\s+me)\s+(my\s+goa|stays?|hotels?|destinations?|landmarks?|food|restaurants?|culture|festivals?|events?|travel|cabs?|taxis?|scooters?|emergency|helpline|coupons|homepage|home)\b/i
+        /(?:^|\b)(?:open|go\s+to|take\s+me\s+to|navigate\s+to|switch\s+to|show\s+me)\s+(my\s+goa|stays?|hotels?|destinations?|landmarks?|food|restaurants?|culture|festivals?|events?|travel|cabs?|taxis?|scooters?|emergency|helpline|coupons|homepage|home)\b/i
       );
 
-      const navTarget = navTagMatch?.[1]?.toLowerCase() || userNavMatch?.[1]?.toLowerCase();
+      const navTarget = userNavMatch?.[1]?.toLowerCase();
       if (navTarget && onNavigateScreen && !executedAction) {
         let screenTarget: any = null;
         let initialTabTarget: 'itineraries' | 'saved_places' | undefined = undefined;
@@ -1408,7 +1449,7 @@ CRITICAL RESPONSE RULES:
           executedAction = {
             type: 'navigated',
             title: `Navigating to ${targetName}`,
-            subtitle: 'Switching screen automatically in 1s...',
+            subtitle: 'Switching screen as requested...',
             buttonText: 'Open Now',
             onButtonClick: () => {
               triggerHaptic(12);
@@ -1416,10 +1457,10 @@ CRITICAL RESPONSE RULES:
             },
           };
 
-          // Automatically navigate after 1.2s so user sees the message
+          // Automatically navigate only when user explicitly instructed it
           setTimeout(() => {
             onNavigateScreen(screenTarget, initialTabTarget);
-          }, 1200);
+          }, 1000);
         }
       }
 
@@ -1585,11 +1626,11 @@ CRITICAL RESPONSE RULES:
       </header>
 
       {/* Top Fading Gradient: Smooth sinking effect behind header */}
-      <div className="pointer-events-none absolute top-[52px] left-0 right-0 h-10 bg-gradient-to-b from-[#F1F1F1] via-[#F1F1F1]/85 to-transparent z-20" />
+      <div className="pointer-events-none absolute top-[48px] left-0 right-0 h-6 bg-gradient-to-b from-[#F1F1F1] to-transparent z-20" />
 
       {/* Messages Feed */}
       <div
-        className="flex-1 overflow-y-auto px-4 pt-3 pb-5 space-y-4 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-6 pb-6 space-y-4 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {/* Render Chat Messages */}
@@ -1777,7 +1818,7 @@ CRITICAL RESPONSE RULES:
           );
         })}
 
-        {/* Loading Indicator: Frosted Glass iOS Pill */}
+        {/* Loading Indicator: Sleek Frosted Glass 3-Dot Pill */}
         {isLoading && (
           <div className="flex items-start gap-2.5 pr-6">
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#177F91] to-[#25A7BD] text-white flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(23,127,145,0.28)]">
@@ -1785,19 +1826,16 @@ CRITICAL RESPONSE RULES:
                 <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.38-1 1.72V7h4a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-8a3 3 0 0 1 3-3h4V5.72c-.6-.34-1-.98-1-1.72a2 2 0 0 1 2-2zm-3 8a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm6 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-6 5h6a1 1 0 0 1 0 2H9a1 1 0 0 1 0-2z" />
               </svg>
             </div>
-            <div className="px-4 py-2.5 rounded-[20px] rounded-tl-[4px] bg-white/95 backdrop-blur-md border border-black/[0.04] shadow-xs flex items-center gap-2">
-              <span className="text-xs font-semibold text-gray-700">GAI is analyzing...</span>
-              <div className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce" />
-                <span
-                  className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce"
-                  style={{ animationDelay: '0.15s' }}
-                />
-                <span
-                  className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce"
-                  style={{ animationDelay: '0.3s' }}
-                />
-              </div>
+            <div className="px-4 py-3 rounded-[20px] rounded-tl-[4px] bg-white/95 backdrop-blur-md border border-black/[0.04] shadow-xs flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce" />
+              <span
+                className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce"
+                style={{ animationDelay: '0.15s' }}
+              />
+              <span
+                className="w-2 h-2 rounded-full bg-[#007AFF] animate-bounce"
+                style={{ animationDelay: '0.3s' }}
+              />
             </div>
           </div>
         )}
