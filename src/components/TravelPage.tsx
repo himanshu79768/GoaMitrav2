@@ -624,7 +624,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Bus Left-Facing Cutout */}
                 <div className="w-16 h-16 rounded-2xl bg-purple-50/70 border border-purple-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
                   <img
-                    src="/images/bus_left_transparent.png"
+                    src="/bus_left_transparent.png"
                     alt="Kadamba Local Bus in Goa"
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-contain filter drop-shadow-xs"
