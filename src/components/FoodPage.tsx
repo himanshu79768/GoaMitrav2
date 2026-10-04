@@ -99,7 +99,7 @@ export const REAL_RESTAURANTS: RestaurantItem[] = [
       'dish-sol-kadi': '₹55',
       'dish-mushroom-xacuti': '₹210',
     },
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqlaHEBhXKN8hx7goBjgBBZ3ndBz6yXvDBozpJeFnpCQ&s=10',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwAYEe03hemWzmI0wNWrdZWACklAe1QExZ2U9qd9dDVg&s=10',
     googleMapsQuery: 'Bhojan Restaurant Panaji Goa',
   },
   {
