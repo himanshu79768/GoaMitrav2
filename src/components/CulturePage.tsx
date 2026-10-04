@@ -1326,13 +1326,13 @@ export const CulturePage: React.FC<CulturePageProps> = ({
         </div>
 
         {/* 2. TOP SEGMENTED CONTROL TABS (Events vs Traditions & Arts) */}
-        <div className="p-1 bg-gray-200/70 rounded-full flex items-center relative">
+        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner">
           <button
             type="button"
             onClick={() => setActiveTab('events')}
-            className={`flex-1 py-2 text-xs font-extrabold rounded-full transition-all text-center cursor-pointer ${
+            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
               activeTab === 'events'
-                ? 'bg-[#177F91] text-white shadow-xs'
+                ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
@@ -1341,9 +1341,9 @@ export const CulturePage: React.FC<CulturePageProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('traditions')}
-            className={`flex-1 py-2 text-xs font-extrabold rounded-full transition-all text-center cursor-pointer ${
+            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
               activeTab === 'traditions'
-                ? 'bg-[#177F91] text-white shadow-xs'
+                ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >

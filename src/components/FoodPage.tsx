@@ -608,36 +608,25 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setViewType('dishes')}
-              className={`flex-1 py-2.5 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
                 viewType === 'dishes'
                   ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
-                <path d="M7 2v20" />
-                <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
-              </svg>
-              <span>Dishes</span>
+              Dishes
             </button>
 
             <button
               type="button"
               onClick={() => setViewType('restaurants')}
-              className={`flex-1 py-2.5 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
                 viewType === 'restaurants'
                   ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
-                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-                <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
-                <path d="M2 7h20" />
-              </svg>
-              <span>Restaurants</span>
+              Restaurants
             </button>
           </div>
 
@@ -657,33 +646,24 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setDietaryFilter('veg')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer ${
                 dietaryFilter === 'veg'
                   ? 'bg-[#15803D] text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
-                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
-              </svg>
-              <span>Veg</span>
+              Veg
             </button>
             <button
               type="button"
               onClick={() => setDietaryFilter('non_veg')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer ${
                 dietaryFilter === 'non_veg'
                   ? 'bg-[#DC2626] text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="9" />
-                <path d="m15 9-6 6" />
-                <path d="m9 9 6 6" />
-              </svg>
-              <span>Non-veg</span>
+              Non-veg
             </button>
           </div>
 
