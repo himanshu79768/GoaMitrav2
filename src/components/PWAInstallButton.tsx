@@ -36,7 +36,11 @@ export const PWAInstallButton: React.FC = () => {
           onClick={() => setShowIOSGuide(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 border border-gray-200 text-gray-800 text-xs font-bold shadow-xs hover:bg-gray-100 active:scale-95 transition-all cursor-pointer"
         >
-          <span>📲 Add to Home Screen</span>
+          <svg className="w-3.5 h-3.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+            <line x1="12" y1="18" x2="12.01" y2="18" />
+          </svg>
+          <span>Add to Home Screen</span>
         </button>
 
         {showIOSGuide && (
@@ -47,9 +51,13 @@ export const PWAInstallButton: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowIOSGuide(false)}
-                  className="w-7 h-7 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center text-xs"
+                  className="w-7 h-7 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center hover:bg-gray-200 transition-colors"
+                  aria-label="Close guide"
                 >
-                  ✕
+                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                 </button>
               </div>
               <p className="mt-3 text-xs text-gray-600 leading-relaxed space-y-2">

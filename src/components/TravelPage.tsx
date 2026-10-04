@@ -10,11 +10,59 @@ interface TravelPageProps {
 }
 
 const TRANSPORT_FILTERS = [
-  { id: 'all', label: 'All', icon: '✨' },
-  { id: 'cab', label: 'Cab', icon: '🚗' },
-  { id: 'auto', label: 'Auto', icon: '🛺' },
-  { id: 'scooter', label: 'Scooter', icon: '🛵' },
-  { id: 'bus', label: 'Bus', icon: '🚌' },
+  {
+    id: 'all',
+    label: 'All',
+    icon: (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+      </svg>
+    ),
+  },
+  {
+    id: 'cab',
+    label: 'Cab',
+    icon: (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
+        <circle cx="7" cy="17" r="2" />
+        <path d="M9 17h6" />
+        <circle cx="17" cy="17" r="2" />
+      </svg>
+    ),
+  },
+  {
+    id: 'auto',
+    label: 'Auto',
+    icon: (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M5 16h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2-3H8L6 7H3a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h2" />
+        <circle cx="6" cy="17" r="2.5" />
+        <circle cx="17" cy="17" r="2.5" />
+      </svg>
+    ),
+  },
+  {
+    id: 'scooter',
+    label: 'Scooter',
+    icon: (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="6" cy="17" r="3" />
+        <circle cx="18" cy="17" r="3" />
+        <path d="M6 14h6l3-6h4" />
+      </svg>
+    ),
+  },
+  {
+    id: 'bus',
+    label: 'Bus',
+    icon: (
+      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="3" width="16" height="15" rx="2" />
+        <path d="M4 11h16M8 18v2M16 18v2M8 7h.01M16 7h.01" />
+      </svg>
+    ),
+  },
 ];
 
 /** Determines the nearest bus stand to the USER based on GPS locality */
@@ -201,7 +249,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
           {/* Hero Copy with Destination Name & Distance */}
           <div className="relative z-10 text-white w-full">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-bold text-white mb-1.5">
-              <span>📍</span>
+              <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
               <span>Destination · ~{km} km away</span>
             </div>
             <h2 className="text-[23px] font-black tracking-tight leading-tight drop-shadow-sm">
@@ -226,7 +277,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
           <div className="space-y-2.5 text-xs">
             {/* Timings */}
             <div className="flex items-start gap-2.5 text-gray-700">
-              <span className="text-base shrink-0">⏰</span>
+              <svg className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
               <div>
                 <span className="font-bold text-gray-900">Visiting Hours: </span>
                 <span>{destination.timings}</span>
@@ -235,7 +289,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
 
             {/* Photography Rules */}
             <div className="flex items-start gap-2.5 text-gray-700 pt-1.5 border-t border-gray-100">
-              <span className="text-base shrink-0">📸</span>
+              <svg className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
               <div>
                 <span className="font-bold text-gray-900">Photography & Drones: </span>
                 <span>{destination.photographyRules}</span>
@@ -244,7 +301,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
 
             {/* Entry Tickets */}
             <div className="flex items-start gap-2.5 text-gray-700 pt-1.5 border-t border-gray-100">
-              <span className="text-base shrink-0">🎟️</span>
+              <svg className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                <path d="M13 5v2M13 17v2M13 11v2" />
+              </svg>
               <div>
                 <span className="font-bold text-gray-900">Entry Tickets: </span>
                 <span>{destination.entryFee}</span>
@@ -253,7 +313,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
 
             {/* Best Time & Insider Tip */}
             <div className="p-3 bg-[#FFF9F2] rounded-2xl border border-[#FDE68A] text-xs text-[#92400E] flex items-start gap-2">
-              <span className="text-base shrink-0">💡</span>
+              <svg className="w-4 h-4 text-[#D97706] shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+                <path d="M9 18h6M10 22h4" />
+              </svg>
               <div>
                 <span className="font-bold">Insider Tip: </span>
                 <span>{destination.insiderTip}</span>
@@ -270,8 +333,14 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 rel="noopener noreferrer"
                 className="flex-1 py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-xs text-center flex items-center justify-center gap-1.5 transition-all"
               >
-                <span>📍 View on Google Maps</span>
-                <span>↗</span>
+                <svg className="w-3.5 h-3.5 text-[#E05333]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+                <span>View on Google Maps</span>
+                <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
               </a>
 
               <button
@@ -283,7 +352,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 }
                 className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white font-bold text-xs text-center flex items-center justify-center gap-1.5 shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer"
               >
-                <span>✨ Ask GAI Advice</span>
+                <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+                </svg>
+                <span>Ask GAI Advice</span>
               </button>
             </div>
           </div>
@@ -324,24 +396,29 @@ export const TravelPage: React.FC<TravelPageProps> = ({
 
         {/* --- TRANSPORT OPTION CARDS --- */}
         <div className="space-y-3.5">
-          {/* 1. AUTO RICKSHAW CARD */}
+          {/* 1. AUTO RICKSHAW CARD (WITH REAL AUTO PHOTO) */}
           {(selectedFilter === 'all' || selectedFilter === 'auto') && (
             <div className="bg-white rounded-3xl p-4 border border-[#BAE6FD] shadow-[0_2px_12px_rgba(2,132,199,0.06)] space-y-3">
               {/* Top Badge */}
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] bg-[#E0F2FE] px-2.5 py-0.5 rounded-full">
-                  <span>★</span>
+                  <svg className="w-3 h-3 text-[#0284C7]" viewBox="0 0 24 24" fill="currentColor">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
                   <span>Best for you</span>
                 </span>
               </div>
 
               {/* Main Info Row */}
               <div className="flex items-start gap-3.5">
-                {/* Auto Rickshaw Icon */}
-                <div className="w-14 h-14 rounded-2xl bg-[#E6F7F5] border border-[#BDEFEA] text-[#0D9488] flex items-center justify-center shrink-0">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 13.5v-3c0-.83-.67-1.5-1.5-1.5H16l-2-4H7L5 9H3.5C2.67 9 2 9.67 2 10.5v3c0 .83.67 1.5 1.5 1.5H4c0 1.66 1.34 3 3 3s3-1.34 3-3h4c0 1.66 1.34 3 3 3s3-1.34 3-3h.5c.83 0 1.5-.67 1.5-1.5zm-12 3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm6-5H8.5V9h4v2.5zm4 5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
-                  </svg>
+                {/* Auto Rickshaw Left-Facing Cutout */}
+                <div className="w-16 h-16 rounded-2xl bg-amber-50/70 border border-amber-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
+                  <img
+                    src="/src/assets/images/auto_rickshaw_left_transparent.png"
+                    alt="Auto Rickshaw in Goa"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain filter drop-shadow-xs"
+                  />
                 </div>
 
                 {/* Title & Subtitle */}
@@ -357,7 +434,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Time & Fare Pill on Right */}
                 <div className="flex flex-col items-end shrink-0 gap-1.5">
                   <div className="flex items-center gap-1 text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
-                    <span>⏱</span>
+                    <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
                     <span>{autoMinutes} min</span>
                   </div>
                   <div className="text-[18px] font-black text-[#FF5436] bg-[#FFF0EC] px-3 py-0.5 rounded-full">
@@ -368,38 +448,54 @@ export const TravelPage: React.FC<TravelPageProps> = ({
 
               {/* Pink Rikshaw Highlight Pill */}
               <div className="p-2.5 bg-[#FFF1F2] rounded-xl border border-[#FFE4E6] flex items-center gap-2 text-xs font-semibold text-[#BE123C]">
-                <span>👩</span>
+                <svg className="w-4 h-4 text-[#BE123C] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
                 <span>Pink Rikshaw (women-only) available at same fare.</span>
               </div>
 
               {/* Footer Specs Row */}
               <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-gray-500">
                 <span className="flex items-center gap-1">
-                  <span>✔</span>
+                  <svg className="w-3.5 h-3.5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
                   <span>Safe & reliable</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>👥</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
                   <span>Available 24×7</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>📍</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
                   <span>Widely available</span>
                 </span>
               </div>
             </div>
           )}
 
-          {/* 2. RENT A SCOOTER CARD */}
+          {/* 2. RENT A SCOOTER CARD (WITH REAL SCOTTY PHOTO) */}
           {(selectedFilter === 'all' || selectedFilter === 'scooter') && (
             <div className="bg-white rounded-3xl p-4 border border-gray-200/90 shadow-xs space-y-3">
               {/* Main Info Row */}
               <div className="flex items-start gap-3.5">
-                {/* Scooter Icon */}
-                <div className="w-14 h-14 rounded-2xl bg-[#FFF6EE] border border-[#FED7AA] text-[#EA580C] flex items-center justify-center shrink-0">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 14h-2.1c-.4-1.2-1.5-2-2.9-2H13l-1.5-3H14V7h-3.2l-1.5-3H6v2h2.2l1.5 3H7c-1.7 0-3 1.3-3 3v2H2v2h2.1c.4 1.2 1.5 2 2.9 2s2.5-.8 2.9-2h4.2c.4 1.2 1.5 2 2.9 2s2.5-.8 2.9-2H22v-2h-3zm-12 3c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm10 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
-                  </svg>
+                {/* Scooter Left-Facing Cutout */}
+                <div className="w-16 h-16 rounded-2xl bg-emerald-50/70 border border-emerald-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
+                  <img
+                    src="/src/assets/images/scooter_left_transparent.png"
+                    alt="Rental Scooter in Goa"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain filter drop-shadow-xs"
+                  />
                 </div>
 
                 {/* Title & Subtitle */}
@@ -415,7 +511,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Time & Fare Pill on Right */}
                 <div className="flex flex-col items-end shrink-0 gap-1.5">
                   <div className="flex items-center gap-1 text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
-                    <span>⏱</span>
+                    <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
                     <span>{scooterMinutes} min</span>
                   </div>
                   <div className="text-[16px] font-black text-[#FF5436] bg-[#FFF0EC] px-2.5 py-0.5 rounded-full whitespace-nowrap">
@@ -427,31 +526,42 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               {/* Footer Specs Row */}
               <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-gray-500">
                 <span className="flex items-center gap-1">
-                  <span>🪖</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2a8 8 0 0 0-8 8v5a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4v-5a8 8 0 0 0-8-8z" />
+                  </svg>
                   <span>Helmets included</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>⛽</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M3 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18" />
+                    <path d="M15 10h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4" />
+                  </svg>
                   <span>Fuel extra</span>
                 </span>
                 <span className="inline-flex items-center gap-1 text-[#9A3412] bg-[#FFF5EC] px-2 py-0.5 rounded-md font-bold">
-                  <span>📄</span>
+                  <svg className="w-3.5 h-3.5 text-[#9A3412]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                  </svg>
                   <span>Valid DL required</span>
                 </span>
               </div>
             </div>
           )}
 
-          {/* 3. CAB (PRIVATE TAXI) - NO GOAMILES MENTIONS */}
+          {/* 3. CAB (PRIVATE TAXI - WITH REAL TAXI PHOTO) */}
           {(selectedFilter === 'all' || selectedFilter === 'cab') && (
             <div className="bg-white rounded-3xl p-4 border border-gray-200/90 shadow-xs space-y-3">
               {/* Main Info Row */}
               <div className="flex items-start gap-3.5">
-                {/* Cab Icon in Blue Box */}
-                <div className="w-14 h-14 rounded-2xl bg-[#EFF6FF] border border-[#BFDBFE] text-[#2563EB] flex items-center justify-center shrink-0">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" />
-                  </svg>
+                {/* Taxi Left-Facing Cutout */}
+                <div className="w-16 h-16 rounded-2xl bg-sky-50/70 border border-sky-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
+                  <img
+                    src="/src/assets/images/taxi_left_transparent.png"
+                    alt="Private Taxi in Goa"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain filter drop-shadow-xs"
+                  />
                 </div>
 
                 {/* Title & Subtitle */}
@@ -467,7 +577,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Time & Fare Pill on Right */}
                 <div className="flex flex-col items-end shrink-0 gap-1.5">
                   <div className="flex items-center gap-1 text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
-                    <span>⏱</span>
+                    <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
                     <span>{cabMinutes} min</span>
                   </div>
                   <div className="text-[16px] font-black text-[#FF5436] bg-[#FFF0EC] px-2.5 py-0.5 rounded-full whitespace-nowrap">
@@ -479,31 +592,43 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               {/* Footer Specs Row */}
               <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-gray-500">
                 <span className="flex items-center gap-1">
-                  <span>❄️</span>
+                  <svg className="w-3.5 h-3.5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="2" y1="12" x2="22" y2="12" />
+                    <line x1="12" y1="2" x2="12" y2="22" />
+                    <path d="M20 16l-4-4 4-4M4 8l4 4-4 4M16 4l-4 4-4-4M8 20l4-4 4 4" />
+                  </svg>
                   <span>AC comfort</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>🧳</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
                   <span>Luggage space</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>🛡️</span>
+                  <svg className="w-3.5 h-3.5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  </svg>
                   <span>Verified local drivers</span>
                 </span>
               </div>
             </div>
           )}
 
-          {/* 4. LOCAL BUS (KADAMBA / SHUTTLE) WITH REAL USER GPS BUS STAND */}
+          {/* 4. LOCAL BUS (KADAMBA / SHUTTLE - WITH REAL BUS PHOTO) */}
           {(selectedFilter === 'all' || selectedFilter === 'bus') && (
             <div className="bg-white rounded-3xl p-4 border border-gray-200/90 shadow-xs space-y-3">
               {/* Main Info Row */}
               <div className="flex items-start gap-3.5">
-                {/* Bus Icon in Purple Box */}
-                <div className="w-14 h-14 rounded-2xl bg-[#F5F3FF] border border-[#DDD6FE] text-[#7C3AED] flex items-center justify-center shrink-0">
-                  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M4 16c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4s-8 .5-8 4v10zm3.5 1c-.83 0-1.5-.67-1.5-1.5S6.67 14 7.5 14s1.5.67 1.5 1.5S8.33 17 7.5 17zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-6H6V6h12v5z" />
-                  </svg>
+                {/* Bus Left-Facing Cutout */}
+                <div className="w-16 h-16 rounded-2xl bg-purple-50/70 border border-purple-100 flex items-center justify-center p-1.5 shadow-2xs shrink-0 overflow-hidden">
+                  <img
+                    src="/src/assets/images/bus_left_transparent.png"
+                    alt="Kadamba Local Bus in Goa"
+                    referrerPolicy="no-referrer"
+                    className="w-full h-full object-contain filter drop-shadow-xs"
+                  />
                 </div>
 
                 {/* Title & Subtitle */}
@@ -519,7 +644,10 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                 {/* Time & Fare Pill on Right */}
                 <div className="flex flex-col items-end shrink-0 gap-1.5">
                   <div className="flex items-center gap-1 text-[11px] font-bold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-full">
-                    <span>⏱</span>
+                    <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
                     <span>{busMinutes} min</span>
                   </div>
                   <div className="text-[16px] font-black text-[#FF5436] bg-[#FFF0EC] px-2.5 py-0.5 rounded-full whitespace-nowrap">
@@ -531,19 +659,37 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               {/* Station & Timing Info Box (Near User GPS Station) */}
               <div className="p-3 bg-[#FAF5FF] rounded-2xl border border-[#E9D5FF] space-y-1.5 text-xs">
                 <div className="flex items-start gap-1.5 text-[#6B21A8]">
-                  <span className="font-bold shrink-0">🚌 Nearest Bus Stand to YOU:</span>
+                  <span className="font-bold shrink-0 flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5 text-[#7C3AED]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="4" y="3" width="16" height="15" rx="2" />
+                      <path d="M4 11h16M8 18v2M16 18v2M8 7h.01M16 7h.01" />
+                    </svg>
+                    <span>Nearest Bus Stand to YOU:</span>
+                  </span>
                   <span className="font-semibold text-gray-900">
                     {nearestBusStandToUser.standName} ({nearestBusStandToUser.distanceToUser})
                   </span>
                 </div>
                 <div className="flex items-start gap-1.5 text-[#6B21A8]">
-                  <span className="font-bold shrink-0">🚏 Board Bus Towards:</span>
+                  <span className="font-bold shrink-0 flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5 text-[#7C3AED]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="8" r="4" />
+                      <path d="M12 12v8" />
+                    </svg>
+                    <span>Board Bus Towards:</span>
+                  </span>
                   <span className="font-medium text-gray-700">
                     {destination.name} direction ({nearestBusStandToUser.busPlatform})
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-gray-500 pt-1 border-t border-[#E9D5FF]/60 text-[11px]">
-                  <span>⏰ Frequency: Every 15–20 mins (6:30 AM – 8:30 PM)</span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3 h-3 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span>Frequency: Every 15–20 mins (6:30 AM – 8:30 PM)</span>
+                  </span>
                   <span className="font-semibold text-[#7C3AED]">Tickets on board</span>
                 </div>
               </div>
@@ -551,15 +697,23 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               {/* Footer Specs Row */}
               <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] font-semibold text-gray-500">
                 <span className="flex items-center gap-1">
-                  <span>🎟️</span>
+                  <svg className="w-3.5 h-3.5 text-purple-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+                  </svg>
                   <span>Budget friendly</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>🚏</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M12 12v8" />
+                  </svg>
                   <span>Fixed routes</span>
                 </span>
                 <span className="flex items-center gap-1">
-                  <span>🌱</span>
+                  <svg className="w-3.5 h-3.5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                    <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                  </svg>
                   <span>Eco-friendly</span>
                 </span>
               </div>

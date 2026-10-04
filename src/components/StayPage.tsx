@@ -37,7 +37,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Taj Fort Aguada Resort & Spa',
     type: 'hotel',
     starRating: 5,
-    starsDisplay: '5★ Luxury',
+    starsDisplay: '5-Star Luxury',
     locality: 'Sinquerim Beach, Candolim',
     areaGroup: 'Candolim',
     distanceToBeach: 'Direct Beachfront access',
@@ -55,7 +55,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'W Goa',
     type: 'hotel',
     starRating: 5,
-    starsDisplay: '5★ Luxury',
+    starsDisplay: '5-Star Luxury',
     locality: 'Vagator Beach, North Goa',
     areaGroup: 'Assagao',
     distanceToBeach: '1 min to Vagator Beach',
@@ -75,7 +75,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'WelcomHeritage Panjim Inn',
     type: 'hotel',
     starRating: 4,
-    starsDisplay: '4★ Boutique',
+    starsDisplay: '4-Star Boutique',
     locality: 'Fontainhas Latin Quarter, Panaji',
     areaGroup: 'Panaji',
     distanceToBeach: '8 min to Miramar Beach',
@@ -93,7 +93,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'The Goan Villa',
     type: 'homestay',
     starRating: 4,
-    starsDisplay: '4★ Boutique',
+    starsDisplay: '4-Star Boutique',
     locality: 'Candolim, North Goa',
     areaGroup: 'Candolim',
     distanceToBeach: '5 min to Candolim Beach',
@@ -111,7 +111,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Botanical Palm Estate',
     type: 'homestay',
     starRating: 4,
-    starsDisplay: '4★ Boutique',
+    starsDisplay: '4-Star Boutique',
     locality: 'Siolim Riverfront, North Goa',
     areaGroup: 'Assagao',
     distanceToBeach: '10 min to Morjim Beach',
@@ -131,7 +131,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Hotel Vilena',
     type: 'hotel',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'Court Circle, Mapusa',
     areaGroup: 'Mapusa',
     distanceToBeach: '14 min to Calangute Beach',
@@ -149,7 +149,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Green Park Resort',
     type: 'hotel',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'Guirim By-pass, Mapusa',
     areaGroup: 'Mapusa',
     distanceToBeach: '12 min to Candolim Beach',
@@ -167,7 +167,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Casa Bela Boutique Hotel',
     type: 'hotel',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'Calangute, North Goa',
     areaGroup: 'Calangute / Baga',
     distanceToBeach: '8 min to Calangute Beach',
@@ -185,7 +185,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Aldeia Santa Rita',
     type: 'hotel',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'Sinquerim, Candolim',
     areaGroup: 'Candolim',
     distanceToBeach: '5 min to Sinquerim Beach',
@@ -203,7 +203,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Quinta da Rosa Heritage Homestay',
     type: 'homestay',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'Assagao, North Goa',
     areaGroup: 'Assagao',
     distanceToBeach: '10 min to Vagator Beach',
@@ -221,7 +221,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Chateau Madeira Homestay',
     type: 'homestay',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'Moira Village (near Mapusa)',
     areaGroup: 'Mapusa',
     distanceToBeach: '20 min to Morjim Beach',
@@ -239,7 +239,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Afonso Heritage Guest House',
     type: 'homestay',
     starRating: 3,
-    starsDisplay: '3★ Comfort',
+    starsDisplay: '3-Star Comfort',
     locality: 'St. Sebastian Chapel, Fontainhas',
     areaGroup: 'Panaji',
     distanceToBeach: '10 min to Miramar Beach',
@@ -259,7 +259,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Hotel Satyaheera',
     type: 'hotel',
     starRating: 2,
-    starsDisplay: '2★ Budget',
+    starsDisplay: '2-Star Budget',
     locality: 'Near Municipal Market, Mapusa',
     areaGroup: 'Mapusa',
     distanceToBeach: '15 min to Calangute Beach',
@@ -277,7 +277,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Mapusa Residency (GTDC)',
     type: 'hotel',
     starRating: 2,
-    starsDisplay: '2★ Budget',
+    starsDisplay: '2-Star Budget',
     locality: 'Near Bus Terminus, Mapusa',
     areaGroup: 'Mapusa',
     distanceToBeach: '18 min to Baga Beach',
@@ -295,7 +295,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Shantadurga Budget Lodge',
     type: 'hotel',
     starRating: 2,
-    starsDisplay: '2★ Budget',
+    starsDisplay: '2-Star Budget',
     locality: 'Market Road, Mapusa',
     areaGroup: 'Mapusa',
     distanceToBeach: '16 min to Anjuna Beach',
@@ -313,7 +313,7 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     name: 'Seashell Palms Inn',
     type: 'hotel',
     starRating: 2,
-    starsDisplay: '2★ Budget',
+    starsDisplay: '2-Star Budget',
     locality: 'Baga Road, Calangute',
     areaGroup: 'Calangute / Baga',
     distanceToBeach: '4 min to beach',
@@ -490,14 +490,24 @@ export const StayPage: React.FC<StayPageProps> = ({
         {/* Selected Party & Month Context Badge (Clean, non-redundant) */}
         <div className="flex items-center justify-between px-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200/80 shadow-2xs text-[12px] font-bold text-gray-800">
-            <span>👥</span>
+            <svg className="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
             <span>{memberCount} {memberCount === 1 ? 'Guest' : 'Guests'}</span>
             <span className="text-gray-300">·</span>
             <span className="text-[#177F91]">{travelType}</span>
           </div>
 
           <div className="text-[12px] font-semibold text-gray-500 flex items-center gap-1">
-            <span>📅</span>
+            <svg className="w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
             <span>{travelMonth}</span>
           </div>
         </div>
@@ -525,7 +535,12 @@ export const StayPage: React.FC<StayPageProps> = ({
         {/* Season Alert Banner: Peak Season Price Rise */}
         <div className="rounded-2xl bg-[#FFF5EC] border border-[#FED7AA] p-3.5 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
-            <span className="text-lg">📅</span>
+            <svg className="w-4 h-4 text-[#EA580C] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
             <div className="text-[12px] font-semibold text-[#9A3412] leading-tight">
               <span>Peak season (Dec–Jan): prices rise 2–3x. Book early.</span>
             </div>
@@ -575,10 +590,10 @@ export const StayPage: React.FC<StayPageProps> = ({
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
             {[
               { id: 'all', label: 'All Stars' },
-              { id: 2, label: '2★ Budget' },
-              { id: 3, label: '3★ Comfort' },
-              { id: 4, label: '4★ Boutique' },
-              { id: 5, label: '5★ Luxury' },
+              { id: 2, label: '2-Star Budget' },
+              { id: 3, label: '3-Star Comfort' },
+              { id: 4, label: '4-Star Boutique' },
+              { id: 5, label: '5-Star Luxury' },
             ].map((s) => {
               const isSelected = starFilter === s.id;
               return (
@@ -622,8 +637,11 @@ export const StayPage: React.FC<StayPageProps> = ({
                     />
 
                     {/* Star badge overlay */}
-                    <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[10px] font-bold text-white">
-                      {stay.starRating}★
+                    <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[10px] font-bold text-white flex items-center gap-0.5">
+                      <span>{stay.starRating}</span>
+                      <svg className="w-2.5 h-2.5 fill-current text-amber-400" viewBox="0 0 24 24">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                      </svg>
                     </div>
 
                     {/* Heart Button */}
@@ -654,7 +672,9 @@ export const StayPage: React.FC<StayPageProps> = ({
                       <div className="flex items-center justify-between gap-1">
                         {stay.isBestMatch ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] bg-[#E0F2FE] px-2 py-0.5 rounded-full">
-                            <span>★</span>
+                            <svg className="w-3 h-3 fill-current text-[#0284C7]" viewBox="0 0 24 24">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
                             <span>Best match</span>
                           </span>
                         ) : (
@@ -665,7 +685,9 @@ export const StayPage: React.FC<StayPageProps> = ({
 
                         {stay.isVerified && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D9488] bg-[#CCFBF1] px-2 py-0.5 rounded-full">
-                            <span>✔</span>
+                            <svg className="w-3 h-3 text-[#0D9488]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
                             <span>Verified</span>
                           </span>
                         )}
@@ -683,7 +705,10 @@ export const StayPage: React.FC<StayPageProps> = ({
 
                       {/* Distance */}
                       <div className="flex items-center gap-1 text-[11.5px] font-semibold text-gray-600 mt-1 truncate">
-                        <span>📍</span>
+                        <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
                         <span className="truncate">{stay.distanceToBeach}</span>
                       </div>
                     </div>
@@ -706,15 +731,28 @@ export const StayPage: React.FC<StayPageProps> = ({
                 <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-gray-600">
                   <div className="flex items-center gap-3 text-[11px] font-semibold text-gray-500 min-w-0">
                     <span className="flex items-center gap-1 truncate max-w-[100px]">
-                      <span>🚶</span>
+                      <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="5" r="2" />
+                        <path d="M10 22v-5l-2-1v-4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4l-2 1v5" />
+                      </svg>
                       <span className="truncate">{stay.distanceToBeach}</span>
                     </span>
                     <span className="flex items-center gap-1 truncate max-w-[95px]">
-                      <span>🚗</span>
+                      <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
+                        <circle cx="7" cy="17" r="2" />
+                        <path d="M9 17h6" />
+                        <circle cx="17" cy="17" r="2" />
+                      </svg>
                       <span className="truncate">{stay.distanceToStation}</span>
                     </span>
                     <span className="flex items-center gap-1 truncate max-w-[85px]">
-                      <span>👥</span>
+                      <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                      </svg>
                       <span className="truncate">{stay.suitableFor}</span>
                     </span>
                   </div>
@@ -771,8 +809,11 @@ export const StayPage: React.FC<StayPageProps> = ({
                     <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-xs font-bold">
                       {selectedStay.starsDisplay}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-[#177F91] text-white text-xs font-bold">
-                      ✔ Verified Stay
+                    <span className="px-2.5 py-1 rounded-full bg-[#177F91] text-white text-xs font-bold inline-flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      <span>Verified Stay</span>
                     </span>
                   </div>
                 </div>
@@ -828,9 +869,12 @@ export const StayPage: React.FC<StayPageProps> = ({
                     {selectedStay.amenities.map((amenity) => (
                       <span
                         key={amenity}
-                        className="px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-xs font-semibold"
+                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-xs font-semibold"
                       >
-                        ✓ {amenity}
+                        <svg className="w-3 h-3 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>{amenity}</span>
                       </span>
                     ))}
                   </div>
@@ -846,8 +890,14 @@ export const StayPage: React.FC<StayPageProps> = ({
                     rel="noopener noreferrer"
                     className="py-3 px-4 rounded-2xl bg-gray-100 text-gray-900 text-center font-bold text-[13.5px] hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center gap-1.5"
                   >
-                    <span>📍 View on map</span>
-                    <span>↗</span>
+                    <svg className="w-4 h-4 text-[#E05333]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span>View on map</span>
+                    <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M7 17L17 7M17 7H7M17 7V17" />
+                    </svg>
                   </a>
 
                   <button
@@ -859,7 +909,10 @@ export const StayPage: React.FC<StayPageProps> = ({
                     }}
                     className="py-3 px-4 rounded-2xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white text-center font-bold text-[13.5px] shadow-sm hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <span>✨ Ask GAI details</span>
+                    <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+                    </svg>
+                    <span>Ask GAI details</span>
                   </button>
                 </div>
               </motion.div>

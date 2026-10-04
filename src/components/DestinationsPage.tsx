@@ -464,14 +464,66 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                       : 'border-gray-200/90 bg-white text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  {tag === 'Uncrowded' && <span>🍃</span>}
-                  {tag === 'Popular' && <span>👥</span>}
-                  {tag === 'Adventure' && <span>⛰️</span>}
-                  {tag === 'Heritage' && <span>🏛️</span>}
-                  {tag === 'Cultural' && <span>🎨</span>}
-                  {tag === 'Forts' && <span>🏰</span>}
-                  {tag === 'Beaches' && <span>🏖️</span>}
-                  {tag === 'Nature & Hills' && <span>🌿</span>}
+                  {tag === 'Uncrowded' && (
+                    <svg className="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                      <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                    </svg>
+                  )}
+                  {tag === 'Popular' && (
+                    <svg className="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                  )}
+                  {tag === 'Adventure' && (
+                    <svg className="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+                    </svg>
+                  )}
+                  {tag === 'Heritage' && (
+                    <svg className="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="2" y1="22" x2="22" y2="22" />
+                      <path d="M4 6h16l-8-4-8 4z" />
+                      <line x1="6" y1="10" x2="6" y2="18" />
+                      <line x1="10" y1="10" x2="10" y2="18" />
+                      <line x1="14" y1="10" x2="14" y2="18" />
+                      <line x1="18" y1="10" x2="18" y2="18" />
+                    </svg>
+                  )}
+                  {tag === 'Cultural' && (
+                    <svg className="w-3.5 h-3.5 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+                      <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+                      <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+                      <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+                      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+                    </svg>
+                  )}
+                  {tag === 'Forts' && (
+                    <svg className="w-3.5 h-3.5 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 21h18" />
+                      <path d="M5 21V5l2-2 2 2v2h6V5l2-2 2 2v16" />
+                      <path d="M9 10h6" />
+                      <path d="M10 21v-4a2 2 0 0 1 4 0v4" />
+                    </svg>
+                  )}
+                  {tag === 'Beaches' && (
+                    <svg className="w-3.5 h-3.5 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 3v18" />
+                      <path d="M12 3a9 9 0 0 1 9 9H3a9 9 0 0 1 9-9Z" />
+                      <path d="M12 21a2 2 0 0 0 2-2" />
+                    </svg>
+                  )}
+                  {tag === 'Nature & Hills' && (
+                    <svg className="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22v-7" />
+                      <path d="M12 15a6 6 0 0 0-6-6c0 3.3 2.7 6 6 6Z" />
+                      <path d="M12 15a6 6 0 0 1 6-6c0 3.3-2.7 6-6 6Z" />
+                    </svg>
+                  )}
                   <span>{tag}</span>
                 </button>
               );
@@ -498,7 +550,10 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                 Spots that actually match your trip.
               </p>
               <div className="text-[11px] font-semibold text-white/80 bg-black/40 backdrop-blur-xs px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0">
-                <span>📍</span>
+                <svg className="w-3 h-3 text-white/90" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
                 <span>Reis Magos Fort</span>
               </div>
             </div>
@@ -508,7 +563,11 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
         {/* Tips / Restrictions Alert Banner */}
         <div className="rounded-2xl bg-[#FFF8EE] border border-[#FDE68A] p-3.5 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
-            <span className="text-lg">⚠️</span>
+            <svg className="w-5 h-5 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
             <div className="text-[12px] font-semibold text-[#92400E] leading-tight">
               <span>Some spots have seasonal restrictions — check before you go.</span>
             </div>
@@ -565,25 +624,37 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                       <div className="flex items-center justify-between gap-1">
                         {item.matchBadge === 'Best match' && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] bg-[#E0F2FE] px-2 py-0.5 rounded-full">
-                            <span>★</span>
+                            <svg className="w-3 h-3 fill-current text-[#0284C7]" viewBox="0 0 24 24">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
                             <span>Best match</span>
                           </span>
                         )}
                         {item.matchBadge === 'Popular' && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D9488] bg-[#CCFBF1] px-2 py-0.5 rounded-full">
-                            <span>👥</span>
+                            <svg className="w-3 h-3 text-[#0D9488]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                              <circle cx="9" cy="7" r="4" />
+                            </svg>
                             <span>Popular</span>
                           </span>
                         )}
                         {item.matchBadge === 'Hidden gem' && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] px-2 py-0.5 rounded-full">
-                            <span>🌱</span>
+                            <svg className="w-3 h-3 text-[#15803D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 22v-7" />
+                              <path d="M12 15a6 6 0 0 0-6-6c0 3.3 2.7 6 6 6Z" />
+                              <path d="M12 15a6 6 0 0 1 6-6c0 3.3-2.7 6-6 6Z" />
+                            </svg>
                             <span>Hidden gem</span>
                           </span>
                         )}
                         {item.matchBadge === 'Scenic pick' && (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#B45309] bg-[#FEF3C7] px-2 py-0.5 rounded-full">
-                            <span>📸</span>
+                            <svg className="w-3 h-3 text-[#B45309]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                              <circle cx="12" cy="13" r="4" />
+                            </svg>
                             <span>Scenic pick</span>
                           </span>
                         )}
@@ -613,13 +684,17 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                             }`}
                             title="Save to My Goa"
                           >
-                            ❤️
+                            <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                            </svg>
                           </button>
 
                           {/* Travel Link Cue */}
-                          <span className="text-[10px] font-bold text-[#177F91] bg-[#EAF5F7] px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                          <span className="text-[10px] font-bold text-[#177F91] bg-[#EAF5F7] px-2 py-0.5 rounded-full flex items-center gap-1">
                             <span>Rides</span>
-                            <span>↗</span>
+                            <svg className="w-2.5 h-2.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M7 17L17 7M17 7H7M17 7V17" />
+                            </svg>
                           </span>
                         </div>
                       </div>
@@ -631,7 +706,10 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
 
                       {/* Distance From Stay */}
                       <div className="flex items-center gap-1 text-[11.5px] font-semibold text-gray-600 mt-0.5">
-                        <span>📍</span>
+                        <svg className="w-3 h-3 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                          <circle cx="12" cy="10" r="3" />
+                        </svg>
                         <span>{minutesFromStay} min from your stay</span>
                       </div>
 
@@ -658,14 +736,57 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                   <div className="flex items-center gap-2.5 truncate pr-2">
                     {item.tags.map((tag, idx) => (
                       <span key={idx} className="flex items-center gap-1 shrink-0">
-                        {tag.toLowerCase().includes('ferry') && <span>⛴</span>}
-                        {tag.toLowerCase().includes('fort') && <span>🏰</span>}
-                        {tag.toLowerCase().includes('heritage') && <span>🏛</span>}
-                        {tag.toLowerCase().includes('uncrowded') && <span>🍃</span>}
-                        {tag.toLowerCase().includes('sunset') && <span>🌅</span>}
-                        {tag.toLowerCase().includes('village') && <span>🏡</span>}
-                        {tag.toLowerCase().includes('trek') && <span>🥾</span>}
-                        {tag.toLowerCase().includes('waterfall') && <span>🌊</span>}
+                        {tag.toLowerCase().includes('ferry') && (
+                          <svg className="w-3 h-3 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                            <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76" />
+                            <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6" />
+                            <line x1="12" y1="1" x2="12" y2="5" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('fort') && (
+                          <svg className="w-3 h-3 text-amber-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 21h18" />
+                            <path d="M5 21V5l2-2 2 2v2h6V5l2-2 2 2v16" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('heritage') && (
+                          <svg className="w-3 h-3 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="2" y1="22" x2="22" y2="22" />
+                            <path d="M4 6h16l-8-4-8 4z" />
+                            <line x1="6" y1="10" x2="6" y2="18" />
+                            <line x1="10" y1="10" x2="10" y2="18" />
+                            <line x1="14" y1="10" x2="14" y2="18" />
+                            <line x1="18" y1="10" x2="18" y2="18" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('uncrowded') && (
+                          <svg className="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('sunset') && (
+                          <svg className="w-3 h-3 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 10V2M4.93 10.93 2.1 8.1M19.07 10.93l2.83-2.83M22 17H2M16 17a4 4 0 0 0-8 0" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('village') && (
+                          <svg className="w-3 h-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('trek') && (
+                          <svg className="w-3 h-3 text-stone-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" />
+                          </svg>
+                        )}
+                        {tag.toLowerCase().includes('waterfall') && (
+                          <svg className="w-3 h-3 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                            <path d="M2 14c.6.5 1.2 1 2.5 1C7 15 7 13 9.5 13c1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                          </svg>
+                        )}
                         <span>{tag}</span>
                       </span>
                     ))}

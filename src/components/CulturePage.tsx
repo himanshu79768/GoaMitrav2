@@ -44,18 +44,18 @@ const ALL_MONTHS = [
 ];
 
 const MONTHLY_CULTURAL_TIPS: Record<number, string> = {
-  0: "💡 January Cultural Tip: Visit Cansaulim Hill early on Jan 6th for the 400-year-old Three Kings Procession, and savor authentic Goan Khaje sweets at Mapusa's Bodgeshwar Zatra!",
-  1: "💡 February Cultural Tip: King Momo decrees 4 days of non-stop joy! Catch float parades in Panaji on Day 1, followed by Margao & Mapusa. Don't miss the 24-hr Mangeshi Zatra!",
-  2: "💡 March Cultural Tip: Shigmo parades feature massive illuminated mythological floats and Romtamel drumming. Arrive by 4:00 PM in Panaji or Ponda for front-row views!",
-  3: "💡 April Cultural Tip: Devotees offer coconut oil at Mapusa Milagres Feast regardless of faith — a world-famous symbol of Goan communal harmony.",
-  4: "💡 May Cultural Tip: Witness the intense midnight Homkhand fire-walking at Shirgao Lairai Zatra, and attend the Panaji Cashew Festival for GI-tagged Feni tastings!",
-  5: "💡 June Cultural Tip: Don fresh flower Kopel crowns during São João on June 24! Join Siolim river boat pageants and watch festive village well-jumping.",
-  6: "💡 July Cultural Tip: Wear comfortable old clothes for Marcel's Chikhal Kalo mud festival — sacred sesame oil is distributed freely before traditional mud sports!",
-  7: "💡 August Cultural Tip: Divar Island's Bonderam festival features Fotash bamboo toy cannons and brass parades. Take the Ribandar ferry early to avoid rush!",
-  8: "💡 September Cultural Tip: Walk through village homes in Marcel and Priol to observe intricate Matoli ceiling canopies woven with 100+ wild forest fruits and medicinal herbs.",
-  9: "💡 October Cultural Tip: Witness giant paper-mâché Narkasur effigies burned across Goan towns on Diwali eve, and visit Colva Church for the historic Fama procession!",
-  10: "💡 November Cultural Tip: Head to the Valvanti riverbank in Sanquelim on Tripurari Poornima to watch lit handcrafted miniature boat models float at dusk.",
-  11: "💡 December Cultural Tip: Visit Old Goa Basilica on Dec 3rd for St. Francis Xavier's feast High Mass, and stroll Fontainhas Latin Quarter for lit Christmas star lanterns.",
+  0: "January Cultural Tip: Visit Cansaulim Hill early on Jan 6th for the 400-year-old Three Kings Procession, and savor authentic Goan Khaje sweets at Mapusa's Bodgeshwar Zatra!",
+  1: "February Cultural Tip: King Momo decrees 4 days of non-stop joy! Catch float parades in Panaji on Day 1, followed by Margao & Mapusa. Don't miss the 24-hr Mangeshi Zatra!",
+  2: "March Cultural Tip: Shigmo parades feature massive illuminated mythological floats and Romtamel drumming. Arrive by 4:00 PM in Panaji or Ponda for front-row views!",
+  3: "April Cultural Tip: Devotees offer coconut oil at Mapusa Milagres Feast regardless of faith — a world-famous symbol of Goan communal harmony.",
+  4: "May Cultural Tip: Witness the intense midnight Homkhand fire-walking at Shirgao Lairai Zatra, and attend the Panaji Cashew Festival for GI-tagged Feni tastings!",
+  5: "June Cultural Tip: Don fresh flower Kopel crowns during São João on June 24! Join Siolim river boat pageants and watch festive village well-jumping.",
+  6: "July Cultural Tip: Wear comfortable old clothes for Marcel's Chikhal Kalo mud festival — sacred sesame oil is distributed freely before traditional mud sports!",
+  7: "August Cultural Tip: Divar Island's Bonderam festival features Fotash bamboo toy cannons and brass parades. Take the Ribandar ferry early to avoid rush!",
+  8: "September Cultural Tip: Walk through village homes in Marcel and Priol to observe intricate Matoli ceiling canopies woven with 100+ wild forest fruits and medicinal herbs.",
+  9: "October Cultural Tip: Witness giant paper-mâché Narkasur effigies burned across Goan towns on Diwali eve, and visit Colva Church for the historic Fama procession!",
+  10: "November Cultural Tip: Head to the Valvanti riverbank in Sanquelim on Tripurari Poornima to watch lit handcrafted miniature boat models float at dusk.",
+  11: "December Cultural Tip: Visit Old Goa Basilica on Dec 3rd for St. Francis Xavier's feast High Mass, and stroll Fontainhas Latin Quarter for lit Christmas star lanterns.",
 };
 
 // Complete Dataset covering ALL events provided in user prompt (Jan - Dec)
@@ -1391,7 +1391,10 @@ export const CulturePage: React.FC<CulturePageProps> = ({
               <div className="bg-white rounded-2xl border border-gray-200/90 p-3 shadow-xs space-y-2">
                 <div className="flex items-center justify-between px-0.5">
                   <div className="flex items-center gap-1.5 text-xs font-extrabold text-gray-800 uppercase tracking-wider">
-                    <span>🔍</span>
+                    <svg className="w-3.5 h-3.5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
                     <span>Filter by Month</span>
                   </div>
                   <button
@@ -1411,7 +1414,12 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                   className="w-full rounded-xl bg-[#E0F2FE] border border-[#0284C7]/40 px-3.5 py-2.5 flex items-center justify-between text-[#0369A1] shadow-2xs hover:bg-[#D0EBFD] active:scale-[0.99] transition-all cursor-pointer"
                 >
                   <div className="flex items-center gap-2 font-black text-[14px]">
-                    <span>📅</span>
+                    <svg className="w-4 h-4 text-[#0284C7]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                      <line x1="16" x2="16" y1="2" y2="6" />
+                      <line x1="8" x2="8" y1="2" y2="6" />
+                      <line x1="3" x2="21" y1="10" y2="10" />
+                    </svg>
                     <span>{currentMonthData.name}</span>
                     <span className="text-xs font-bold text-[#0284C7] bg-white/80 px-2 py-0.5 rounded-full border border-[#0284C7]/30">
                       {filteredEvents.length} events
@@ -1447,6 +1455,11 @@ export const CulturePage: React.FC<CulturePageProps> = ({
 
               {/* CULTURAL INSIDER TIP */}
               <div className="bg-[#F0FDF4] border border-[#B9F6CA] rounded-2xl p-3.5 shadow-2xs flex items-start gap-2.5">
+                <svg className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+                  <path d="M9 18h6" />
+                  <path d="M10 22h4" />
+                </svg>
                 <p className="text-[12.5px] font-semibold text-[#1B5E20] leading-relaxed">
                   {currentTip}
                 </p>
@@ -1455,8 +1468,11 @@ export const CulturePage: React.FC<CulturePageProps> = ({
               {/* CULTURAL EVENTS LIST */}
               <div className="space-y-3.5 pt-1">
                 <div className="flex items-center justify-between px-1">
-                  <h3 className="text-[13px] font-extrabold text-gray-800 uppercase tracking-wider">
-                    🌴 {currentMonthData.name} Cultural Events ({filteredEvents.length})
+                  <h3 className="text-[13px] font-extrabold text-gray-800 uppercase tracking-wider flex items-center gap-1.5">
+                    <svg className="w-4 h-4 text-emerald-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V18a1 1 0 0 1-2 0v-1.07A6 6 0 0 1 6.07 12H5a1 1 0 0 1 0-2h1.07A6 6 0 0 1 11 4.93V4a1 1 0 0 1 2 0v.93A6 6 0 0 1 17.93 10H19a1 1 0 0 1 0 2h-1.07A6 6 0 0 1 13 16.93z" />
+                    </svg>
+                    <span>{currentMonthData.name} Cultural Events ({filteredEvents.length})</span>
                   </h3>
                 </div>
 
@@ -1488,7 +1504,10 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                             <div className="flex items-center gap-1.5">
                               {evt.badgeType === 'bestMatch' && (
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#38BDF8] text-[#0369A1] font-extrabold text-[11px] shadow-xs">
-                                  <span>★</span> Best match
+                                  <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                  </svg>
+                                  <span>Best match</span>
                                 </span>
                               )}
                               <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-[#FFE4E6] text-[#E11D48] font-extrabold text-[11px] shadow-xs">
@@ -1522,13 +1541,21 @@ export const CulturePage: React.FC<CulturePageProps> = ({
 
                           {/* Location */}
                           <div className="flex items-center gap-1.5 text-[13px] font-semibold text-gray-700">
-                            <span className="text-gray-400">📍</span>
+                            <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
                             <span>{evt.location}</span>
                           </div>
 
                           {/* Date & Time */}
                           <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#177F91]">
-                            <span>📅</span>
+                            <svg className="w-3.5 h-3.5 text-[#177F91] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
+                              <line x1="16" x2="16" y1="2" y2="6" />
+                              <line x1="8" x2="8" y1="2" y2="6" />
+                              <line x1="3" x2="21" y1="10" y2="10" />
+                            </svg>
                             <span>{evt.dateDisplay}</span>
                           </div>
 
@@ -1541,13 +1568,23 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                           <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between text-gray-600 text-[12px] font-semibold">
                             <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
                               {evt.activityType && (
-                                <span className="flex items-center gap-1 text-gray-700 font-medium">
-                                  <span>👥</span> {evt.activityType}
+                                <span className="flex items-center gap-1.5 text-gray-700 font-medium">
+                                  <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                  </svg>
+                                  <span>{evt.activityType}</span>
                                 </span>
                               )}
                               {evt.audience && (
-                                <span className="flex items-center gap-1 text-gray-700 font-medium">
-                                  <span>👨‍👩‍👧</span> {evt.audience}
+                                <span className="flex items-center gap-1.5 text-gray-700 font-medium">
+                                  <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                    <circle cx="9" cy="7" r="4" />
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                                  </svg>
+                                  <span>{evt.audience}</span>
                                 </span>
                               )}
                             </div>
@@ -1561,7 +1598,11 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                   })
                 ) : (
                   <div className="p-8 text-center bg-white rounded-3xl border border-gray-200/80 space-y-3">
-                    <span className="text-3xl">🌴</span>
+                    <div className="w-12 h-12 mx-auto rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V18a1 1 0 0 1-2 0v-1.07A6 6 0 0 1 6.07 12H5a1 1 0 0 1 0-2h1.07A6 6 0 0 1 11 4.93V4a1 1 0 0 1 2 0v.93A6 6 0 0 1 17.93 10H19a1 1 0 0 1 0 2h-1.07A6 6 0 0 1 13 16.93z" />
+                      </svg>
+                    </div>
                     <h3 className="text-base font-bold text-gray-900">
                       No events listed for {currentMonthData.name}
                     </h3>
@@ -1664,9 +1705,13 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsMonthPickerOpen(false)}
-                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center text-xs cursor-pointer"
+                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                  aria-label="Close month picker"
                 >
-                  ✕
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                 </button>
               </div>
 
@@ -1693,7 +1738,12 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                       <div className="text-sm font-extrabold flex items-center justify-between">
                         <span>{m.name}</span>
                         {isSelected ? (
-                          <span className="text-white text-xs font-bold">✓ Selected</span>
+                          <span className="text-white text-xs font-bold inline-flex items-center gap-1">
+                            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <span>Selected</span>
+                          </span>
                         ) : (
                           <span className="text-gray-400 text-[10px] font-semibold">{monthEventsCount} events</span>
                         )}

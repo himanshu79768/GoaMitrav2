@@ -517,10 +517,12 @@ export const FoodPage: React.FC<FoodPageProps> = ({
     return item.minutesFromPanaji + 25; // South Goa
   };
 
-  const getProximityText = (item: RestaurantItem) => {
+  const getProximityData = (item: RestaurantItem) => {
     const mins = getMinutesForRestaurant(item);
-    if (mins <= 6) return `🚶 ${mins} min walk`;
-    return `🚗 ${mins} min drive`;
+    return {
+      mins,
+      isWalk: mins <= 6,
+    };
   };
 
   // Filter and SORT Restaurants from Closest to Farthest
@@ -612,7 +614,11 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <span>🍽️</span>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                <path d="M7 2v20" />
+                <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+              </svg>
               <span>Dishes</span>
             </button>
 
@@ -625,7 +631,12 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <span>🏬</span>
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
+                <path d="M2 7h20" />
+              </svg>
               <span>Restaurants</span>
             </button>
           </div>
@@ -646,25 +657,32 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setDietaryFilter('veg')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1 ${
+              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
                 dietaryFilter === 'veg'
                   ? 'bg-[#15803D] text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <span>🥬</span>
+              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+              </svg>
               <span>Veg</span>
             </button>
             <button
               type="button"
               onClick={() => setDietaryFilter('non_veg')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1 ${
+              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer flex items-center justify-center gap-1.5 ${
                 dietaryFilter === 'non_veg'
                   ? 'bg-[#DC2626] text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <span>🍗</span>
+              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="m15 9-6 6" />
+                <path d="m9 9 6 6" />
+              </svg>
               <span>Non-veg</span>
             </button>
           </div>
@@ -688,25 +706,31 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setCuisineOption('goan_authentic')}
-              className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
                 cuisineOption === 'goan_authentic'
                   ? 'bg-[#0F766E] text-white border-[#0F766E] shadow-2xs'
                   : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
               }`}
             >
-              <span>🥥</span>
+              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V18a1 1 0 0 1-2 0v-1.07A6 6 0 0 1 6.07 12H5a1 1 0 0 1 0-2h1.07A6 6 0 0 1 11 4.93V4a1 1 0 0 1 2 0v.93A6 6 0 0 1 17.93 10H19a1 1 0 0 1 0 2h-1.07A6 6 0 0 1 13 16.93z" />
+              </svg>
               <span>Goan Authentic</span>
             </button>
             <button
               type="button"
               onClick={() => setCuisineOption('normal')}
-              className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
                 cuisineOption === 'normal'
                   ? 'bg-gray-800 text-white border-gray-800 shadow-2xs'
                   : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
               }`}
             >
-              <span>🍕</span>
+              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                <path d="M2 12h20" />
+              </svg>
               <span>Normal / Multi-Cuisine</span>
             </button>
           </div>
@@ -722,7 +746,9 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                   : 'bg-white text-gray-700 border-gray-200/90 hover:bg-gray-50'
               }`}
             >
-              <span>🍃</span>
+              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+              </svg>
               <span>Jain-friendly</span>
             </button>
 
@@ -735,7 +761,10 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                   : 'bg-white text-gray-700 border-gray-200/90 hover:bg-gray-50'
               }`}
             >
-              <span>🛡️</span>
+              <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
               <span>Allergy-safe</span>
             </button>
           </div>
@@ -769,7 +798,11 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             className="rounded-2xl bg-[#FFF9EB] border border-[#FDE68A] p-3.5 flex items-center justify-between shadow-2xs cursor-pointer hover:bg-[#FEF3C7] active:scale-[0.99] transition-all"
           >
             <div className="flex items-center gap-2.5">
-              <span className="text-xl shrink-0">💡</span>
+              <svg className="w-5 h-5 text-amber-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
+                <path d="M9 18h6" />
+                <path d="M10 22h4" />
+              </svg>
               <p className="text-[12px] font-semibold text-[#92400E] leading-snug">
                 Loved butter chicken? Try <strong className="text-[#78350F]">Goan Xacuti</strong> — rich, spiced, not overly hot.
               </p>
@@ -779,8 +812,11 @@ export const FoodPage: React.FC<FoodPageProps> = ({
 
           {/* Location Context Banner */}
           <div className="flex items-center justify-between px-1 text-[11.5px] font-semibold text-gray-500">
-            <div className="flex items-center gap-1">
-              <span>📍</span>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
               <span>Sorted closest to: <strong>{userLocality}</strong></span>
             </div>
             <span className="text-gray-400">
@@ -812,8 +848,24 @@ export const FoodPage: React.FC<FoodPageProps> = ({
 
                       {/* Top Badges */}
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                        <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-white font-bold text-[11px] shadow-xs">
-                          <span>{dish.cuisineStyle === 'goan_authentic' ? '🥥 Goan authentic' : '🍕 Normal style'}</span>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-md text-white font-bold text-[11px] shadow-xs">
+                          {dish.cuisineStyle === 'goan_authentic' ? (
+                            <>
+                              <svg className="w-3 h-3 text-teal-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V18a1 1 0 0 1-2 0v-1.07A6 6 0 0 1 6.07 12H5a1 1 0 0 1 0-2h1.07A6 6 0 0 1 11 4.93V4a1 1 0 0 1 2 0v.93A6 6 0 0 1 17.93 10H19a1 1 0 0 1 0 2h-1.07A6 6 0 0 1 13 16.93z" />
+                              </svg>
+                              <span>Goan authentic</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3 h-3 text-amber-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                                <path d="M2 12h20" />
+                              </svg>
+                              <span>Normal style</span>
+                            </>
+                          )}
                         </div>
 
                         {/* Favorite Button */}
@@ -835,12 +887,29 @@ export const FoodPage: React.FC<FoodPageProps> = ({
 
                       {/* Dietary Pill on Image */}
                       <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                        <span className={`px-2 py-0.5 rounded-full text-[10.5px] font-bold shadow-xs ${
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10.5px] font-bold shadow-xs ${
                           dish.dietaryType === 'veg'
                             ? 'bg-[#DCFCE7] text-[#15803D]'
                             : 'bg-[#FEE2E2] text-[#DC2626]'
                         }`}>
-                          {dish.dietaryType === 'veg' ? '🥬 Pure Veg' : '🍗 Non-veg'}
+                          {dish.dietaryType === 'veg' ? (
+                            <>
+                              <svg className="w-3 h-3 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                              </svg>
+                              <span>Pure Veg</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3 h-3 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="9" />
+                                <path d="m15 9-6 6" />
+                                <path d="m9 9 6 6" />
+                              </svg>
+                              <span>Non-veg</span>
+                            </>
+                          )}
                         </span>
                         <span className="text-[11.5px] font-bold text-white drop-shadow-xs">
                           {dish.origin}
@@ -872,8 +941,13 @@ export const FoodPage: React.FC<FoodPageProps> = ({
 
                       {/* Find Restaurants Button */}
                       <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
-                        <span className="text-[11.5px] font-bold text-[#177F91]">
-                          🍽️ Tap to find restaurants serving this dish
+                        <span className="text-[11.5px] font-bold text-[#177F91] flex items-center gap-1.5">
+                          <svg className="w-3.5 h-3.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                            <path d="M7 2v20" />
+                            <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                          </svg>
+                          <span>Tap to find restaurants serving this dish</span>
                         </span>
 
                         <span className="px-3 py-1.5 rounded-xl bg-gray-900 text-white font-bold text-xs flex items-center gap-1 shadow-xs">
@@ -891,7 +965,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <div className="space-y-3.5">
               {filteredRestaurants.map((rest) => {
                 const isFav = favorites.includes(rest.id) || savedPlaces.some((p) => p.id === rest.id);
-                const proximity = getProximityText(rest);
+                const proximity = getProximityData(rest);
 
                 return (
                   <div
@@ -911,13 +985,17 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                       <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
                         {rest.matchBadge === 'Best match' && (
                           <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#E0F2FE] text-[#0369A1] font-bold text-[11px] shadow-xs">
-                            <span>★</span>
+                            <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
                             <span>Best match</span>
                           </div>
                         )}
                         {rest.matchBadge === 'Verified' && (
                           <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] font-bold text-[11px] shadow-xs">
-                            <span>✔</span>
+                            <svg className="w-3 h-3 text-[#15803D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
                             <span>Verified</span>
                           </div>
                         )}
@@ -929,13 +1007,17 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                         )}
                         {rest.matchBadge === 'Hidden gem' && (
                           <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#F3E8FF] text-[#7E22CE] font-bold text-[11px] shadow-xs">
-                            <span>💎</span>
+                            <svg className="w-3 h-3 text-[#7E22CE]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M6 3h12l4 6-10 12L2 9z" />
+                            </svg>
                             <span>Hidden gem</span>
                           </div>
                         )}
                         {rest.matchBadge === 'Iconic landmark' && (
                           <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#FFE4E6] text-[#E11D48] font-bold text-[11px] shadow-xs">
-                            <span>👑</span>
+                            <svg className="w-3 h-3 text-[#E11D48]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14" />
+                            </svg>
                             <span>Iconic landmark</span>
                           </div>
                         )}
@@ -959,8 +1041,23 @@ export const FoodPage: React.FC<FoodPageProps> = ({
 
                       {/* Bottom Info on Image */}
                       <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
-                        <div className="text-[12px] font-bold drop-shadow-xs bg-[#177F91]/90 backdrop-blur-md px-2.5 py-0.5 rounded-full">
-                          {proximity}
+                        <div className="text-[12px] font-bold drop-shadow-xs bg-[#177F91]/90 backdrop-blur-md px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                          {proximity.isWalk ? (
+                            <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="4" r="2" />
+                              <path d="m9 20 3-6 3 6" />
+                              <path d="m6 8 6 2 6-2" />
+                              <path d="M12 10v4" />
+                            </svg>
+                          ) : (
+                            <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
+                              <circle cx="7" cy="17" r="2" />
+                              <path d="M9 17h6" />
+                              <circle cx="17" cy="17" r="2" />
+                            </svg>
+                          )}
+                          <span>{proximity.mins} min {proximity.isWalk ? 'walk' : 'drive'}</span>
                         </div>
                         <div className="text-[11px] font-bold bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full">
                           {rest.priceCategory}
@@ -974,8 +1071,11 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                         <h3 className="text-[17px] font-black text-gray-900 leading-tight">
                           {rest.name}
                         </h3>
-                        <p className="text-[12px] text-gray-500 font-medium flex items-center gap-1 mt-0.5">
-                          <span>📍</span>
+                        <p className="text-[12px] text-gray-500 font-medium flex items-center gap-1.5 mt-0.5">
+                          <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                            <circle cx="12" cy="10" r="3" />
+                          </svg>
                           <span>{rest.location}</span>
                         </p>
                       </div>
@@ -999,11 +1099,34 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                       {/* Footer Specifications & Action Buttons */}
                       <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2 text-[11px] font-bold text-gray-500">
-                          <span>{rest.dietaryType === 'veg' ? '🥬 Pure Veg' : '🍗 Non-veg'}</span>
+                          <span className="flex items-center gap-1">
+                            {rest.dietaryType === 'veg' ? (
+                              <>
+                                <svg className="w-3 h-3 text-[#15803D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                                </svg>
+                                <span>Pure Veg</span>
+                              </>
+                            ) : (
+                              <>
+                                <svg className="w-3 h-3 text-[#DC2626]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                  <circle cx="12" cy="12" r="9" />
+                                  <path d="m15 9-6 6" />
+                                  <path d="m9 9 6 6" />
+                                </svg>
+                                <span>Non-veg</span>
+                              </>
+                            )}
+                          </span>
                           {rest.hasJain && (
                             <>
                               <span>·</span>
-                              <span className="text-[#15803D]">🍃 Jain options</span>
+                              <span className="text-[#15803D] flex items-center gap-1">
+                                <svg className="w-3 h-3 text-[#15803D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                                </svg>
+                                <span>Jain options</span>
+                              </span>
                             </>
                           )}
                         </div>
@@ -1016,7 +1139,9 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                           className="px-3 py-1.5 rounded-xl bg-gray-900 text-white font-bold text-xs flex items-center gap-1 shadow-xs hover:bg-gray-800 active:scale-95 transition-all"
                         >
                           <span>Maps</span>
-                          <span>↗</span>
+                          <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M7 17L17 7M17 7H7M17 7V17" />
+                          </svg>
                         </a>
                       </div>
                     </div>
@@ -1092,12 +1217,29 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                   <div className="absolute top-3 left-3">
-                    <span className={`px-2.5 py-1 rounded-full font-bold text-[11px] shadow-xs ${
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-bold text-[11px] shadow-xs ${
                       selectedDishForFinder.dietaryType === 'veg'
                         ? 'bg-[#DCFCE7] text-[#15803D]'
                         : 'bg-[#FEE2E2] text-[#DC2626]'
                     }`}>
-                      {selectedDishForFinder.dietaryType === 'veg' ? '🥬 Pure Vegetarian' : '🍗 Authentic Non-veg'}
+                      {selectedDishForFinder.dietaryType === 'veg' ? (
+                        <>
+                          <svg className="w-3 h-3 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+                          </svg>
+                          <span>Pure Vegetarian</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg className="w-3 h-3 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="9" />
+                            <path d="m15 9-6 6" />
+                            <path d="m9 9 6 6" />
+                          </svg>
+                          <span>Authentic Non-veg</span>
+                        </>
+                      )}
                     </span>
                   </div>
 
@@ -1138,7 +1280,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                   .sort((a, b) => getMinutesForRestaurant(a) - getMinutesForRestaurant(b))
                   .map((rest) => {
                     const dishPrice = rest.dishPrices?.[selectedDishForFinder.id] || rest.priceCategory;
-                    const proximity = getProximityText(rest);
+                    const proximity = getProximityData(rest);
 
                     return (
                       <div
@@ -1156,11 +1298,30 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                               <h4 className="text-[16px] font-black text-gray-900 leading-tight">
                                 {rest.name}
                               </h4>
-                              <p className="text-[12px] text-gray-500 font-medium mt-0.5">
-                                📍 {rest.location}
+                              <p className="text-[12px] text-gray-500 font-medium flex items-center gap-1.5 mt-0.5">
+                                <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                  <circle cx="12" cy="10" r="3" />
+                                </svg>
+                                <span>{rest.location}</span>
                               </p>
-                              <div className="text-[11.5px] font-bold text-[#177F91] mt-1">
-                                {proximity}
+                              <div className="text-[11.5px] font-bold text-[#177F91] mt-1 flex items-center gap-1.5">
+                                {proximity.isWalk ? (
+                                  <svg className="w-3.5 h-3.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="12" cy="4" r="2" />
+                                    <path d="m9 20 3-6 3 6" />
+                                    <path d="m6 8 6 2 6-2" />
+                                    <path d="M12 10v4" />
+                                  </svg>
+                                ) : (
+                                  <svg className="w-3.5 h-3.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" />
+                                    <circle cx="7" cy="17" r="2" />
+                                    <path d="M9 17h6" />
+                                    <circle cx="17" cy="17" r="2" />
+                                  </svg>
+                                )}
+                                <span>{proximity.mins} min {proximity.isWalk ? 'walk' : 'drive'}</span>
                               </div>
                             </div>
                           </div>
@@ -1185,9 +1346,12 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                                 `Is ${rest.name} in ${rest.location} currently open and what are their best recommendations for ${selectedDishForFinder.name}?`
                               )
                             }
-                            className="text-[11.5px] font-bold text-[#177F91] hover:underline flex items-center gap-1"
+                            className="text-[11.5px] font-bold text-[#177F91] hover:underline flex items-center gap-1.5 cursor-pointer"
                           >
-                            <span>✨ Ask GAI details</span>
+                            <svg className="w-3.5 h-3.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                            </svg>
+                            <span>Ask GAI details</span>
                           </button>
 
                           <a
@@ -1199,7 +1363,9 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                             className="px-3 py-1.5 rounded-xl bg-gray-900 text-white font-bold text-xs flex items-center gap-1 shadow-xs hover:bg-gray-800 active:scale-95 transition-all"
                           >
                             <span>Get Directions</span>
-                            <span>↗</span>
+                            <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M7 17L17 7M17 7H7M17 7V17" />
+                            </svg>
                           </a>
                         </div>
                       </div>
@@ -1222,9 +1388,12 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                       `Find me the top 3 highest-rated local hidden spots and dhabas to eat authentic ${selectedDishForFinder.name} within 15 minutes of ${userLocality}. Include pricing and timings.`
                     )
                   }
-                  className="w-full py-2.5 rounded-xl bg-[#0284C7] text-white font-bold text-xs shadow-xs hover:bg-[#0369A1] active:scale-98 transition-all"
+                  className="w-full py-2.5 rounded-xl bg-[#0284C7] text-white font-bold text-xs shadow-xs hover:bg-[#0369A1] active:scale-98 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                 >
-                  Search More Local Places with GAI ✨
+                  <span>Search More Local Places with GAI</span>
+                  <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                  </svg>
                 </button>
               </div>
             </div>

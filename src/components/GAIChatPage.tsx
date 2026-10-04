@@ -55,12 +55,64 @@ interface GAIChatPageProps {
   onUpdatePreferences?: (partial: Partial<UserPreferences>) => void;
 }
 
-const QUICK_PROMPTS = [
-  { label: 'Prepare 3-Day Itinerary', icon: '🗺️', prompt: 'Please prepare a complete 3-day itinerary for my Goa trip based on my preferences. Format it clearly by day with morning, afternoon, and evening plans.' },
-  { label: 'Nearby food?', icon: '🍴', prompt: 'What are the best authentic Goan food spots closest to my current spot right now?' },
-  { label: 'Sunset spots?', icon: '🌅', prompt: 'What is the closest and best sunset viewpoint to visit from here?' },
-  { label: 'Scooter/cab rates?', icon: '🛵', prompt: 'How much does scooter rental and private taxi cost around here?' },
-  { label: 'Historic churches?', icon: '📍', prompt: 'What are the closest historic churches and Portuguese heritage sights near me?' },
+const QUICK_PROMPTS: { label: string; icon: React.ReactNode; prompt: string }[] = [
+  {
+    label: 'Prepare 3-Day Itinerary',
+    icon: (
+      <svg className="w-3.5 h-3.5 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+        <line x1="9" x2="9" y1="3" y2="18" />
+        <line x1="15" x2="15" y1="6" y2="21" />
+      </svg>
+    ),
+    prompt: 'Please prepare a complete 3-day itinerary for my Goa trip based on my preferences. Format it clearly by day with morning, afternoon, and evening plans.',
+  },
+  {
+    label: 'Nearby food?',
+    icon: (
+      <svg className="w-3.5 h-3.5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+        <path d="M7 2v20" />
+        <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+      </svg>
+    ),
+    prompt: 'What are the best authentic Goan food spots closest to my current spot right now?',
+  },
+  {
+    label: 'Sunset spots?',
+    icon: (
+      <svg className="w-3.5 h-3.5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 10V2M4.93 10.93 2.1 8.1M19.07 10.93l2.83-2.83M22 17H2M16 17a4 4 0 0 0-8 0" />
+      </svg>
+    ),
+    prompt: 'What is the closest and best sunset viewpoint to visit from here?',
+  },
+  {
+    label: 'Scooter/cab rates?',
+    icon: (
+      <svg className="w-3.5 h-3.5 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="6" cy="17" r="3" />
+        <circle cx="18" cy="17" r="3" />
+        <path d="M6 14h6l3-6h4" />
+      </svg>
+    ),
+    prompt: 'How much does scooter rental and private taxi cost around here?',
+  },
+  {
+    label: 'Historic churches?',
+    icon: (
+      <svg className="w-3.5 h-3.5 text-indigo-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="2" y1="22" x2="22" y2="22" />
+        <line x1="12" y1="2" x2="12" y2="6" />
+        <path d="M4 6h16l-8-4-8 4z" />
+        <line x1="6" y1="10" x2="6" y2="18" />
+        <line x1="10" y1="10" x2="10" y2="18" />
+        <line x1="14" y1="10" x2="14" y2="18" />
+        <line x1="18" y1="10" x2="18" y2="18" />
+      </svg>
+    ),
+    prompt: 'What are the closest historic churches and Portuguese heritage sights near me?',
+  },
 ];
 
 /** Helper to match places, stays, or restaurants from user input */
@@ -597,7 +649,9 @@ const FormattedMessage: React.FC<{
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-bold bg-[#FFECE6] hover:bg-[#FFE0D6] text-[#E05333] transition-all active:scale-95 shrink-0 cursor-pointer shadow-2xs"
             >
               <span>View on map</span>
-              <span className="text-[12px]">↗</span>
+              <svg className="w-2.5 h-2.5 text-[#E05333]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 17L17 7M17 7H7M17 7V17" />
+              </svg>
             </a>
           </div>
 
@@ -610,9 +664,14 @@ const FormattedMessage: React.FC<{
                   triggerHaptic(12);
                   onQuickAction(`Best food and cafes near ${targetPlace}?`);
                 }}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-gray-200/60 shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-gray-200/60 shadow-2xs"
               >
-                <span>🍴 Nearby food?</span>
+                <svg className="w-3 h-3 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                  <path d="M7 2v20" />
+                  <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                </svg>
+                <span>Nearby food?</span>
               </button>
 
               <button
@@ -621,9 +680,13 @@ const FormattedMessage: React.FC<{
                   triggerHaptic(12);
                   onQuickAction(`Best time to visit and photo spots at ${targetPlace}?`);
                 }}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-gray-200/60 shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium bg-gray-50 text-gray-700 hover:bg-gray-100 active:scale-95 transition-all cursor-pointer border border-gray-200/60 shadow-2xs"
               >
-                <span>📷 Best time to visit?</span>
+                <svg className="w-3 h-3 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                  <circle cx="12" cy="13" r="4" />
+                </svg>
+                <span>Best time to visit?</span>
               </button>
             </div>
           )}
@@ -633,8 +696,13 @@ const FormattedMessage: React.FC<{
       {/* Real-time Web Grounding Sources if present */}
       {groundingSources && groundingSources.length > 0 && (
         <div className="pt-2 border-t border-gray-100 space-y-1">
-          <div className="text-[10.5px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
-            <span>🌐 Web Search Sources</span>
+          <div className="text-[10.5px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+            <svg className="w-3 h-3 text-cyan-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="2" x2="22" y1="12" y2="12" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+            <span>Web Search Sources</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {groundingSources.slice(0, 3).map((src, sIdx) => (
@@ -647,7 +715,9 @@ const FormattedMessage: React.FC<{
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11px] font-medium truncate max-w-[200px]"
               >
                 <span className="truncate">{src.title || src.uri}</span>
-                <span className="text-[10px]">↗</span>
+                <svg className="w-2.5 h-2.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" />
+                </svg>
               </a>
             ))}
           </div>
@@ -752,7 +822,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     {
       id: 'welcome-1',
       role: 'assistant',
-      content: `Hello ${preferences.name || 'there'}! 🌴 Warm greetings and welcome to Goa. How may I help you today?`,
+      content: `Hello ${preferences.name || 'there'}! Warm greetings and welcome to Goa. How may I help you today?`,
       timestamp: format12HourTime(),
     },
   ]);
@@ -779,7 +849,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
   const handleSaveItineraryFromMessage = (msg: { id: string; content: string }): SavedItineraryItem | null => {
     const existing = savedItineraries?.find((i) => i.id === msg.id);
     if (existing) {
-      setToastMessage('Already saved in My Goa! 🌴');
+      setToastMessage('Already saved in My Goa!');
       setTimeout(() => setToastMessage(null), 2500);
       return existing;
     }
@@ -816,7 +886,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     }
 
     triggerHaptic([15, 30]);
-    setToastMessage('Itinerary saved to My Goa! 🌴');
+    setToastMessage('Itinerary saved to My Goa!');
     setTimeout(() => setToastMessage(null), 2500);
 
     return item;
@@ -1335,7 +1405,7 @@ CRITICAL RESPONSE RULES:
 
         onToggleSavePlace(matchedPlace);
         triggerHaptic([15, 30]);
-        setToastMessage(`Saved "${matchedPlace.title}" to My Goa! ❤️`);
+        setToastMessage(`Saved "${matchedPlace.title}" to My Goa!`);
         setTimeout(() => setToastMessage(null), 2500);
 
         executedAction = {
@@ -1711,8 +1781,10 @@ CRITICAL RESPONSE RULES:
                     className="mt-2 w-full bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/10 border border-emerald-500/20 backdrop-blur-md rounded-[18px] p-3 shadow-xs flex items-center justify-between gap-2.5"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center text-sm shrink-0 font-black shadow-xs">
-                        ✓
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
@@ -1759,7 +1831,12 @@ CRITICAL RESPONSE RULES:
                       title="Copy text"
                     >
                       {copiedId === msg.id ? (
-                        <span className="text-[10.5px]">✓ Copied</span>
+                        <span className="text-[10.5px] inline-flex items-center gap-1">
+                          <svg className="w-3 h-3 text-[#007AFF]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                          <span>Copied</span>
+                        </span>
                       ) : (
                         <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
@@ -1903,10 +1980,14 @@ CRITICAL RESPONSE RULES:
                   triggerHaptic(10);
                   setAttachedImage(null);
                 }}
-                className="w-7 h-7 rounded-full bg-black/[0.05] hover:bg-rose-100 hover:text-rose-600 text-gray-500 flex items-center justify-center text-xs font-bold transition-all cursor-pointer shrink-0"
+                className="w-7 h-7 rounded-full bg-black/[0.05] hover:bg-rose-100 hover:text-rose-600 text-gray-500 flex items-center justify-center transition-all cursor-pointer shrink-0"
                 title="Remove photo"
+                aria-label="Remove photo"
               >
-                ✕
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </motion.div>
           )}
@@ -2046,9 +2127,13 @@ CRITICAL RESPONSE RULES:
                     triggerHaptic(10);
                     setIsAttachmentSheetOpen(false);
                   }}
-                  className="w-8 h-8 rounded-full bg-black/[0.05] text-gray-500 font-bold flex items-center justify-center text-xs cursor-pointer hover:bg-black/[0.08]"
+                  className="w-8 h-8 rounded-full bg-black/[0.05] text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-black/[0.08] transition-colors"
+                  aria-label="Close sheet"
                 >
-                  ✕
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
                 </button>
               </div>
 
@@ -2111,7 +2196,9 @@ CRITICAL RESPONSE RULES:
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[100] px-4.5 py-2.5 rounded-full bg-gray-900/90 backdrop-blur-xl text-white text-xs font-bold shadow-2xl border border-white/10 flex items-center gap-2 select-none"
           >
-            <span className="text-sm">🌴</span>
+            <svg className="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
             <span>{toastMessage}</span>
           </motion.div>
         )}

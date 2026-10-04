@@ -42,15 +42,66 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
   const getCategoryBadge = (cat: SavedPlaceItem['category']) => {
     switch (cat) {
       case 'destination':
-        return { label: 'Landmark', icon: '📍', bg: 'bg-[#E0F2FE]', text: 'text-[#0284C7]' };
+        return {
+          label: 'Landmark',
+          icon: (
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+          ),
+          bg: 'bg-[#E0F2FE]',
+          text: 'text-[#0284C7]',
+        };
       case 'stay':
-        return { label: 'Stay', icon: '🏨', bg: 'bg-[#FEF3C7]', text: 'text-[#D97706]' };
+        return {
+          label: 'Stay',
+          icon: (
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 21h18M3 7v14M21 7v14M6 11h4M6 15h4M14 11h4M14 15h4M9 3h6v4H9z" />
+            </svg>
+          ),
+          bg: 'bg-[#FEF3C7]',
+          text: 'text-[#D97706]',
+        };
       case 'food':
-        return { label: 'Food', icon: '🍴', bg: 'bg-[#DCFCE7]', text: 'text-[#15803D]' };
+        return {
+          label: 'Food',
+          icon: (
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 2v20M6 2v6a3 3 0 0 0 3 3h0a3 3 0 0 0 3-3V2M9 11v11" />
+            </svg>
+          ),
+          bg: 'bg-[#DCFCE7]',
+          text: 'text-[#15803D]',
+        };
       case 'culture':
-        return { label: 'Culture', icon: '🎨', bg: 'bg-[#F3E8FF]', text: 'text-[#9333EA]' };
+        return {
+          label: 'Culture',
+          icon: (
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+              <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+              <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+              <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C21.999 5.75 17.5 2 12 2z" />
+            </svg>
+          ),
+          bg: 'bg-[#F3E8FF]',
+          text: 'text-[#9333EA]',
+        };
       case 'coupon':
-        return { label: 'Coupon', icon: '🏷️', bg: 'bg-[#FFEAE5]', text: 'text-[#FF6B4A]' };
+        return {
+          label: 'Coupon',
+          icon: (
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+              <line x1="7" y1="7" x2="7.01" y2="7" />
+            </svg>
+          ),
+          bg: 'bg-[#FFEAE5]',
+          text: 'text-[#FF6B4A]',
+        };
     }
   };
 
@@ -113,15 +164,18 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                 My Goa Hub
               </span>
               <h2 className="text-2xl font-black tracking-tight mt-2.5">
-                Hello, {preferences.name || 'Explorer'}! 👋
+                Hello, {preferences.name || 'Explorer'}!
               </h2>
               <p className="text-xs text-white/80 mt-1 leading-relaxed max-w-[260px]">
                 Your saved itineraries, liked places, and trip preferences all in one place.
               </p>
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center text-2xl shrink-0 shadow-inner">
-              🌴
+            <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shrink-0 shadow-inner">
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+              </svg>
             </div>
           </div>
         </motion.div>
@@ -196,7 +250,12 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                   : 'text-gray-500 hover:text-gray-800'
               }`}
             >
-              <span>🗺️ My Itineraries</span>
+              <svg className="w-3.5 h-3.5 text-[#FF6B4A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                <line x1="9" y1="3" x2="9" y2="18" />
+                <line x1="15" y1="6" x2="15" y2="21" />
+              </svg>
+              <span>My Itineraries</span>
               <span className="px-1.5 py-0.5 rounded-full bg-gray-100 text-[10px] font-black text-gray-600">
                 {savedItineraries.length}
               </span>
@@ -211,7 +270,10 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                   : 'text-gray-500 hover:text-gray-800'
               }`}
             >
-              <span>❤️ Liked Places</span>
+              <svg className="w-3.5 h-3.5 text-rose-500" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              </svg>
+              <span>Liked Places</span>
               <span className="px-1.5 py-0.5 rounded-full bg-gray-100 text-[10px] font-black text-gray-600">
                 {savedPlaces.length}
               </span>
@@ -224,8 +286,12 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
           <div className="space-y-3">
             {savedItineraries.length === 0 ? (
               <div className="p-8 rounded-3xl bg-white border border-gray-200/80 text-center space-y-3">
-                <div className="w-14 h-14 rounded-full bg-[#FFEAE5] text-[#FF6B4A] flex items-center justify-center text-2xl mx-auto">
-                  🗺️
+                <div className="w-14 h-14 rounded-full bg-[#FFEAE5] text-[#FF6B4A] flex items-center justify-center mx-auto">
+                  <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                    <line x1="9" y1="3" x2="9" y2="18" />
+                    <line x1="15" y1="6" x2="15" y2="21" />
+                  </svg>
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-gray-900">No saved itineraries yet</h3>
@@ -238,7 +304,10 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                   onClick={() => onAskGAI(`Prepare a complete 3-day itinerary for my trip to Goa in ${preferences.travelMonth || 'this month'}.`)}
                   className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white text-xs font-bold shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-1.5"
                 >
-                  <span>✨ Ask GAI to Prepare Itinerary</span>
+                  <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+                  </svg>
+                  <span>Ask GAI to Prepare Itinerary</span>
                 </button>
               </div>
             ) : (
@@ -296,9 +365,12 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                       <button
                         type="button"
                         onClick={() => onAskGAI(`Can you customize my itinerary "${itinerary.title}"? Here is what I want to modify...`)}
-                        className="text-xs font-bold text-[#FF6B4A] hover:underline cursor-pointer ml-auto flex items-center gap-1"
+                        className="text-xs font-bold text-[#FF6B4A] hover:underline cursor-pointer ml-auto flex items-center gap-1.5"
                       >
-                        <span>Modify with GAI ✨</span>
+                        <svg className="w-3.5 h-3.5 text-[#FF6B4A]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+                        </svg>
+                        <span>Modify with GAI</span>
                       </button>
                     </div>
                   </motion.div>
@@ -331,8 +403,10 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
 
             {filteredPlaces.length === 0 ? (
               <div className="p-8 rounded-3xl bg-white border border-gray-200/80 text-center space-y-3">
-                <div className="w-14 h-14 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-2xl mx-auto">
-                  ❤️
+                <div className="w-14 h-14 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto">
+                  <svg className="w-7 h-7 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                  </svg>
                 </div>
                 <div>
                   <h3 className="text-base font-bold text-gray-900">No saved places in this category</h3>
@@ -385,8 +459,12 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                           </h4>
 
                           {place.location && (
-                            <p className="text-xs text-gray-500 truncate font-medium mt-0.5">
-                              📍 {place.location}
+                            <p className="text-xs text-gray-500 truncate font-medium mt-0.5 flex items-center gap-1">
+                              <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                                <circle cx="12" cy="10" r="3" />
+                              </svg>
+                              <span>{place.location}</span>
                             </p>
                           )}
                         </div>
@@ -396,19 +474,23 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                         <button
                           type="button"
                           onClick={() => onAskGAI(`Tell me details and how to visit ${place.title} in Goa.`)}
-                          className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#FFEAE5] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
+                          className="w-8 h-8 rounded-full bg-gray-100 hover:bg-[#FFEAE5] hover:text-[#FF6B4A] text-gray-600 flex items-center justify-center transition-colors cursor-pointer"
                           title="Ask GAI about this place"
                         >
-                          ✨
+                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
+                          </svg>
                         </button>
 
                         <button
                           type="button"
                           onClick={() => onRemoveSavedPlace(place.id)}
-                          className="w-8 h-8 rounded-full hover:bg-red-50 text-red-500 flex items-center justify-center text-xs font-bold transition-colors cursor-pointer"
+                          className="w-8 h-8 rounded-full hover:bg-red-50 text-red-500 flex items-center justify-center transition-colors cursor-pointer"
                           title="Remove from saved"
                         >
-                          ❤️
+                          <svg className="w-4 h-4 text-red-500 fill-red-500" viewBox="0 0 24 24">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                          </svg>
                         </button>
                       </div>
                     </motion.div>
