@@ -1294,8 +1294,8 @@ export const CulturePage: React.FC<CulturePageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full font-sans">
       {/* 1. PINNED STICKY TOP HEADER (No Profile Icon) */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 pt-3 pb-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="max-w-6xl mx-auto w-full flex flex-col gap-2.5">
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 sm:px-6 lg:px-10 xl:px-14 pt-3 pb-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        <div className="w-full flex flex-col gap-2.5">
           <div className="flex items-center justify-between relative">
             {/* Back Button */}
             <button
@@ -1356,10 +1356,10 @@ export const CulturePage: React.FC<CulturePageProps> = ({
 
       {/* 3. SCROLLABLE BODY CONTAINER WITH TAB TRANSITIONS */}
       <div
-        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-3 pb-12 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-3 pb-12 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="max-w-6xl mx-auto space-y-4 w-full">
+        <div className="w-full space-y-4">
         <AnimatePresence mode="wait" custom={activeTab}>
           {activeTab === 'events' ? (
             <motion.div

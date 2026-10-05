@@ -424,73 +424,74 @@ export const StayPage: React.FC<StayPageProps> = ({
   });
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
-      {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="max-w-6xl mx-auto flex items-center justify-between w-full">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="Back to Homepage"
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full font-sans">
+      {/* 1. Pinned Sticky Top Navigation Bar */}
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        {/* Back Button */}
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.92 }}
+          onClick={onBack}
+          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer"
+          aria-label="Back to Homepage"
+        >
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12.5 15L7.5 10L12.5 5" />
-            </svg>
-          </button>
+            <path d="M12.5 15L7.5 10L12.5 5" />
+          </svg>
+        </motion.button>
 
-          {/* Title */}
-          <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
-            Stay
-          </h1>
+        {/* Title */}
+        <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
+          Stay
+        </h1>
 
-          {/* Right Balance Spacer */}
-          <div className="w-9 h-9" />
-        </div>
+        {/* Right Balance Spacer */}
+        <div className="w-9 h-9" />
       </header>
 
-      {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
+      {/* 2. Scrollable Body Container */}
       <div
-        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-3.5 pb-8 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-3.5 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y no-scrollbar"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="max-w-6xl mx-auto space-y-4 w-full">
         {/* Two Pill Segmented Toggle: Hotels vs Village Homestays */}
-        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner">
-          <button
+        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner relative">
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.98 }}
             onClick={() => setStayType('hotel')}
-            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
+            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer relative z-10 ${
               stayType === 'hotel'
-                ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
+                ? 'bg-[#177F91] text-white shadow-[0_2px_10px_rgba(23,127,145,0.35)]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             Hotels
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.98 }}
             onClick={() => setStayType('homestay')}
-            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
+            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer relative z-10 ${
               stayType === 'homestay'
-                ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
+                ? 'bg-[#177F91] text-white shadow-[0_2px_10px_rgba(23,127,145,0.35)]'
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
             Village Homestays
-          </button>
+          </motion.button>
         </div>
 
-        {/* Selected Party & Month Context Badge (Clean, non-redundant) */}
+        {/* Selected Party & Month Context Badge */}
         <div className="flex items-center justify-between px-1">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200/80 shadow-2xs text-[12px] font-bold text-gray-800">
             <svg className="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -515,7 +516,7 @@ export const StayPage: React.FC<StayPageProps> = ({
           </div>
         </div>
 
-        {/* Fresh, High-Res Hero Image Card */}
+        {/* Hero Banner */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[175px] flex items-end p-5">
           <img
             src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&auto=format&fit=crop&q=80"
@@ -535,7 +536,7 @@ export const StayPage: React.FC<StayPageProps> = ({
           </div>
         </div>
 
-        {/* Season Alert Banner: Peak Season Price Rise */}
+        {/* Season Alert Banner */}
         <div className="rounded-2xl bg-[#FFF5EC] border border-[#FED7AA] p-3.5 flex items-center justify-between shadow-xs">
           <div className="flex items-center gap-2.5">
             <svg className="w-4 h-4 text-[#EA580C] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -548,17 +549,19 @@ export const StayPage: React.FC<StayPageProps> = ({
               <span>Peak season (Dec–Jan): prices rise 2–3x. Book early.</span>
             </div>
           </div>
-          <button
+          <motion.button
             type="button"
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.95 }}
             onClick={() => onAskGAI(`What are hotel prices and availability like for ${memberCount} guests in Mapusa, Calangute, and Candolim in ${travelMonth}?`)}
             className="text-[11.5px] font-bold text-[#EA580C] hover:underline flex items-center shrink-0 ml-2 cursor-pointer"
           >
             <span>Learn more</span>
             <span className="ml-0.5">›</span>
-          </button>
+          </motion.button>
         </div>
 
-        {/* Area Locality Filter Pills (Mapusa, Calangute, Candolim, Assagao, Panaji) */}
+        {/* Area Locality Filter Pills */}
         <div>
           <div className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center justify-between">
             <span>Filter by Town / Area</span>
@@ -568,9 +571,11 @@ export const StayPage: React.FC<StayPageProps> = ({
             {AREA_FILTERS.map((area) => {
               const isSelected = selectedArea === area;
               return (
-                <button
+                <motion.button
                   key={area}
                   type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setSelectedArea(area)}
                   className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 ${
                     isSelected
@@ -579,13 +584,13 @@ export const StayPage: React.FC<StayPageProps> = ({
                   }`}
                 >
                   {area}
-                </button>
+                </motion.button>
               );
             })}
           </div>
         </div>
 
-        {/* Star Rating Filters: All, 2 Star, 3 Star, 4 Star, 5 Star */}
+        {/* Star Rating Filters */}
         <div>
           <div className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5">
             Star Rating
@@ -600,9 +605,11 @@ export const StayPage: React.FC<StayPageProps> = ({
             ].map((s) => {
               const isSelected = starFilter === s.id;
               return (
-                <button
+                <motion.button
                   key={s.id}
                   type="button"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => setStarFilter(s.id as any)}
                   className={`px-3 py-1 rounded-full text-[11.5px] font-bold border transition-all cursor-pointer whitespace-nowrap ${
                     isSelected
@@ -611,32 +618,35 @@ export const StayPage: React.FC<StayPageProps> = ({
                   }`}
                 >
                   {s.label}
-                </button>
+                </motion.button>
               );
             })}
           </div>
         </div>
 
-        {/* Stays List with 100% Unique Photos & Dynamic Guest Pricing */}
+        {/* Stays List with Micro-Transitions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
           {filteredStays.map((stay) => {
             const isFav = favorites.includes(stay.id) || savedPlaces.some((p) => p.id === stay.id);
             const calculated = calculateStayPrice(stay.basePricePerRoom, memberCount);
 
             return (
-              <div
+              <motion.div
                 key={stay.id}
+                whileHover={{ y: -2, transition: { duration: 0.15 } }}
+                whileTap={{ scale: 0.985 }}
                 onClick={() => setSelectedStay(stay)}
-                className="bg-white rounded-3xl p-3 border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-md transition-all cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-3xl p-3 border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow cursor-pointer flex flex-col justify-between"
               >
-                {/* Main Card Top Section: Image on Left + Info on Right */}
+                {/* Main Card Top Section */}
                 <div className="flex items-start gap-3.5">
-                  {/* Photo with Heart (Favorite) button on top right */}
+                  {/* Photo with Heart Button */}
                   <div className="relative w-[115px] h-[115px] rounded-2xl overflow-hidden shrink-0 bg-gray-100">
                     <img
                       src={stay.image}
                       alt={stay.name}
                       className="w-full h-full object-cover object-center"
+                      loading="lazy"
                     />
 
                     {/* Star badge overlay */}
@@ -647,11 +657,12 @@ export const StayPage: React.FC<StayPageProps> = ({
                       </svg>
                     </div>
 
-                    {/* Heart Button */}
-                    <button
+                    {/* Heart Button with Pop Micro-animation */}
+                    <motion.button
                       type="button"
+                      whileTap={{ scale: 0.75 }}
                       onClick={(e) => toggleFavorite(stay.id, e)}
-                      className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/40 backdrop-blur-xs flex items-center justify-center text-white active:scale-90 transition-transform cursor-pointer"
+                      className="absolute top-1.5 right-1.5 w-7 h-7 rounded-full bg-black/40 backdrop-blur-xs flex items-center justify-center text-white cursor-pointer"
                       aria-label="Save to favorites"
                     >
                       <svg
@@ -665,13 +676,13 @@ export const StayPage: React.FC<StayPageProps> = ({
                       >
                         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
                       </svg>
-                    </button>
+                    </motion.button>
                   </div>
 
                   {/* Right Details */}
                   <div className="flex-1 min-w-0 flex flex-col justify-between h-[115px]">
                     <div>
-                      {/* Top Badges: Best Match & Verified */}
+                      {/* Top Badges */}
                       <div className="flex items-center justify-between gap-1">
                         {stay.isBestMatch ? (
                           <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] bg-[#E0F2FE] px-2 py-0.5 rounded-full">
@@ -716,7 +727,7 @@ export const StayPage: React.FC<StayPageProps> = ({
                       </div>
                     </div>
 
-                    {/* Price Pill Box on right: Calculated for member count, clearly states excl GST */}
+                    {/* Price */}
                     <div className="flex items-end justify-end mt-1">
                       <div className="text-right">
                         <span className="text-[17px] font-black text-[#FF5436] tracking-tight">
@@ -760,57 +771,90 @@ export const StayPage: React.FC<StayPageProps> = ({
                     </span>
                   </div>
 
-                  {/* Chevron Button */}
+                  {/* Right Action Circle */}
                   <div className="w-6 h-6 rounded-full bg-gray-50 border border-gray-200/80 flex items-center justify-center text-gray-400 shrink-0">
                     <svg className="w-3.5 h-3.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M6 12l4-4-4-4" />
                     </svg>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-        </div>
       </div>
 
-      {/* 3. Smooth Down-to-Up & Up-to-Down Animated Bottom Sheet */}
+      {/* 3. High-Performance, Zero-Lag, Hardware-Accelerated iOS-Style Bottom Sheet */}
       <AnimatePresence>
         {selectedStay && (() => {
           const calculated = calculateStayPrice(selectedStay.basePricePerRoom, memberCount);
           const gstAmount = Math.round(calculated.totalPrice * 0.12);
 
           return (
-            <motion.div
-              key="stay-sheet-backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.22 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center"
-              onClick={() => setSelectedStay(null)}
-            >
+            <div className="fixed inset-0 z-50 flex items-end justify-center select-none">
+              {/* Ultra-smooth Backdrop */}
+              <motion.div
+                key="stay-sheet-backdrop"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="absolute inset-0 bg-black/50 backdrop-blur-xs"
+                onClick={() => setSelectedStay(null)}
+              />
+
+              {/* Hardware-Accelerated Bottom Sheet with Drag-to-Dismiss */}
               <motion.div
                 key="stay-sheet-content"
                 initial={{ y: '100%' }}
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
-                transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
+                transition={{
+                  duration: 0.28,
+                  ease: [0.22, 1, 0.36, 1], // Smooth Apple iOS curve
+                }}
+                drag="y"
+                dragConstraints={{ top: 0 }}
+                dragElastic={{ top: 0, bottom: 0.6 }}
+                onDragEnd={(_, info) => {
+                  if (info.offset.y > 90 || info.velocity.y > 450) {
+                    setSelectedStay(null);
+                  }
+                }}
+                className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto relative z-10 will-change-transform transform-gpu overscroll-contain"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Sheet Handle */}
-                <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
+                {/* Drag Handle Bar & Close Button Header */}
+                <div className="flex items-center justify-between -mt-1 pb-1">
+                  <div className="w-8" />
+                  <div
+                    onClick={() => setSelectedStay(null)}
+                    className="w-12 h-1.5 bg-gray-300 hover:bg-gray-400 rounded-full cursor-pointer transition-colors"
+                  />
+                  <motion.button
+                    type="button"
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setSelectedStay(null)}
+                    className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition-colors"
+                    aria-label="Close sheet"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </motion.button>
+                </div>
 
                 {/* Stay Image with Badges */}
-                <div className="relative h-48 rounded-2xl overflow-hidden shadow-sm">
+                <div className="relative h-48 rounded-2xl overflow-hidden shadow-sm bg-gray-100">
                   <img
                     src={selectedStay.image}
                     alt={selectedStay.name}
                     className="w-full h-full object-cover"
+                    loading="eager"
                   />
                   <div className="absolute top-3 left-3 flex gap-1.5">
-                    <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-xs text-white text-xs font-bold">
+                    <span className="px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-xs text-white text-xs font-bold">
                       {selectedStay.starsDisplay}
                     </span>
                     <span className="px-2.5 py-1 rounded-full bg-[#177F91] text-white text-xs font-bold inline-flex items-center gap-1">
@@ -824,8 +868,8 @@ export const StayPage: React.FC<StayPageProps> = ({
 
                 {/* Title & Price Header */}
                 <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="text-[21px] font-black text-gray-900 tracking-tight leading-tight">
+                  <div className="min-w-0 pr-2">
+                    <h3 className="text-[20px] font-black text-gray-900 tracking-tight leading-tight">
                       {selectedStay.name}
                     </h3>
                     <p className="text-sm font-semibold text-gray-500 mt-0.5">
@@ -833,8 +877,8 @@ export const StayPage: React.FC<StayPageProps> = ({
                     </p>
                   </div>
 
-                  <div className="text-right">
-                    <div className="text-[23px] font-black text-[#FF5436]">
+                  <div className="text-right shrink-0">
+                    <div className="text-[22px] font-black text-[#FF5436] tracking-tight">
                       ₹{calculated.totalPrice.toLocaleString('en-IN')}
                     </div>
                     <div className="text-[10px] text-gray-400 font-medium">
@@ -843,8 +887,8 @@ export const StayPage: React.FC<StayPageProps> = ({
                   </div>
                 </div>
 
-                {/* Dynamic Price Breakdown for party */}
-                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-200/70 text-xs space-y-1.5">
+                {/* Dynamic Price Breakdown */}
+                <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-200/70 text-xs space-y-1.5">
                   <div className="flex justify-between text-gray-600">
                     <span>Base rate per room:</span>
                     <span>₹{selectedStay.basePricePerRoom.toLocaleString('en-IN')} / room</span>
@@ -885,14 +929,15 @@ export const StayPage: React.FC<StayPageProps> = ({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-2.5 pt-2">
-                  <a
+                <div className="grid grid-cols-2 gap-2.5 pt-2 pb-1">
+                  <motion.a
+                    whileTap={{ scale: 0.96 }}
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                       `${selectedStay.name}, ${selectedStay.locality}`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="py-3 px-4 rounded-2xl bg-gray-100 text-gray-900 text-center font-bold text-[13.5px] hover:bg-gray-200 active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                    className="py-3.5 px-4 rounded-2xl bg-gray-100 text-gray-900 text-center font-bold text-[13.5px] hover:bg-gray-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <svg className="w-4 h-4 text-[#E05333]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -902,28 +947,30 @@ export const StayPage: React.FC<StayPageProps> = ({
                     <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M7 17L17 7M17 7H7M17 7V17" />
                     </svg>
-                  </a>
+                  </motion.a>
 
-                  <button
+                  <motion.button
                     type="button"
+                    whileTap={{ scale: 0.96 }}
                     onClick={() => {
                       const prompt = `Can you tell me more about ${selectedStay.name} in ${selectedStay.locality} (${selectedStay.starsDisplay}), including exact ratings, room types for ${memberCount} guests, and nearby attractions?`;
                       setSelectedStay(null);
                       onAskGAI(prompt);
                     }}
-                    className="py-3 px-4 rounded-2xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white text-center font-bold text-[13.5px] shadow-sm hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white text-center font-bold text-[13.5px] shadow-sm hover:brightness-105 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
                     </svg>
                     <span>Ask GAI details</span>
-                  </button>
+                  </motion.button>
                 </div>
               </motion.div>
-            </motion.div>
+            </div>
           );
         })()}
       </AnimatePresence>
     </div>
   );
 };
+

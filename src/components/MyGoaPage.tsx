@@ -369,8 +369,8 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
   return (
     <div className="w-full h-full flex flex-col bg-[#F7F7F5] select-none overflow-hidden">
       {/* Top Sticky Header */}
-      <header className="sticky top-0 z-30 px-5 pt-4 pb-3 bg-[#F7F7F5]/90 backdrop-blur-md border-b border-gray-200/60">
-        <div className="max-w-5xl mx-auto flex items-center justify-between w-full">
+      <header className="sticky top-0 z-30 px-4 sm:px-6 lg:px-10 xl:px-14 pt-4 pb-3 bg-[#F7F7F5]/90 backdrop-blur-md border-b border-gray-200/60">
+        <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -411,8 +411,8 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
       </header>
 
       {/* Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 min-h-0">
-        <div className="max-w-5xl mx-auto space-y-4 w-full">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-4 pb-8 min-h-0">
+        <div className="w-full space-y-4">
         {/* Personalized Welcome Banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

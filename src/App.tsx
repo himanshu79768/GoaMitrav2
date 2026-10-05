@@ -394,9 +394,9 @@ export default function App() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-[#F7F7F5] flex flex-col">
-      {/* Viewport Container: Full edge-to-edge screen, zero side letterboxing */}
-      <div className="w-full h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] relative overflow-hidden flex flex-col">
+    <main className="w-full min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-start">
+      {/* Viewport Container: Fluid full width on mobile, nicely bounded and centered on tablet & desktop */}
+      <div className="w-full max-w-full md:max-w-5xl lg:max-w-6xl xl:max-w-7xl h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] relative md:shadow-[0_20px_60px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col">
         {/* Persistent Pre-warmed Homepage (Always Active in Background once onboarded) */}
         {!isOnboarding && (
           <div className="w-full h-[100dvh] max-h-[100dvh] overflow-y-auto flex flex-col justify-start pb-6 absolute inset-0 z-0 bg-[#F7F7F5]">
@@ -431,7 +431,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <OnboardingStepOne
                 name={name}
@@ -454,7 +454,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <OnboardingStepTwo
                 name={name.trim() || 'Explorer'}
@@ -477,7 +477,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <StayPage
                 preferences={savedPreferences}
@@ -498,7 +498,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <DestinationsPage
                 preferences={savedPreferences}
@@ -519,7 +519,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <TravelPage
                 destination={selectedDestinationForTravel}
@@ -539,7 +539,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <FoodPage
                 preferences={savedPreferences}
@@ -560,7 +560,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <CulturePage
                 preferences={savedPreferences}
@@ -581,7 +581,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <CouponsPage
                 onBack={() => navigateBack('homepage')}
@@ -598,7 +598,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <EmergencyPage
                 preferences={savedPreferences}
@@ -617,7 +617,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <GAIChatPage
                 preferences={savedPreferences}
@@ -652,7 +652,7 @@ export default function App() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5]"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
             >
               <MyGoaPage
                 preferences={savedPreferences}

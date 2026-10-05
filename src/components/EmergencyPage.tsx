@@ -73,8 +73,8 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="max-w-5xl mx-auto flex items-center justify-between w-full">
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 sm:px-6 lg:px-10 xl:px-14 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        <div className="w-full flex items-center justify-between">
           {/* Back Button */}
           <button
             type="button"
@@ -107,10 +107,10 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
 
       {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
       <div
-        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-3.5 pb-10 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-3.5 pb-10 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="max-w-5xl mx-auto space-y-4 w-full">
+        <div className="w-full space-y-4">
         {/* Hero Card: Coastal lighthouse & sunrise */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[170px] flex items-end p-5 bg-gradient-to-br from-[#E0F2FE] to-[#FCE7F3]">
           <img
