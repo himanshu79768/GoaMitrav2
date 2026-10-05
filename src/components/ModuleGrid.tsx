@@ -102,9 +102,9 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenEmergency,
 }) => {
   return (
-    <div className="px-5 pb-6 w-full max-w-5xl mx-auto">
-      {/* 2-2-2 on Mobile, 3-3 on Laptop & Big Screen */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4.5">
+    <div className="px-5 pb-6 w-full">
+      {/* 2-2-2 on Mobile, 3-3 on Laptop & Big Screen (Left Aligned & Stretching to Profile side) */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4.5 w-full">
         {/* 1. Stay Card - Hotel Bed / Orange Color */}
         <ModuleCard
           title="Stay"

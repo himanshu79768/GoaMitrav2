@@ -77,6 +77,9 @@ export default function App() {
   const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
   const [tempNameInput, setTempNameInput] = useState('');
 
+  // Logout Confirmation Dialog state
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+
   // Keep track of current screen in a ref for popstate handling
   const currentScreenRef = React.useRef<ScreenType>(currentScreen);
   useEffect(() => {
@@ -376,10 +379,18 @@ export default function App() {
     if (partial.travelType !== undefined) setTravelType(partial.travelType);
   };
 
-  const handleLogout = () => {
+  const handleRequestLogout = () => {
+    setIsLogoutConfirmOpen(true);
+  };
+
+  const handleConfirmLogout = () => {
+    setIsLogoutConfirmOpen(false);
     try {
       localStorage.removeItem(ONBOARDING_COMPLETED_KEY);
       localStorage.removeItem(USER_PREFERENCES_KEY);
+      localStorage.removeItem(SAVED_PLACES_KEY);
+      localStorage.removeItem(SAVED_ITINERARIES_KEY);
+      localStorage.removeItem(UNSEEN_PROFILE_ITEMS_KEY);
     } catch (e) {
       console.error('Failed to remove stored items', e);
     }
@@ -389,7 +400,22 @@ export default function App() {
     setSelectedMonth('');
     setMemberCount(2);
     setTravelType('Couple / Duo');
-    navigateBack('onboarding_step_1');
+    setSavedPlaces([]);
+    setSavedItineraries([]);
+    setHasNewProfileItem(false);
+
+    setNavDirection('backward');
+    setCurrentScreen('onboarding_step_1');
+    try {
+      window.history.replaceState({ screen: 'onboarding_step_1' }, '');
+    } catch (e) {
+      console.error('Failed to replace history state', e);
+    }
+    showToast({
+      message: 'Logged out successfully',
+      icon: 'check',
+      type: 'info',
+    });
   };
 
   const handleFinishOnboarding = () => {
@@ -470,7 +496,7 @@ export default function App() {
               onOpenChat={() => handleOpenChat()}
               onOpenMyGoa={() => handleOpenMyGoa()}
               onOpenNameDialog={handleOpenNameDialog}
-              onLogout={handleLogout}
+              onLogout={handleRequestLogout}
             />
 
             <ModuleGrid
@@ -908,6 +934,79 @@ export default function App() {
                     className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#FF6B4A] text-white shadow-md hover:bg-[#FF5436] active:scale-95 transition-all cursor-pointer"
                   >
                     Save
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
+
+        {/* Logout Confirmation Floating Glassmorphism Dialog */}
+        <AnimatePresence>
+          {isLogoutConfirmOpen && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 select-none">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsLogoutConfirmOpen(false)}
+                className="absolute inset-0 bg-black/50 backdrop-blur-xs z-0"
+              />
+
+              {/* Floating Glassmorphism Dialog Box */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 12 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 380 }}
+                className="w-full max-w-[340px] bg-white/95 backdrop-blur-2xl border border-white/80 rounded-3xl p-5 shadow-2xl relative z-10"
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7.5 h-7.5 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                      <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <h3 className="text-base font-extrabold text-gray-900 tracking-tight">Confirm Logout</h3>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsLogoutConfirmOpen(false)}
+                    className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors cursor-pointer"
+                    aria-label="Close dialog"
+                  >
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="mt-3.5">
+                  <p className="text-[13.5px] font-bold text-gray-800 leading-snug">
+                    Are you sure you want to log out?
+                  </p>
+                  <p className="text-xs font-medium text-gray-500 mt-1 leading-relaxed">
+                    This will reset your session and take you back to the welcome page to enter your name.
+                  </p>
+                </div>
+
+                <div className="mt-5 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsLogoutConfirmOpen(false)}
+                    className="px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-100 transition-colors cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleConfirmLogout}
+                    className="px-4 py-2.5 rounded-xl text-xs font-bold bg-rose-600 text-white shadow-md hover:bg-rose-700 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Log Out
                   </button>
                 </div>
               </motion.div>

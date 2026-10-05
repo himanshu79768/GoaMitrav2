@@ -443,10 +443,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </p>
       </div>
 
-      {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism pill, spacious gap to let user sink and avoid cluster */}
+      {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism bar, spacious gap to let user sink and avoid cluster */}
       <div className="relative mt-12 sm:mt-14 mb-1 max-w-2xl">
-        <div className="relative rounded-full p-[1.5px] gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
-          {/* Inner iOS Liquid Glassmorphism Pill */}
+        <div className="relative rounded-3xl p-[1.5px] gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
+          {/* Inner iOS Liquid Glassmorphism Bar */}
           <div
             onClick={onOpenChat}
             role="button"
@@ -454,7 +454,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') onOpenChat();
             }}
-            className="water-drop-lens flex items-center justify-between p-2 pl-3 rounded-full border border-white/50 bg-white/10 sm:bg-white/12 active:scale-[0.99] transition-all cursor-pointer"
+            className="water-drop-lens flex items-center justify-between p-2 pl-3 rounded-3xl border border-white/50 bg-white/10 sm:bg-white/12 active:scale-[0.99] transition-all cursor-pointer"
           >
             {/* Left: Search / Sparkle Icon */}
             <div className="flex items-center gap-3 min-w-0 flex-1 z-10">
