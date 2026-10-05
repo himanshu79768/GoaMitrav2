@@ -29,19 +29,22 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   return (
     <motion.div
       onClick={onClick}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -4, scale: 1.015 }}
       whileTap={{ scale: 0.975 }}
-      transition={{ type: 'spring', stiffness: 450, damping: 28 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       style={{ backgroundColor: bgColor }}
-      className="relative rounded-[22px] p-3.5 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[136px] select-none cursor-pointer"
+      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] border border-black/[0.03] min-h-[142px] select-none cursor-pointer transition-shadow group"
     >
+      {/* Subtle Apple-style top glass reflection */}
+      <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
+
       {/* Background Subtle Thematic Illustration */}
-      <div className="absolute right-0 bottom-0 w-[80%] h-[78%] pointer-events-none overflow-hidden opacity-95">
+      <div className="absolute right-0 bottom-0 w-[80%] h-[78%] pointer-events-none overflow-hidden opacity-95 group-hover:scale-105 transition-transform duration-300">
         {illustration}
       </div>
 
       {/* Top Icon */}
-      <div className="relative z-10">{icon}</div>
+      <div className="relative z-10 group-hover:scale-105 transition-transform duration-200">{icon}</div>
 
       {/* Card Content & Action Button */}
       <div className="relative z-10 flex items-end justify-between mt-1 pt-0.5">
@@ -104,7 +107,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenEmergency,
 }) => {
   return (
-    <div className="px-5 pb-5 w-full">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* 1. Stay Card - Hotel Bed / Orange Color */}
         <ModuleCard

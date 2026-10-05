@@ -202,46 +202,49 @@ export const TravelPage: React.FC<TravelPageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        {/* Back Button */}
-        <button
-          type="button"
-          onClick={onBack}
-          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-          aria-label="Back to Destinations"
-        >
-          <svg
-            className="w-5 h-5"
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        <div className="max-w-4xl mx-auto flex items-center justify-between w-full">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+            aria-label="Back to Destinations"
           >
-            <path d="M12.5 15L7.5 10L12.5 5" />
-          </svg>
-        </button>
+            <svg
+              className="w-5 h-5"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12.5 15L7.5 10L12.5 5" />
+            </svg>
+          </button>
 
-        {/* Title */}
-        <div className="flex flex-col items-center">
-          <h1 className="text-[19px] font-black text-[#111111] tracking-tight leading-tight">
-            Travel
-          </h1>
-          <span className="text-[11px] font-medium text-gray-500 leading-tight truncate max-w-[200px]">
-            To {destination.name}
-          </span>
+          {/* Title */}
+          <div className="flex flex-col items-center">
+            <h1 className="text-[19px] font-black text-[#111111] tracking-tight leading-tight">
+              Travel
+            </h1>
+            <span className="text-[11px] font-medium text-gray-500 leading-tight truncate max-w-[200px]">
+              To {destination.name}
+            </span>
+          </div>
+
+          {/* Right Balance Spacer */}
+          <div className="w-9 h-9" />
         </div>
-
-        {/* Right Balance Spacer */}
-        <div className="w-9 h-9" />
       </header>
 
       {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
       <div
-        className="flex-1 overflow-y-auto px-4 pt-3 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-3 pb-8 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
+        <div className="max-w-4xl mx-auto space-y-4 w-full">
         {/* HERO CARD: Features the selected destination itself */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[185px] flex items-end p-5">
           {/* Real Photo of Target Destination */}
@@ -738,6 +741,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

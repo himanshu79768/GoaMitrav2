@@ -75,8 +75,8 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
             We’ll personalize your Goa experience.
           </p>
 
-          {/* Name Input Box */}
-          <div className="mt-3 relative rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center gap-3 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all">
+          {/* Name Input Box - Ergonomic bounded width */}
+          <div className="mt-3 relative rounded-2xl bg-white border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center gap-3 focus-within:border-[#FF6B4A] focus-within:ring-2 focus-within:ring-[#FF6B4A]/15 transition-all max-w-md">
             <svg
               className="w-5 h-5 text-gray-400 shrink-0"
               viewBox="0 0 24 24"
@@ -293,12 +293,12 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
       </div>
 
       {/* Persistent Bottom Action Bar (Fixed, never cutoff, auto-pads for all screens) */}
-      <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+      <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] flex flex-col items-center">
         <button
           type="button"
           disabled={!isUnlocked}
           onClick={onContinue}
-          className={`w-full py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] flex items-center justify-center gap-2 transition-all ${
+          className={`w-full max-w-sm sm:max-w-md py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] flex items-center justify-center gap-2 transition-all ${
             isUnlocked
               ? 'bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] cursor-pointer'
               : 'bg-gray-200/80 text-gray-400 cursor-not-allowed shadow-none'

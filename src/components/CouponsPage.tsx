@@ -8,34 +8,36 @@ export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack }) => {
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        {/* Back Button */}
-        <button
-          type="button"
-          onClick={onBack}
-          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-          aria-label="Back to Homepage"
-        >
-          <svg
-            className="w-5 h-5"
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        <div className="max-w-4xl mx-auto flex items-center justify-between w-full">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+            aria-label="Back to Homepage"
           >
-            <path d="M12.5 15L7.5 10L12.5 5" />
-          </svg>
-        </button>
+            <svg
+              className="w-5 h-5"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12.5 15L7.5 10L12.5 5" />
+            </svg>
+          </button>
 
-        {/* Title */}
-        <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
-          Coupons
-        </h1>
+          {/* Title */}
+          <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
+            Coupons
+          </h1>
 
-        {/* Right Balance Spacer */}
-        <div className="w-9 h-9" />
+          {/* Right Balance Spacer */}
+          <div className="w-9 h-9" />
+        </div>
       </header>
 
       {/* 2. Body Container (Centered text) */}

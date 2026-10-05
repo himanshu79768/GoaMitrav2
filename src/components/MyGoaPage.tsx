@@ -369,47 +369,50 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
   return (
     <div className="w-full h-full flex flex-col bg-[#F7F7F5] select-none overflow-hidden">
       {/* Top Sticky Header */}
-      <header className="sticky top-0 z-30 px-5 pt-4 pb-3 bg-[#F7F7F5]/90 backdrop-blur-md border-b border-gray-200/60 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="Go back"
-          >
-            <svg
-              className="w-4 h-4"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <header className="sticky top-0 z-30 px-5 pt-4 pb-3 bg-[#F7F7F5]/90 backdrop-blur-md border-b border-gray-200/60">
+        <div className="max-w-5xl mx-auto flex items-center justify-between w-full">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+              aria-label="Go back"
             >
-              <path d="M10 12L6 8l4-4" />
-            </svg>
-          </button>
+              <svg
+                className="w-4 h-4"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M10 12L6 8l4-4" />
+              </svg>
+            </button>
 
-          <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-[#FF6B4A] tracking-wider uppercase">
-              PERSONAL DASHBOARD
-            </span>
-            <h1 className="text-[19px] font-extrabold text-gray-900 tracking-tight leading-none mt-0.5">
-              My Goa
-            </h1>
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-[#FF6B4A] tracking-wider uppercase">
+                PERSONAL DASHBOARD
+              </span>
+              <h1 className="text-[19px] font-extrabold text-gray-900 tracking-tight leading-none mt-0.5">
+                My Goa
+              </h1>
+            </div>
           </div>
-        </div>
 
-        {/* Brand wordmark badge */}
-        <div className="flex items-center tracking-[0.2em] text-[11px] font-black text-[#111111]">
-          <span>G</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-[#177F91] mx-0.5 inline-block" />
-          <span>AMITRA</span>
+          {/* Brand wordmark badge */}
+          <div className="flex items-center tracking-[0.2em] text-[11px] font-black text-[#111111]">
+            <span>G</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#177F91] mx-0.5 inline-block" />
+            <span>AMITRA</span>
+          </div>
         </div>
       </header>
 
       {/* Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-8 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 min-h-0">
+        <div className="max-w-5xl mx-auto space-y-4 w-full">
         {/* Personalized Welcome Banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -770,6 +773,7 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

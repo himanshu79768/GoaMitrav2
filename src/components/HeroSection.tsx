@@ -209,66 +209,68 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   }, [preferences.travelMonth]);
 
   return (
-    <div className="relative isolate pt-5 pb-4 px-5 select-none">
-      {/* Background Hero Photo Container extending through GAI pill */}
-      <div className="absolute inset-0 top-0 h-[535px] sm:h-[555px] overflow-hidden pointer-events-none -z-10">
-        <img
-          key={currentHero.src}
-          src={currentHero.src}
-          alt={currentHero.alt}
-          className="w-full h-full object-cover object-center scale-[1.02] transition-opacity duration-300"
-          loading="eager"
-        />
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-5 pb-2 select-none">
+      {/* Hero Card Container: Apple style squircle card on tablet/desktop, fluid on mobile */}
+      <div className="relative isolate rounded-[28px] sm:rounded-[36px] overflow-hidden p-4 sm:p-7 md:p-8 min-h-[460px] md:min-h-[420px] lg:min-h-[440px] flex flex-col justify-between shadow-[0_16px_45px_rgba(0,0,0,0.06)] border border-white/70">
+        {/* Background Hero Photo Container */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+          <img
+            key={currentHero.src}
+            src={currentHero.src}
+            alt={currentHero.alt}
+            className="w-full h-full object-cover object-[center_35%] scale-[1.02] transition-opacity duration-300"
+            loading="eager"
+          />
 
-        {/* Seasonal Animated Screen Effects Overlay */}
-        {currentHero.season === 'rainy' && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            {Array.from({ length: 18 }).map((_, i) => {
-              const left = (i * 5.8 + (i % 3) * 2.1) % 96;
-              const duration = 0.85 + (i % 5) * 0.2;
-              const delay = (i * 0.12) % 1.5;
-              const height = 18 + (i % 4) * 8;
-              return (
-                <div
-                  key={i}
-                  className="rain-drop"
-                  style={{
-                    left: `${left}%`,
-                    height: `${height}px`,
-                    animationDuration: `${duration}s`,
-                    animationDelay: `${delay}s`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        )}
+          {/* Seasonal Animated Screen Effects Overlay */}
+          {currentHero.season === 'rainy' && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              {Array.from({ length: 18 }).map((_, i) => {
+                const left = (i * 5.8 + (i % 3) * 2.1) % 96;
+                const duration = 0.85 + (i % 5) * 0.2;
+                const delay = (i * 0.12) % 1.5;
+                const height = 18 + (i % 4) * 8;
+                return (
+                  <div
+                    key={i}
+                    className="rain-drop"
+                    style={{
+                      left: `${left}%`,
+                      height: `${height}px`,
+                      animationDuration: `${duration}s`,
+                      animationDelay: `${delay}s`,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )}
 
-        {currentHero.season === 'winter' && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            <div className="fog-mist-layer" />
-            <div className="fog-mist-layer-secondary" />
-          </div>
-        )}
+          {currentHero.season === 'winter' && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              <div className="fog-mist-layer" />
+              <div className="fog-mist-layer-secondary" />
+            </div>
+          )}
 
-        {currentHero.season === 'summer' && (
-          <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-            <div className="summer-sunbeam" />
-          </div>
-        )}
+          {currentHero.season === 'summer' && (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              <div className="summer-sunbeam" />
+            </div>
+          )}
 
-        {/* Subtle, translucent overlay: keeps hero image vibrant and visible through liquid glass GAI bar */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 18%, rgba(255,255,255,0.12) 46%, rgba(247,247,245,0.28) 68%, rgba(247,247,245,0.88) 88%, #F7F7F5 100%)',
-          }}
-        />
-      </div>
+          {/* Subtle, translucent overlay: keeps hero image vibrant and visible through liquid glass GAI bar */}
+          <div
+            className="absolute inset-0 z-0"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 20%, rgba(255,255,255,0.15) 50%, rgba(247,247,245,0.7) 80%, rgba(247,247,245,0.96) 100%)',
+            }}
+          />
+        </div>
 
-      {/* Top Bar: Location Pill, PWA Install & Profile Button */}
-      <div className="flex items-center justify-between pt-1 gap-2 relative z-30">
+        {/* Top Bar: Location Pill, PWA Install & Profile Button */}
+        <div className="flex items-center justify-between pt-0.5 gap-2 relative z-30">
         {/* Location Pill */}
         <motion.button
           type="button"
@@ -435,30 +437,31 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       </div>
 
-      {/* Greeting Area with Real-Time Dynamic Salutation */}
-      <div className="mt-6 mb-0">
-        <h2 className="text-[25px] font-semibold text-[#111111] tracking-tight leading-snug">
-          {greetingInfo.greeting}
-        </h2>
+      {/* Greeting & Search Area: Pushed to bottom of the card with Apple layout */}
+      <div className="mt-auto pt-6 flex flex-col justify-end">
+        <div className="mb-0">
+          <h2 className="text-[23px] sm:text-[27px] font-semibold text-[#111111] tracking-tight leading-snug">
+            {greetingInfo.greeting}
+          </h2>
 
-        {/* User Name with Dynamic Seasonal Icon */}
-        <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[36px] font-black text-[#111111] tracking-tight truncate max-w-[280px] sm:max-w-md md:max-w-xl">
-            {preferences.name || 'Explorer'}
-          </span>
+          {/* User Name with Dynamic Seasonal Icon */}
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-[34px] sm:text-[42px] font-black text-[#111111] tracking-tight truncate max-w-[280px] sm:max-w-md md:max-w-xl">
+              {preferences.name || 'Explorer'}
+            </span>
 
-          {/* Dynamic Season Icon (Summer Sun, Winter Cold Snowflake, Rainy Rain Cloud) */}
-          {renderSeasonIcon(currentHero.season)}
+            {/* Dynamic Season Icon (Summer Sun, Winter Cold Snowflake, Rainy Rain Cloud) */}
+            {renderSeasonIcon(currentHero.season)}
+          </div>
+
+          {/* Subtitle with Real-Time & Travel Month context */}
+          <p className="mt-2 text-[14.5px] sm:text-[15.5px] font-medium text-[#374151] leading-[1.4] whitespace-pre-line max-w-2xl">
+            {greetingInfo.subtitle}
+          </p>
         </div>
 
-        {/* Subtitle with Real-Time & Travel Month context */}
-        <p className="mt-2.5 text-[15px] font-medium text-[#4B5763] leading-[1.42] whitespace-pre-line max-w-2xl">
-          {greetingInfo.subtitle}
-        </p>
-      </div>
-
-      {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism pill, spacious gap to let user sink and avoid cluster */}
-      <div className="relative mt-12 sm:mt-14 mb-1 max-w-2xl">
+        {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism pill, bounded width */}
+        <div className="relative mt-6 sm:mt-7 mb-1 max-w-lg lg:max-w-xl w-full">
         <div className="relative rounded-full p-[1.5px] gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
           {/* Inner iOS Liquid Glassmorphism Pill */}
           <div
@@ -521,5 +524,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       </div>
     </div>
-  );
+  </div>
+</div>
+);
 };

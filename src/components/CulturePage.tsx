@@ -1294,69 +1294,72 @@ export const CulturePage: React.FC<CulturePageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full font-sans">
       {/* 1. PINNED STICKY TOP HEADER (No Profile Icon) */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 pt-3 pb-2.5 flex flex-col gap-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="flex items-center justify-between relative">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer z-10"
-            aria-label="Back to Homepage"
-          >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 pt-3 pb-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        <div className="max-w-6xl mx-auto w-full flex flex-col gap-2.5">
+          <div className="flex items-center justify-between relative">
+            {/* Back Button */}
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer z-10"
+              aria-label="Back to Homepage"
             >
-              <path d="M12.5 15L7.5 10L12.5 5" />
-            </svg>
-          </button>
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 20 20"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12.5 15L7.5 10L12.5 5" />
+              </svg>
+            </button>
 
-          {/* Centered Title */}
-          <h1 className="text-[20px] font-black text-[#111111] tracking-tight absolute inset-0 flex items-center justify-center pointer-events-none">
-            Culture
-          </h1>
+            {/* Centered Title */}
+            <h1 className="text-[20px] font-black text-[#111111] tracking-tight absolute inset-0 flex items-center justify-center pointer-events-none">
+              Culture
+            </h1>
 
-          {/* Spacer for symmetrical centering */}
-          <div className="w-9 h-9 opacity-0 pointer-events-none" />
-        </div>
+            {/* Spacer for symmetrical centering */}
+            <div className="w-9 h-9 opacity-0 pointer-events-none" />
+          </div>
 
-        {/* 2. TOP SEGMENTED CONTROL TABS (Events vs Traditions & Arts) */}
-        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner">
-          <button
-            type="button"
-            onClick={() => setActiveTab('events')}
-            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
-              activeTab === 'events'
-                ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Events
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('traditions')}
-            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
-              activeTab === 'traditions'
-                ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Traditions & Arts
-          </button>
+          {/* 2. TOP SEGMENTED CONTROL TABS (Events vs Traditions & Arts) */}
+          <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner max-w-md mx-auto w-full">
+            <button
+              type="button"
+              onClick={() => setActiveTab('events')}
+              className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer ${
+                activeTab === 'events'
+                  ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Events
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('traditions')}
+              className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer ${
+                activeTab === 'traditions'
+                  ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Traditions & Arts
+            </button>
+          </div>
         </div>
       </header>
 
       {/* 3. SCROLLABLE BODY CONTAINER WITH TAB TRANSITIONS */}
       <div
-        className="flex-1 overflow-y-auto px-4 pt-3 pb-12 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-3 pb-12 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
+        <div className="max-w-6xl mx-auto space-y-4 w-full">
         <AnimatePresence mode="wait" custom={activeTab}>
           {activeTab === 'events' ? (
             <motion.div
@@ -1674,6 +1677,7 @@ export const CulturePage: React.FC<CulturePageProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* MONTH PICKER MODAL SHEET */}

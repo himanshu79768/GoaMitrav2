@@ -269,11 +269,11 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
       </div>
 
       {/* Persistent Bottom Action Bar (Fixed, never cutoff, auto-pads for all screens) */}
-      <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+      <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] flex flex-col items-center">
         <button
           type="button"
           onClick={onFinish}
-          className="w-full py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full max-w-sm sm:max-w-md py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>Explore Goa Now</span>
           <svg
