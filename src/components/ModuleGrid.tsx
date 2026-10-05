@@ -104,8 +104,8 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenEmergency,
 }) => {
   return (
-    <div className="px-5 pb-5">
-      <div className="grid grid-cols-2 gap-3">
+    <div className="px-5 pb-5 w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
         {/* 1. Stay Card - Hotel Bed / Orange Color */}
         <ModuleCard
           title="Stay"

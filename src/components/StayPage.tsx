@@ -424,7 +424,7 @@ export const StayPage: React.FC<StayPageProps> = ({
   });
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
@@ -615,7 +615,7 @@ export const StayPage: React.FC<StayPageProps> = ({
         </div>
 
         {/* Stays List with 100% Unique Photos & Dynamic Guest Pricing */}
-        <div className="space-y-3.5 pt-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 pt-1">
           {filteredStays.map((stay) => {
             const isFav = favorites.includes(stay.id) || savedPlaces.some((p) => p.id === stay.id);
             const calculated = calculateStayPrice(stay.basePricePerRoom, memberCount);
@@ -792,7 +792,7 @@ export const StayPage: React.FC<StayPageProps> = ({
                 animate={{ y: 0 }}
                 exit={{ y: '100%' }}
                 transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-                className="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
+                className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Sheet Handle */}

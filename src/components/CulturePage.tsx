@@ -1292,7 +1292,7 @@ export const CulturePage: React.FC<CulturePageProps> = ({
   };
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full font-sans">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full font-sans">
       {/* 1. PINNED STICKY TOP HEADER (No Profile Icon) */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 pt-3 pb-2.5 flex flex-col gap-2.5 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         <div className="flex items-center justify-between relative">
@@ -1477,8 +1477,9 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                 </div>
 
                 {filteredEvents.length > 0 ? (
-                  filteredEvents.map((evt) => {
-                    const isFav = favorites.includes(evt.id) || savedPlaces.some((p) => p.id === evt.id);
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    {filteredEvents.map((evt) => {
+                      const isFav = favorites.includes(evt.id) || savedPlaces.some((p) => p.id === evt.id);
 
                     return (
                       <div
@@ -1595,7 +1596,8 @@ export const CulturePage: React.FC<CulturePageProps> = ({
                         </div>
                       </div>
                     );
-                  })
+                  })}
+                  </div>
                 ) : (
                   <div className="p-8 text-center bg-white rounded-3xl border border-gray-200/80 space-y-3">
                     <div className="w-12 h-12 mx-auto rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -1693,7 +1695,7 @@ export const CulturePage: React.FC<CulturePageProps> = ({
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl relative z-10 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-5 shadow-2xl relative z-10 max-h-[85vh] overflow-y-auto"
             >
               <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-3" />
 

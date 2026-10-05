@@ -38,7 +38,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               duration: 0.26,
               ease: [0.32, 0.72, 0, 1], // Native iOS sheet curve
             }}
-            className="w-full max-w-[430px] bg-[#F7F7F5] rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-white/60 relative z-10 will-change-transform transform-gpu"
+            className="w-full max-w-md md:max-w-lg bg-[#F7F7F5] rounded-t-[32px] sm:rounded-3xl p-6 shadow-2xl border-t sm:border border-white/60 relative z-10 will-change-transform transform-gpu"
           >
             {/* Modal Handle (Click to dismiss) */}
             <div

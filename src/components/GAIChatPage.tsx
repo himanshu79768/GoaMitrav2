@@ -1638,7 +1638,7 @@ CRITICAL RESPONSE RULES:
   };
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F1F1F1] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden font-sans">
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F1F1F1] flex flex-col justify-between max-w-3xl lg:max-w-4xl mx-auto select-none relative overflow-hidden font-sans">
       {/* Hidden File Inputs for Camera and Gallery */}
       <input
         type="file"
@@ -2112,7 +2112,7 @@ CRITICAL RESPONSE RULES:
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-              className="w-full max-w-[430px] bg-white/95 backdrop-blur-2xl rounded-t-[30px] sm:rounded-[26px] p-5 shadow-2xl relative z-10 space-y-4 border-t border-black/[0.04]"
+              className="w-full max-w-md bg-white/95 backdrop-blur-2xl rounded-t-[30px] sm:rounded-[26px] p-5 shadow-2xl relative z-10 space-y-4 border-t border-black/[0.04]"
             >
               <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto" />
 

@@ -6,7 +6,7 @@ interface CouponsPageProps {
 
 export const CouponsPage: React.FC<CouponsPageProps> = ({ onBack }) => {
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}

@@ -84,7 +84,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
   const isCountLocked = travelType === 'Solo Traveler' || travelType === 'Couple / Duo';
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none overflow-hidden relative font-sans">
+    <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-xl md:max-w-2xl mx-auto select-none overflow-hidden relative font-sans">
       {/* Scrollable Content Area (Auto-adjusts according to screen size) */}
       <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-6 pb-6 no-scrollbar">
         {/* Top Header: Back Button, Logo, 2-Segment Progress Bar */}

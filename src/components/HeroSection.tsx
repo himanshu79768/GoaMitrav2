@@ -443,7 +443,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
         {/* User Name with Dynamic Seasonal Icon */}
         <div className="flex items-center gap-2 mt-0.5">
-          <span className="text-[36px] font-black text-[#111111] tracking-tight truncate max-w-[280px]">
+          <span className="text-[36px] font-black text-[#111111] tracking-tight truncate max-w-[280px] sm:max-w-md md:max-w-xl">
             {preferences.name || 'Explorer'}
           </span>
 
@@ -452,13 +452,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Subtitle with Real-Time & Travel Month context */}
-        <p className="mt-2.5 text-[15px] font-medium text-[#4B5763] leading-[1.42] whitespace-pre-line">
+        <p className="mt-2.5 text-[15px] font-medium text-[#4B5763] leading-[1.42] whitespace-pre-line max-w-2xl">
           {greetingInfo.subtitle}
         </p>
       </div>
 
       {/* AI Search / Ask GAI Bar: Clean liquid glassmorphism pill, spacious gap to let user sink and avoid cluster */}
-      <div className="relative mt-12 sm:mt-14 mb-1">
+      <div className="relative mt-12 sm:mt-14 mb-1 max-w-2xl">
         <div className="relative rounded-full p-[1.5px] gai-soft-liquid-border shadow-[0_4px_24px_rgba(0,0,0,0.06),0_0_16px_rgba(255,255,255,0.45)]">
           {/* Inner iOS Liquid Glassmorphism Pill */}
           <div

@@ -71,7 +71,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
   )}, ${userCoords.lng.toFixed(4)}). Just letting you know I am safe! Sent via GoaMitra.`;
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
@@ -155,8 +155,8 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           <span className="text-xl font-bold opacity-80 pr-1">›</span>
         </button>
 
-        {/* 2x2 Action Cards Grid */}
-        <div className="grid grid-cols-2 gap-3.5">
+        {/* 2x2 or 4x1 Action Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {/* 1. Check-in Card (Teal) */}
           <div
             onClick={() => setActiveModal('checkin')}
@@ -332,7 +332,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
@@ -386,7 +386,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
@@ -440,7 +440,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 space-y-3 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-3 max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
@@ -492,7 +492,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              className="w-full max-w-[430px] bg-white rounded-t-[32px] p-6 space-y-3 max-h-[85vh] overflow-y-auto"
+              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-3 max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />

@@ -564,7 +564,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
   });
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* SCREEN 1: MAIN FOOD DIRECTORY */}
       <div className="w-full h-full flex flex-col justify-between">
         {/* 1. 100% Pinned Sticky Top Navigation Bar */}
@@ -807,7 +807,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
           {/* DYNAMIC CARDS LIST */}
           {viewType === 'dishes' ? (
             /* DISHES LIST VIEW */
-            <div className="space-y-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {filteredDishes.map((dish) => {
                 const isFav = favorites.includes(dish.id) || savedPlaces.some((p) => p.id === dish.id);
 
@@ -942,7 +942,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             </div>
           ) : (
             /* RESTAURANTS LIST VIEW */
-            <div className="space-y-3.5">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {filteredRestaurants.map((rest) => {
                 const isFav = favorites.includes(rest.id) || savedPlaces.some((p) => p.id === rest.id);
                 const proximity = getProximityData(rest);

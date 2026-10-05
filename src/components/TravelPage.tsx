@@ -200,7 +200,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
   const busMinutes = Math.round(km * 2.8 + 12);
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between max-w-[430px] mx-auto select-none relative overflow-hidden w-full">
+    <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
       <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
         {/* Back Button */}
@@ -402,7 +402,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
         </div>
 
         {/* --- TRANSPORT OPTION CARDS --- */}
-        <div className="space-y-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {/* 1. AUTO RICKSHAW CARD (WITH REAL AUTO PHOTO) */}
           {(selectedFilter === 'all' || selectedFilter === 'auto') && (
             <div className="bg-white rounded-3xl p-4 border border-[#BAE6FD] shadow-[0_2px_12px_rgba(2,132,199,0.06)] space-y-3">
