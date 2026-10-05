@@ -29,30 +29,27 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   return (
     <motion.div
       onClick={onClick}
-      whileHover={{ y: -4, scale: 1.015 }}
+      whileHover={{ y: -3, scale: 1.01 }}
       whileTap={{ scale: 0.975 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      transition={{ type: 'spring', stiffness: 450, damping: 28 }}
       style={{ backgroundColor: bgColor }}
-      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] border border-black/[0.03] min-h-[142px] select-none cursor-pointer transition-shadow group"
+      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[140px] sm:min-h-[148px] select-none cursor-pointer group"
     >
-      {/* Subtle Apple-style top glass reflection */}
-      <div className="absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/40 to-transparent pointer-events-none" />
-
       {/* Background Subtle Thematic Illustration */}
-      <div className="absolute right-0 bottom-0 w-[80%] h-[78%] pointer-events-none overflow-hidden opacity-95 group-hover:scale-105 transition-transform duration-300">
+      <div className="absolute right-0 bottom-0 w-[78%] h-[78%] pointer-events-none overflow-hidden opacity-95 group-hover:scale-105 transition-transform duration-300">
         {illustration}
       </div>
 
       {/* Top Icon */}
-      <div className="relative z-10 group-hover:scale-105 transition-transform duration-200">{icon}</div>
+      <div className="relative z-10">{icon}</div>
 
       {/* Card Content & Action Button */}
       <div className="relative z-10 flex items-end justify-between mt-1 pt-0.5">
         <div className="pr-1 min-w-0">
-          <h3 className="text-[16px] font-extrabold text-[#111111] tracking-tight leading-tight">
+          <h3 className="text-[16.5px] font-extrabold text-[#111111] tracking-tight leading-tight">
             {title}
           </h3>
-          <p className="text-[11.5px] leading-[1.28] text-[#55606A] font-medium mt-0.5 whitespace-pre-line">
+          <p className="text-[12px] leading-[1.3] text-[#55606A] font-medium mt-0.5 whitespace-pre-line">
             {description}
           </p>
         </div>
@@ -60,14 +57,14 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
         {/* Circular Action Button */}
         <motion.button
           type="button"
-          whileHover={{ scale: 1.08 }}
+          whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.92 }}
           onClick={(e) => {
             e.stopPropagation();
             onClick?.();
           }}
           aria-label={`Open ${title}`}
-          className="w-8 h-8 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#111111] shrink-0 transition-shadow cursor-pointer"
+          className="w-8.5 h-8.5 rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] flex items-center justify-center text-[#111111] shrink-0 transition-shadow cursor-pointer"
         >
           <svg
             className="w-3.5 h-3.5"
@@ -87,8 +84,6 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   );
 };
 
-
-
 interface ModuleGridProps {
   onOpenStay?: () => void;
   onOpenDestinations?: () => void;
@@ -107,8 +102,9 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenEmergency,
 }) => {
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-14 pb-8 pt-3 select-none">
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 xl:gap-5 w-full">
+    <div className="px-5 pb-6 w-full max-w-5xl mx-auto">
+      {/* 2-2-2 on Mobile, 3-3 on Laptop & Big Screen */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4.5">
         {/* 1. Stay Card - Hotel Bed / Orange Color */}
         <ModuleCard
           title="Stay"
@@ -240,105 +236,6 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
             </div>
           }
         />
-      </div>
-
-      {/* Desktop-Exclusive Live Goa Hub: Edge-to-Edge Desktop Dashboard Section */}
-      <div className="hidden lg:block mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#177F91] animate-pulse" />
-            <h3 className="text-[17px] font-black text-gray-900 tracking-tight">
-              Curated Goa Intelligence Hub
-            </h3>
-            <span className="px-2 py-0.5 rounded-full text-[10.5px] font-bold bg-[#177F91]/10 text-[#177F91]">
-              Live Real-Time
-            </span>
-          </div>
-          <span className="text-xs font-semibold text-gray-500">
-            Updated for your travel preferences
-          </span>
-        </div>
-
-        <div className="grid grid-cols-3 gap-5 w-full">
-          {/* Card 1: Marine & Beach Safety Live */}
-          <div
-            onClick={onOpenEmergency}
-            className="rounded-[24px] p-5 bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100 flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                  Live Beach Safety
-                </span>
-                <span className="text-xs font-bold text-gray-400">Drishti 24×7</span>
-              </div>
-              <h4 className="text-[16px] font-black text-gray-900 leading-snug group-hover:text-[#177F91] transition-colors">
-                Baga, Calangute & Morjim Safe Zones
-              </h4>
-              <p className="text-[12.5px] text-gray-600 font-medium mt-1.5 leading-relaxed">
-                Calm coastal tides, full lifeguard watch deployed across all 40+ North & South Goa beaches. Tap for instant SOS & medical helpline.
-              </p>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#177F91]">
-              <span>View Safety Protocols & Contacts</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-          </div>
-
-          {/* Card 2: Must-Visit Coastal Curations */}
-          <div
-            onClick={onOpenDestinations}
-            className="rounded-[24px] p-5 bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#059669] bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100">
-                  Featured Spots
-                </span>
-                <span className="text-xs font-bold text-gray-400">High Ratings</span>
-              </div>
-              <h4 className="text-[16px] font-black text-gray-900 leading-snug group-hover:text-[#059669] transition-colors">
-                Aguada Fort, Palolem & Dudhsagar Falls
-              </h4>
-              <p className="text-[12.5px] text-gray-600 font-medium mt-1.5 leading-relaxed">
-                Discover sunset vantage points, historical Portuguese ramparts, and seasonal waterfall treks with verified distance & taxi estimates.
-              </p>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#059669]">
-              <span>Explore All Verified Spots</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-          </div>
-
-          {/* Card 3: Authentic Food & Culture Highlights */}
-          <div
-            onClick={onOpenFood}
-            className="rounded-[24px] p-5 bg-white/75 backdrop-blur-xl border border-white/80 shadow-[0_8px_30px_rgb(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#C2410C] bg-orange-50 px-2.5 py-1 rounded-full border border-orange-100">
-                  Local Flavors
-                </span>
-                <span className="text-xs font-bold text-gray-400">Authentic Taste</span>
-              </div>
-              <h4 className="text-[16px] font-black text-gray-900 leading-snug group-hover:text-[#C2410C] transition-colors">
-                Kingfish Thali, Bebinca & Fontainhas Cafes
-              </h4>
-              <p className="text-[12.5px] text-gray-600 font-medium mt-1.5 leading-relaxed">
-                Hand-curated local bakeries, seaside shacks, and traditional spice-infused Goan curries with exact Google Maps directions.
-              </p>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-[#C2410C]">
-              <span>Find Dishes & Restaurants</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

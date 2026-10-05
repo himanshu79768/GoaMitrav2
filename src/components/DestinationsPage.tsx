@@ -581,10 +581,10 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
             <span className="w-2 h-2 rounded-full bg-[#177F91]" />
             <span className="font-bold text-gray-800">
               {hasHeritage && hasCultural
-                ? 'Curated for Heritage & Cultural Exploration'
+                ? 'Heritage & Cultural Exploration'
                 : hasCultural
-                ? 'Curated for Living Cultural Traditions (No forts)'
-                : 'Curated for Historic Heritage & Forts'}
+                ? 'Living Cultural Traditions'
+                : 'Historic Heritage & Forts'}
             </span>
           </div>
           <span>Near {userLocality}</span>

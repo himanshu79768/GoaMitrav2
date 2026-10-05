@@ -426,7 +426,7 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
           <div className="relative z-10 flex items-start justify-between gap-3">
             <div>
               <span className="px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md text-[11px] font-semibold tracking-wide uppercase text-white/90">
-                My Goa Hub
+                My Goa
               </span>
               <h2 className="text-2xl font-black tracking-tight mt-2.5">
                 Hello, {preferences.name || 'Explorer'}!

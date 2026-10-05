@@ -735,7 +735,7 @@ export default function App() {
           )}
         </AnimatePresence>
 
-        {/* Global Sleek Floating iOS Toast Notification with Spring Physics & Blur */}
+        {/* Global Sleek Floating iOS Toast Notification with Translucent Blur Glassmorphism */}
         <AnimatePresence>
           {activeToast && (
             <motion.div
@@ -751,17 +751,17 @@ export default function App() {
               }}
               className="fixed top-6 left-1/2 -translate-x-1/2 z-[10000] pointer-events-none select-none max-w-[92vw] sm:max-w-md w-auto"
             >
-              <div className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-[#111111]/92 backdrop-blur-2xl text-white border border-white/15 shadow-[0_12px_36px_rgba(0,0,0,0.38)]">
+              <div className="water-drop-lens flex items-center gap-3 px-4.5 py-2.5 rounded-full bg-white/40 sm:bg-white/50 backdrop-blur-2xl text-[#111827] border border-white/70 shadow-[0_16px_40px_-4px_rgba(0,0,0,0.18),0_4px_16px_rgba(0,0,0,0.06)]">
                 {/* Icon */}
                 <div
-                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 shadow-2xs ${
                     activeToast.type === 'favorite'
-                      ? 'bg-rose-500/20 text-rose-400'
+                      ? 'bg-rose-500/15 text-rose-600'
                       : activeToast.type === 'remove'
-                      ? 'bg-gray-700/60 text-gray-300'
+                      ? 'bg-gray-500/15 text-gray-700'
                       : activeToast.type === 'success'
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-[#177F91]/20 text-[#38BDF8]'
+                      ? 'bg-[#FF6B4A]/15 text-[#FF6B4A]'
+                      : 'bg-[#177F91]/15 text-[#177F91]'
                   }`}
                 >
                   {activeToast.icon === 'heart' && (
@@ -776,7 +776,7 @@ export default function App() {
                     </motion.svg>
                   )}
                   {activeToast.icon === 'heart-broken' && (
-                    <svg className="w-4 h-4 text-gray-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
                       <line x1="2" y1="2" x2="22" y2="22" />
                     </svg>
@@ -800,18 +800,18 @@ export default function App() {
                     </motion.svg>
                   )}
                   {activeToast.icon === 'delete' && (
-                    <svg className="w-4 h-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="3 6 5 6 21 6" />
                       <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                     </svg>
                   )}
                   {activeToast.icon === 'check' && (
-                    <svg className="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   )}
                   {activeToast.icon === 'sparkles' && (
-                    <svg className="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
                     </svg>
                   )}
@@ -819,11 +819,11 @@ export default function App() {
 
                 {/* Text Content */}
                 <div className="flex flex-col min-w-0 pr-1">
-                  <span className="text-[13px] font-bold text-white tracking-tight leading-snug truncate">
+                  <span className="text-[13.5px] font-extrabold text-[#111827] tracking-tight leading-snug truncate">
                     {activeToast.message}
                   </span>
                   {activeToast.subMessage && (
-                    <span className="text-[11px] font-medium text-white/70 leading-tight truncate max-w-[240px]">
+                    <span className="text-[11.5px] font-semibold text-[#475569] leading-tight truncate max-w-[240px]">
                       {activeToast.subMessage}
                     </span>
                   )}
