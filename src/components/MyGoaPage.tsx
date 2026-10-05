@@ -11,6 +11,8 @@ interface MyGoaPageProps {
   onAskGAI: (initialPrompt?: string) => void;
   onRemoveSavedPlace: (id: string) => void;
   onRemoveItinerary: (id: string) => void;
+  onToggleSavePlace?: (place: SavedPlaceItem) => void;
+  onShowToast?: (toast: { message: string; subMessage?: string; icon?: 'heart' | 'heart-broken' | 'itinerary' | 'check' | 'delete' | 'sparkles'; type?: 'success' | 'info' | 'favorite' | 'remove' }) => void;
   initialTab?: 'itineraries' | 'saved_places';
 }
 
@@ -284,6 +286,8 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
   onAskGAI,
   onRemoveSavedPlace,
   onRemoveItinerary,
+  onToggleSavePlace,
+  onShowToast,
   initialTab,
 }) => {
   const [activeTab, setActiveTab] = useState<'itineraries' | 'saved_places'>(initialTab || 'itineraries');

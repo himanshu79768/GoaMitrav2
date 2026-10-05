@@ -1087,7 +1087,11 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     triggerHaptic(10);
     navigator.clipboard.writeText(text);
     setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
+    setToastMessage('Copied to clipboard');
+    setTimeout(() => {
+      setCopiedId(null);
+      setToastMessage(null);
+    }, 2000);
   };
 
   const handleShare = async (text: string) => {
@@ -1101,16 +1105,22 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
       } catch {}
     } else {
       navigator.clipboard.writeText(text);
-      alert('Copied travel recommendation to clipboard!');
+      setToastMessage('Copied travel recommendation to clipboard');
+      setTimeout(() => setToastMessage(null), 2000);
     }
   };
 
   const toggleLike = (id: string) => {
     triggerHaptic(10);
+    const willLike = !likedIds.includes(id);
     setLikedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
     setDislikedIds((prev) => prev.filter((i) => i !== id));
+    if (willLike) {
+      setToastMessage('Marked as helpful 👍');
+      setTimeout(() => setToastMessage(null), 2000);
+    }
   };
 
   const toggleDislike = (id: string) => {
