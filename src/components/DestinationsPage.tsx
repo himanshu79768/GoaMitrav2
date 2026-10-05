@@ -413,44 +413,41 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 sm:px-6 lg:px-10 xl:px-14 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="w-full flex items-center justify-between">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="Back to Homepage"
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        {/* Back Button */}
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+          aria-label="Back to Homepage"
+        >
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12.5 15L7.5 10L12.5 5" />
-            </svg>
-          </button>
+            <path d="M12.5 15L7.5 10L12.5 5" />
+          </svg>
+        </button>
 
-          {/* Title */}
-          <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
-            Destinations
-          </h1>
+        {/* Title */}
+        <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
+          Destinations
+        </h1>
 
-          {/* Right Balance Spacer */}
-          <div className="w-9 h-9" />
-        </div>
+        {/* Right Balance Spacer */}
+        <div className="w-9 h-9" />
       </header>
 
       {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
       <div
-        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-3 pb-8 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-3 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="w-full space-y-4">
         {/* Filter Pills Bar */}
         <div>
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
@@ -594,7 +591,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
         </div>
 
         {/* Destinations List Cards: Tapping any card redirects to Travel page */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1">
           {displayedDestinations.map((item) => {
             const minutesFromStay = getMinutesFromStay(item);
 
@@ -602,12 +599,12 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
               <div
                 key={item.id}
                 onClick={() => onSelectDestination(item)}
-                className="bg-white rounded-3xl p-3 border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-md active:scale-[0.99] transition-all cursor-pointer flex flex-col justify-between"
+                className="bg-white rounded-3xl p-4 border border-gray-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-md active:scale-[0.99] transition-all cursor-pointer flex flex-col justify-between gap-3"
               >
                 {/* Main Card Top Section: Real Image on Left + Info on Right */}
                 <div className="flex items-start gap-3.5">
                   {/* Genuine Outdoor Landmark Image */}
-                  <div className="relative w-[115px] h-[115px] rounded-2xl overflow-hidden shrink-0 bg-gray-100">
+                  <div className="relative w-[115px] h-[120px] rounded-2xl overflow-hidden shrink-0 bg-gray-100">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -615,18 +612,18 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                     />
 
                     {/* Category Tag */}
-                    <div className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[9.5px] font-bold text-white capitalize">
+                    <div className="absolute bottom-1.5 left-1.5 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-xs text-[9.5px] font-bold text-white capitalize">
                       {item.category.replace('_', ' ')}
                     </div>
                   </div>
 
                   {/* Right Details */}
-                  <div className="flex-1 min-w-0 flex flex-col justify-between h-[115px]">
+                  <div className="flex-1 min-w-0 flex flex-col justify-between min-h-[120px] space-y-1.5">
                     <div>
-                      {/* Top Badges (Half-day badge removed per request) */}
-                      <div className="flex items-center justify-between gap-1">
+                      {/* Top Badges */}
+                      <div className="flex items-center justify-between gap-1.5 pb-0.5">
                         {item.matchBadge === 'Best match' && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] bg-[#E0F2FE] px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0284C7] bg-[#E0F2FE] px-2.5 py-0.5 rounded-full">
                             <svg className="w-3 h-3 fill-current text-[#0284C7]" viewBox="0 0 24 24">
                               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                             </svg>
@@ -634,7 +631,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                           </span>
                         )}
                         {item.matchBadge === 'Popular' && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D9488] bg-[#CCFBF1] px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D9488] bg-[#CCFBF1] px-2.5 py-0.5 rounded-full">
                             <svg className="w-3 h-3 text-[#0D9488]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                               <circle cx="9" cy="7" r="4" />
@@ -643,7 +640,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                           </span>
                         )}
                         {item.matchBadge === 'Hidden gem' && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#15803D] bg-[#DCFCE7] px-2.5 py-0.5 rounded-full">
                             <svg className="w-3 h-3 text-[#15803D]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M12 22v-7" />
                               <path d="M12 15a6 6 0 0 0-6-6c0 3.3 2.7 6 6 6Z" />
@@ -653,7 +650,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                           </span>
                         )}
                         {item.matchBadge === 'Scenic pick' && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#B45309] bg-[#FEF3C7] px-2 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#B45309] bg-[#FEF3C7] px-2.5 py-0.5 rounded-full">
                             <svg className="w-3 h-3 text-[#B45309]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
                               <circle cx="12" cy="13" r="4" />
@@ -662,7 +659,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                           </span>
                         )}
 
-                        {/* Heart / Save Button */}
+                        {/* Heart / Save Button & Rides badge */}
                         <div className="flex items-center gap-1.5 ml-auto">
                           <button
                             type="button"
@@ -703,13 +700,13 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                       </div>
 
                       {/* Destination Name */}
-                      <h3 className="text-[16.5px] font-extrabold text-gray-900 tracking-tight leading-tight mt-1 truncate">
+                      <h3 className="text-[16.5px] font-extrabold text-gray-900 tracking-tight leading-snug truncate mt-0.5">
                         {item.name}
                       </h3>
 
                       {/* Distance From Stay */}
-                      <div className="flex items-center gap-1 text-[11.5px] font-semibold text-gray-600 mt-0.5">
-                        <svg className="w-3 h-3 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <div className="flex items-center gap-1.5 text-[11.5px] font-semibold text-gray-600 mt-1">
+                        <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                           <circle cx="12" cy="10" r="3" />
                         </svg>
@@ -717,15 +714,15 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                       </div>
 
                       {/* Concise 2-line Description */}
-                      <p className="text-[11.5px] text-gray-500 leading-snug line-clamp-2 mt-1">
+                      <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-2 mt-1">
                         {item.description}
                       </p>
                     </div>
 
                     {/* Warning Pill if present */}
                     {item.warningNote && (
-                      <div className="mt-1">
-                        <span className="inline-flex items-center gap-1 text-[9.5px] font-bold text-[#B45309] bg-[#FEF3C7] px-2 py-0.5 rounded-md truncate max-w-full">
+                      <div className="mt-1.5">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#B45309] bg-[#FEF3C7] px-2.5 py-0.5 rounded-md truncate max-w-full">
                           <span>!</span>
                           <span className="truncate">{item.warningNote}</span>
                         </span>
@@ -735,7 +732,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
                 </div>
 
                 {/* Bottom Tag Specs: e.g. Ferry ride · Heritage · Uncrowded */}
-                <div className="mt-2.5 pt-2 flex items-center justify-between text-gray-500 text-[11px] font-semibold">
+                <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between text-gray-500 text-[11.5px] font-semibold">
                   <div className="flex items-center gap-2.5 truncate pr-2">
                     {item.tags.map((tag, idx) => (
                       <span key={idx} className="flex items-center gap-1 shrink-0">
@@ -805,7 +802,6 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({
               </div>
             );
           })}
-        </div>
         </div>
       </div>
     </div>

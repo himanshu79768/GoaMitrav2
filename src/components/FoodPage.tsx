@@ -667,7 +667,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             </button>
           </div>
 
-          {/* PILL 3: Option Filter: Normal or Goan Authentic */}
+          {/* PILL 3: Option Filter: Style & Dietary Features (All in one unified row) */}
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 md:justify-center">
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider shrink-0 pl-1">
               Style:
@@ -711,41 +711,36 @@ export const FoodPage: React.FC<FoodPageProps> = ({
                 <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
                 <path d="M2 12h20" />
               </svg>
-              <span>Normal / Multi-Cuisine</span>
+              <span>Normal / Multi</span>
             </button>
-          </div>
-
-          {/* PILL 4: Dietary Preference Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
             <button
               type="button"
               onClick={() => setActiveChip(activeChip === 'jain' ? 'all' : 'jain')}
-              className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
                 activeChip === 'jain'
                   ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
-                  : 'bg-white text-gray-700 border-gray-200/90 hover:bg-gray-50'
+                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
               }`}
             >
               <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
               </svg>
-              <span>Jain-friendly</span>
+              <span>Jain</span>
             </button>
-
             <button
               type="button"
               onClick={() => setActiveChip(activeChip === 'allergy' ? 'all' : 'allergy')}
-              className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-full text-[12px] font-bold border transition-all cursor-pointer shrink-0 flex items-center gap-1.5 ${
                 activeChip === 'allergy'
                   ? 'bg-blue-600 text-white border-blue-600 shadow-2xs'
-                  : 'bg-white text-gray-700 border-gray-200/90 hover:bg-gray-50'
+                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
               }`}
             >
               <svg className="w-3.5 h-3.5 text-current" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                 <path d="m9 12 2 2 4-4" />
               </svg>
-              <span>Allergy-safe</span>
+              <span>Allergy</span>
             </button>
           </div>
 

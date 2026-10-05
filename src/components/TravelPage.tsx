@@ -202,49 +202,46 @@ export const TravelPage: React.FC<TravelPageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 sm:px-6 lg:px-10 xl:px-14 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="w-full flex items-center justify-between">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="Back to Destinations"
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        {/* Back Button */}
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+          aria-label="Back to Destinations"
+        >
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12.5 15L7.5 10L12.5 5" />
-            </svg>
-          </button>
+            <path d="M12.5 15L7.5 10L12.5 5" />
+          </svg>
+        </button>
 
-          {/* Title */}
-          <div className="flex flex-col items-center">
-            <h1 className="text-[19px] font-black text-[#111111] tracking-tight leading-tight">
-              Travel
-            </h1>
-            <span className="text-[11px] font-medium text-gray-500 leading-tight truncate max-w-[200px]">
-              To {destination.name}
-            </span>
-          </div>
-
-          {/* Right Balance Spacer */}
-          <div className="w-9 h-9" />
+        {/* Title */}
+        <div className="flex flex-col items-center">
+          <h1 className="text-[19px] font-black text-[#111111] tracking-tight leading-tight">
+            Travel
+          </h1>
+          <span className="text-[11px] font-medium text-gray-500 leading-tight truncate max-w-[200px]">
+            To {destination.name}
+          </span>
         </div>
+
+        {/* Right Balance Spacer */}
+        <div className="w-9 h-9" />
       </header>
 
       {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
       <div
-        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-3 pb-8 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-3 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="w-full max-w-5xl mx-auto space-y-4">
         {/* HERO CARD: Features the selected destination itself */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[185px] flex items-end p-5">
           {/* Real Photo of Target Destination */}
@@ -333,15 +330,15 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               </div>
             </div>
 
-            {/* Map Link & GAI Route Advice */}
-            <div className="flex items-center gap-2 pt-1">
+            {/* Map Link & GAI Route Advice (Compact width & strictly left-aligned) */}
+            <div className="flex items-center justify-start gap-2 pt-1 flex-wrap">
               <a
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                   `${destination.name}, Goa`
                 )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 py-2.5 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-xs text-center flex items-center justify-center gap-1.5 transition-all"
+                className="py-2 px-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold text-xs text-center inline-flex items-center justify-start gap-1.5 transition-all shrink-0 cursor-pointer"
               >
                 <svg className="w-3.5 h-3.5 text-[#E05333]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
@@ -360,7 +357,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
                     `How should I travel to ${destination.name} from my location (${userLocality})? Give me best scooter/cab routes and local tips.`
                   )
                 }
-                className="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white font-bold text-xs text-center flex items-center justify-center gap-1.5 shadow-xs hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+                className="py-2 px-3.5 rounded-xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white font-bold text-xs text-center inline-flex items-center justify-start gap-1.5 shadow-xs hover:brightness-105 active:scale-95 transition-all shrink-0 cursor-pointer"
               >
                 <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
@@ -371,9 +368,9 @@ export const TravelPage: React.FC<TravelPageProps> = ({
           </div>
         </div>
 
-        {/* Transportation Filter Pills (Cab, Auto, Scooter, Bus) */}
+        {/* Transportation Filter Pills (Cab, Auto, Scooter, Bus - Centered on desktop) */}
         <div>
-          <div className="flex items-center justify-between px-1 mb-1.5">
+          <div className="flex items-center justify-between px-1 mb-1.5 md:justify-center md:gap-4">
             <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">
               Travel Options ({km} km)
             </span>
@@ -382,7 +379,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({
             </span>
           </div>
 
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 justify-start md:justify-center w-full">
             {TRANSPORT_FILTERS.map((f) => {
               const isSelected = selectedFilter === f.id;
               return (
@@ -741,7 +738,6 @@ export const TravelPage: React.FC<TravelPageProps> = ({
               </div>
             </div>
           )}
-        </div>
         </div>
       </div>
     </div>

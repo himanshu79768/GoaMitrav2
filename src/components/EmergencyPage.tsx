@@ -319,28 +319,44 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           </motion.div>
         )}
 
-        {/* 2. CHECK-IN MODAL */}
+        {/* 2. CHECK-IN MODAL (iOS Popup on Desktop / Smooth Sheet on Mobile) */}
         {activeModal === 'checkin' && (
           <motion.div
             key="checkin-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 select-none"
             onClick={() => setActiveModal(null)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+              initial={{ y: 20, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-lg bg-white/95 backdrop-blur-2xl rounded-t-[32px] md:rounded-[28px] p-6 space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl border border-black/[0.06]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
-              <h3 className="text-lg font-black text-gray-900">Send "I am Safe" Check-in</h3>
-              <p className="text-xs text-gray-500">
-                Share your verified live Goan locality and GPS coordinates with family or friends via WhatsApp or SMS.
-              </p>
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto md:hidden" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900">Send "I am Safe" Check-in</h3>
+                  <p className="text-xs text-gray-500">
+                    Share your verified live Goan locality and GPS coordinates with family or friends.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal(null)}
+                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors shrink-0 ml-2"
+                  aria-label="Close dialog"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
 
               <div className="p-3 bg-gray-50 rounded-2xl border border-gray-200 text-xs text-gray-800 font-mono">
                 {checkinMessage}
@@ -373,28 +389,44 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           </motion.div>
         )}
 
-        {/* 3. TRANSLATE & SHOW EMERGENCY ID */}
+        {/* 3. TRANSLATE & SHOW EMERGENCY ID (iOS Popup on Desktop) */}
         {activeModal === 'translate' && (
           <motion.div
             key="translate-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 select-none"
             onClick={() => setActiveModal(null)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-4 max-h-[85vh] overflow-y-auto"
+              initial={{ y: 20, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-lg bg-white/95 backdrop-blur-2xl rounded-t-[32px] md:rounded-[28px] p-6 space-y-4 max-h-[85vh] overflow-y-auto shadow-2xl border border-black/[0.06]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
-              <h3 className="text-lg font-black text-gray-900">Emergency ID Card</h3>
-              <p className="text-xs text-gray-500">
-                Show this directly to local Goan doctors, pharmacists, police, or responders.
-              </p>
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto md:hidden" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900">Emergency ID Card</h3>
+                  <p className="text-xs text-gray-500">
+                    Show this directly to local Goan doctors, pharmacists, police, or responders.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal(null)}
+                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors shrink-0 ml-2"
+                  aria-label="Close dialog"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
 
               <div className="bg-[#FEF3C7]/40 border border-[#FDE68A] rounded-2xl p-4 space-y-3">
                 <div className="flex justify-between items-center border-b border-[#FDE68A]/60 pb-2">
@@ -419,7 +451,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="w-full py-3 rounded-2xl bg-gray-900 text-white font-bold text-xs"
+                className="w-full py-3 rounded-2xl bg-gray-900 text-white font-bold text-xs cursor-pointer hover:bg-gray-800"
               >
                 Close ID Card
               </button>
@@ -427,26 +459,42 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           </motion.div>
         )}
 
-        {/* 4. HELPLINES SHEET */}
+        {/* 4. HELPLINES SHEET (iOS Popup on Desktop) */}
         {activeModal === 'helplines' && (
           <motion.div
             key="helplines-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 select-none"
             onClick={() => setActiveModal(null)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-3 max-h-[85vh] overflow-y-auto"
+              initial={{ y: 20, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-lg bg-white/95 backdrop-blur-2xl rounded-t-[32px] md:rounded-[28px] p-6 space-y-3 max-h-[85vh] overflow-y-auto shadow-2xl border border-black/[0.06]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
-              <h3 className="text-lg font-black text-gray-900">Official Goa Helplines</h3>
-              <p className="text-xs text-gray-500">Tap to call verified emergency numbers directly.</p>
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto md:hidden" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900">Official Goa Helplines</h3>
+                  <p className="text-xs text-gray-500">Tap to call verified emergency numbers directly.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal(null)}
+                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors shrink-0 ml-2"
+                  aria-label="Close dialog"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
 
               <div className="space-y-2 pt-1">
                 {[
@@ -479,26 +527,42 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           </motion.div>
         )}
 
-        {/* 5. ROADSIDE HELP SHEET */}
+        {/* 5. ROADSIDE HELP SHEET (iOS Popup on Desktop) */}
         {activeModal === 'roadside' && (
           <motion.div
             key="roadside-modal"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end justify-center"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end md:items-center justify-center p-0 md:p-4 select-none"
             onClick={() => setActiveModal(null)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-6 space-y-3 max-h-[85vh] overflow-y-auto"
+              initial={{ y: 20, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-lg bg-white/95 backdrop-blur-2xl rounded-t-[32px] md:rounded-[28px] p-6 space-y-3 max-h-[85vh] overflow-y-auto shadow-2xl border border-black/[0.06]"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto" />
-              <h3 className="text-lg font-black text-gray-900">Roadside Repair & Mechanics</h3>
-              <p className="text-xs text-gray-500">Verified scooter & car puncture services in Goa.</p>
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto md:hidden" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-black text-gray-900">Roadside Repair & Mechanics</h3>
+                  <p className="text-xs text-gray-500">Verified scooter & car puncture services in Goa.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActiveModal(null)}
+                  className="w-8 h-8 rounded-full bg-gray-100 text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors shrink-0 ml-2"
+                  aria-label="Close dialog"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
 
               <div className="space-y-2 pt-1">
                 {[

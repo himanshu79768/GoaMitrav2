@@ -2092,10 +2092,10 @@ CRITICAL RESPONSE RULES:
         </div>
       </div>
 
-      {/* ATTACHMENT OPTIONS BOTTOM SHEET: iOS Sheet Style */}
+      {/* ATTACHMENT OPTIONS POPUP / BOTTOM SHEET: Modern iOS Popup Style on Desktop */}
       <AnimatePresence>
         {isAttachmentSheetOpen && (
-          <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:p-4 select-none">
+          <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 select-none">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -2105,18 +2105,18 @@ CRITICAL RESPONSE RULES:
                 triggerHaptic(10);
                 setIsAttachmentSheetOpen(false);
               }}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             />
 
-            {/* Bottom Sheet Menu */}
+            {/* Popup / Bottom Sheet Menu */}
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ duration: 0.28, ease: [0.32, 0.72, 0, 1] }}
-              className="w-full max-w-md bg-white/95 backdrop-blur-2xl rounded-t-[30px] sm:rounded-[26px] p-5 shadow-2xl relative z-10 space-y-4 border-t border-black/[0.04]"
+              initial={{ y: 20, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              exit={{ y: 20, opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="w-full max-w-md bg-white/95 backdrop-blur-2xl rounded-t-[30px] md:rounded-[26px] p-5 shadow-2xl relative z-10 space-y-4 border border-black/[0.08]"
             >
-              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto" />
+              <div className="w-10 h-1 bg-gray-300 rounded-full mx-auto md:hidden" />
 
               <div className="flex items-center justify-between pb-2 border-b border-black/[0.05]">
                 <div>
@@ -2130,7 +2130,7 @@ CRITICAL RESPONSE RULES:
                     setIsAttachmentSheetOpen(false);
                   }}
                   className="w-8 h-8 rounded-full bg-black/[0.05] text-gray-500 font-bold flex items-center justify-center cursor-pointer hover:bg-black/[0.08] transition-colors"
-                  aria-label="Close sheet"
+                  aria-label="Close dialog"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18" />
