@@ -568,50 +568,47 @@ export const FoodPage: React.FC<FoodPageProps> = ({
       {/* SCREEN 1: MAIN FOOD DIRECTORY */}
       <div className="w-full h-full flex flex-col justify-between">
         {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-        <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 sm:px-6 lg:px-10 xl:px-14 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-          <div className="w-full flex items-center justify-between">
-            {/* Back Button */}
-            <button
-              type="button"
-              onClick={onBack}
-              className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-              aria-label="Back to Homepage"
+        <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+            aria-label="Back to Homepage"
+          >
+            <svg
+              className="w-5 h-5"
+              viewBox="0 0 20 20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <svg
-                className="w-5 h-5"
-                viewBox="0 0 20 20"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12.5 15L7.5 10L12.5 5" />
-              </svg>
-            </button>
+              <path d="M12.5 15L7.5 10L12.5 5" />
+            </svg>
+          </button>
 
-            {/* Title */}
-            <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
-              Food
-            </h1>
+          {/* Title */}
+          <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
+            Food
+          </h1>
 
-            {/* Right Balance Spacer */}
-            <div className="w-9 h-9" />
-          </div>
+          {/* Right Balance Spacer */}
+          <div className="w-9 h-9" />
         </header>
 
         {/* 2. Scrollable Body Container */}
         <div
-          className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-3 pb-10 min-h-0 overscroll-contain touch-pan-y"
+          className="flex-1 overflow-y-auto px-4 pt-3 pb-10 space-y-3.5 min-h-0 overscroll-contain touch-pan-y"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          <div className="w-full space-y-4">
-          {/* PILL 1: Primary Segmented Toggle: Dishes vs Restaurants */}
-          <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner">
+          {/* PILL 1: Primary Segmented Toggle: Dishes vs Restaurants (Reduced width & centered on desktop) */}
+          <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner w-full md:max-w-sm md:mx-auto">
             <button
               type="button"
               onClick={() => setViewType('dishes')}
-              className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
+              className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer ${
                 viewType === 'dishes'
                   ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
                   : 'text-gray-600 hover:text-gray-900'
@@ -623,7 +620,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setViewType('restaurants')}
-              className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer ${
+              className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer ${
                 viewType === 'restaurants'
                   ? 'bg-[#177F91] text-white shadow-[0_2px_8px_rgba(23,127,145,0.35)]'
                   : 'text-gray-600 hover:text-gray-900'
@@ -633,12 +630,12 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             </button>
           </div>
 
-          {/* PILL 2: Secondary Toggle: Veg and Non-veg */}
-          <div className="bg-white border border-gray-200/80 p-1 rounded-2xl flex items-center shadow-2xs">
+          {/* PILL 2: Secondary Toggle: Veg and Non-veg (Reduced width & centered on desktop) */}
+          <div className="bg-white border border-gray-200/80 p-1 rounded-2xl flex items-center shadow-2xs w-full md:max-w-xs md:mx-auto">
             <button
               type="button"
               onClick={() => setDietaryFilter('all')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer ${
+              className={`flex-1 py-1.5 rounded-xl text-[12px] font-bold transition-all text-center cursor-pointer ${
                 dietaryFilter === 'all'
                   ? 'bg-gray-900 text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
@@ -649,7 +646,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setDietaryFilter('veg')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer ${
+              className={`flex-1 py-1.5 rounded-xl text-[12px] font-bold transition-all text-center cursor-pointer ${
                 dietaryFilter === 'veg'
                   ? 'bg-[#15803D] text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
@@ -660,7 +657,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             <button
               type="button"
               onClick={() => setDietaryFilter('non_veg')}
-              className={`flex-1 py-1.5 rounded-xl text-[12.5px] font-bold transition-all text-center cursor-pointer ${
+              className={`flex-1 py-1.5 rounded-xl text-[12px] font-bold transition-all text-center cursor-pointer ${
                 dietaryFilter === 'non_veg'
                   ? 'bg-[#DC2626] text-white shadow-xs'
                   : 'text-gray-600 hover:text-gray-900'
@@ -671,7 +668,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
           </div>
 
           {/* PILL 3: Option Filter: Normal or Goan Authentic */}
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 md:justify-center">
             <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider shrink-0 pl-1">
               Style:
             </span>
@@ -810,7 +807,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
           {/* DYNAMIC CARDS LIST */}
           {viewType === 'dishes' ? (
             /* DISHES LIST VIEW */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {filteredDishes.map((dish) => {
                 const isFav = favorites.includes(dish.id) || savedPlaces.some((p) => p.id === dish.id);
 
@@ -945,7 +942,7 @@ export const FoodPage: React.FC<FoodPageProps> = ({
             </div>
           ) : (
             /* RESTAURANTS LIST VIEW */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
               {filteredRestaurants.map((rest) => {
                 const isFav = favorites.includes(rest.id) || savedPlaces.some((p) => p.id === rest.id);
                 const proximity = getProximityData(rest);
@@ -1133,7 +1130,6 @@ export const FoodPage: React.FC<FoodPageProps> = ({
               })}
             </div>
           )}
-          </div>
         </div>
       </div>
 

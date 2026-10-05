@@ -463,13 +463,13 @@ export const StayPage: React.FC<StayPageProps> = ({
         className="flex-1 overflow-y-auto px-4 pt-3.5 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y no-scrollbar"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        {/* Two Pill Segmented Toggle: Hotels vs Village Homestays */}
-        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner relative">
+        {/* Two Pill Segmented Toggle: Hotels vs Village Homestays (Reduced width & centered on desktop) */}
+        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner relative w-full md:max-w-sm md:mx-auto">
           <motion.button
             type="button"
             whileTap={{ scale: 0.98 }}
             onClick={() => setStayType('hotel')}
-            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer relative z-10 ${
+            className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer relative z-10 ${
               stayType === 'hotel'
                 ? 'bg-[#177F91] text-white shadow-[0_2px_10px_rgba(23,127,145,0.35)]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -481,7 +481,7 @@ export const StayPage: React.FC<StayPageProps> = ({
             type="button"
             whileTap={{ scale: 0.98 }}
             onClick={() => setStayType('homestay')}
-            className={`flex-1 py-2.5 rounded-full text-[14px] font-bold transition-all text-center cursor-pointer relative z-10 ${
+            className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer relative z-10 ${
               stayType === 'homestay'
                 ? 'bg-[#177F91] text-white shadow-[0_2px_10px_rgba(23,127,145,0.35)]'
                 : 'text-gray-600 hover:text-gray-900'
@@ -492,7 +492,7 @@ export const StayPage: React.FC<StayPageProps> = ({
         </div>
 
         {/* Selected Party & Month Context Badge */}
-        <div className="flex items-center justify-between px-1">
+        <div className="flex items-center justify-between px-1 max-w-4xl md:mx-auto w-full">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-gray-200/80 shadow-2xs text-[12px] font-bold text-gray-800">
             <svg className="w-3.5 h-3.5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -563,11 +563,11 @@ export const StayPage: React.FC<StayPageProps> = ({
 
         {/* Area Locality Filter Pills */}
         <div>
-          <div className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center justify-between">
+          <div className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 flex items-center justify-between md:justify-center md:gap-3">
             <span>Filter by Town / Area</span>
             <span className="text-gray-400 font-normal">({filteredStays.length} stays)</span>
           </div>
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 md:justify-center">
             {AREA_FILTERS.map((area) => {
               const isSelected = selectedArea === area;
               return (
@@ -592,10 +592,10 @@ export const StayPage: React.FC<StayPageProps> = ({
 
         {/* Star Rating Filters */}
         <div>
-          <div className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5">
+          <div className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider px-1 mb-1.5 md:text-center">
             Star Rating
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar md:justify-center">
             {[
               { id: 'all', label: 'All Stars' },
               { id: 2, label: '2-Star Budget' },
@@ -784,14 +784,14 @@ export const StayPage: React.FC<StayPageProps> = ({
         </div>
       </div>
 
-      {/* 3. High-Performance, Zero-Lag, Hardware-Accelerated iOS-Style Bottom Sheet */}
+      {/* 3. Sleek Modern iOS Style Popup Modal on Desktop / Smooth Sheet on Mobile */}
       <AnimatePresence>
         {selectedStay && (() => {
           const calculated = calculateStayPrice(selectedStay.basePricePerRoom, memberCount);
           const gstAmount = Math.round(calculated.totalPrice * 0.12);
 
           return (
-            <div className="fixed inset-0 z-50 flex items-end justify-center select-none">
+            <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center select-none p-0 md:p-4">
               {/* Ultra-smooth Backdrop */}
               <motion.div
                 key="stay-sheet-backdrop"
@@ -799,44 +799,39 @@ export const StayPage: React.FC<StayPageProps> = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="absolute inset-0 bg-black/50 backdrop-blur-xs"
+                className="absolute inset-0 bg-black/55 backdrop-blur-sm"
                 onClick={() => setSelectedStay(null)}
               />
 
-              {/* Hardware-Accelerated Bottom Sheet with Drag-to-Dismiss */}
+              {/* Modern iOS Style Popup Card on Desktop / Sheet on Mobile */}
               <motion.div
                 key="stay-sheet-content"
-                initial={{ y: '100%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '100%' }}
+                initial={{ y: 24, opacity: 0, scale: 0.96 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                exit={{ y: 24, opacity: 0, scale: 0.96 }}
                 transition={{
-                  duration: 0.28,
-                  ease: [0.22, 1, 0.36, 1], // Smooth Apple iOS curve
+                  duration: 0.24,
+                  ease: [0.22, 1, 0.36, 1], // Apple iOS spring-curve
                 }}
-                drag="y"
-                dragConstraints={{ top: 0 }}
-                dragElastic={{ top: 0, bottom: 0.6 }}
-                onDragEnd={(_, info) => {
-                  if (info.offset.y > 90 || info.velocity.y > 450) {
-                    setSelectedStay(null);
-                  }
-                }}
-                className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] sm:rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 max-h-[88vh] overflow-y-auto relative z-10 will-change-transform transform-gpu overscroll-contain"
+                className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] md:rounded-[28px] p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative z-10 will-change-transform transform-gpu overscroll-contain border border-black/[0.08]"
                 onClick={(e) => e.stopPropagation()}
               >
-                {/* Drag Handle Bar & Close Button Header */}
+                {/* Drag Handle Bar (mobile) & Close Button Header */}
                 <div className="flex items-center justify-between -mt-1 pb-1">
                   <div className="w-8" />
                   <div
                     onClick={() => setSelectedStay(null)}
-                    className="w-12 h-1.5 bg-gray-300 hover:bg-gray-400 rounded-full cursor-pointer transition-colors"
+                    className="w-12 h-1.5 bg-gray-300 hover:bg-gray-400 rounded-full cursor-pointer transition-colors md:hidden"
                   />
+                  <div className="hidden md:block text-[13px] font-extrabold text-gray-400 uppercase tracking-wider">
+                    Property Details
+                  </div>
                   <motion.button
                     type="button"
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setSelectedStay(null)}
                     className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition-colors"
-                    aria-label="Close sheet"
+                    aria-label="Close modal"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18" />

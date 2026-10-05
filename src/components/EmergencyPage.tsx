@@ -73,44 +73,41 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
   return (
     <div className="h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] flex flex-col justify-between select-none relative overflow-hidden w-full">
       {/* 1. 100% Pinned Sticky Top Navigation Bar */}
-      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 sm:px-6 lg:px-10 xl:px-14 py-3 shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
-        <div className="w-full flex items-center justify-between">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={onBack}
-            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-            aria-label="Back to Homepage"
+      <header className="shrink-0 z-30 bg-[#F7F7F5]/95 backdrop-blur-xl border-b border-gray-200/70 px-4 py-3 flex items-center justify-between shadow-[0_1px_4px_rgba(0,0,0,0.03)]">
+        {/* Back Button */}
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-800 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+          aria-label="Back to Homepage"
+        >
+          <svg
+            className="w-5 h-5"
+            viewBox="0 0 20 20"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <svg
-              className="w-5 h-5"
-              viewBox="0 0 20 20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M12.5 15L7.5 10L12.5 5" />
-            </svg>
-          </button>
+            <path d="M12.5 15L7.5 10L12.5 5" />
+          </svg>
+        </button>
 
-          {/* Title */}
-          <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
-            Emergency & Safety
-          </h1>
+        {/* Title */}
+        <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
+          Emergency & Safety
+        </h1>
 
-          {/* Right Balance Spacer */}
-          <div className="w-9 h-9" />
-        </div>
+        {/* Right Balance Spacer */}
+        <div className="w-9 h-9" />
       </header>
 
       {/* 2. Scrollable Body Container (Header stays 100% fixed) */}
       <div
-        className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-3.5 pb-10 min-h-0 overscroll-contain touch-pan-y"
+        className="flex-1 overflow-y-auto px-4 pt-3.5 pb-10 space-y-4 min-h-0 overscroll-contain touch-pan-y"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="w-full space-y-4">
         {/* Hero Card: Coastal lighthouse & sunrise */}
         <div className="relative rounded-[24px] overflow-hidden shadow-md min-h-[170px] flex items-end p-5 bg-gradient-to-br from-[#E0F2FE] to-[#FCE7F3]">
           <img
@@ -131,35 +128,36 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
           </div>
         </div>
 
-        {/* SOS Urgent Banner (Red gradient button) */}
-        <button
-          type="button"
-          onClick={startSos}
-          className="w-full rounded-[22px] bg-gradient-to-r from-[#FF5436] to-[#EF4444] p-4 text-white shadow-[0_4px_16px_rgba(239,68,68,0.3)] flex items-center justify-between hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer text-left"
-        >
-          <div className="flex items-center gap-3.5">
-            {/* Phone Pulse Icon */}
-            <div className="w-12 h-12 rounded-full bg-white/25 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/30">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-              </svg>
+        {/* Emergency Action Cards Grid (SOS is now styled same as other cards, not full width) */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3.5">
+          {/* 0. SOS Urgent Card (Red) */}
+          <div
+            onClick={startSos}
+            className="bg-gradient-to-br from-[#FFF0ED] to-[#FFE2DC] rounded-3xl p-4 border border-[#FFCCD3] shadow-xs hover:shadow-md active:scale-98 transition-all cursor-pointer flex flex-col justify-between min-h-[145px]"
+          >
+            <div className="flex items-start justify-between">
+              <div className="w-10 h-10 rounded-2xl bg-[#FFE4E0] border border-[#FFAEA3] text-[#FF5436] flex items-center justify-center">
+                <svg className="w-5 h-5 animate-pulse" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+                </svg>
+              </div>
+              <span className="text-[#FF5436] font-extrabold text-sm">SOS</span>
             </div>
 
             <div>
-              <h3 className="text-[16px] font-black tracking-tight leading-tight">
-                SOS — Tap for immediate help
-              </h3>
-              <p className="text-[11.5px] font-medium text-white/90 leading-tight mt-0.5">
-                Connects to 112 India Emergency + shares your live location
+              <h4 className="text-[15px] font-black text-[#991B1B] leading-tight">
+                SOS Help
+              </h4>
+              <p className="text-[11.5px] text-[#B91C1C] leading-snug mt-0.5">
+                Instant 112 India emergency
               </p>
+            </div>
+
+            <div className="text-[10px] font-bold text-[#DC2626] pt-1">
+              Shares live GPS location
             </div>
           </div>
 
-          <span className="text-xl font-bold opacity-80 pr-1">›</span>
-        </button>
-
-        {/* 2x2 or 4x1 Action Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
           {/* 1. Check-in Card (Teal) */}
           <div
             onClick={() => setActiveModal('checkin')}
@@ -271,7 +269,6 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
               Nearby verified mechanics
             </div>
           </div>
-        </div>
         </div>
       </div>
 

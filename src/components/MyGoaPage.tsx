@@ -369,50 +369,47 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
   return (
     <div className="w-full h-full flex flex-col bg-[#F7F7F5] select-none overflow-hidden">
       {/* Top Sticky Header */}
-      <header className="sticky top-0 z-30 px-4 sm:px-6 lg:px-10 xl:px-14 pt-4 pb-3 bg-[#F7F7F5]/90 backdrop-blur-md border-b border-gray-200/60">
-        <div className="w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onBack}
-              className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
-              aria-label="Go back"
+      <header className="sticky top-0 z-30 px-5 pt-4 pb-3 bg-[#F7F7F5]/90 backdrop-blur-md border-b border-gray-200/60 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onBack}
+            className="w-9 h-9 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center text-gray-700 hover:bg-gray-50 active:scale-95 transition-all cursor-pointer"
+            aria-label="Go back"
+          >
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <svg
-                className="w-4 h-4"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M10 12L6 8l4-4" />
-              </svg>
-            </button>
+              <path d="M10 12L6 8l4-4" />
+            </svg>
+          </button>
 
-            <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-[#FF6B4A] tracking-wider uppercase">
-                PERSONAL DASHBOARD
-              </span>
-              <h1 className="text-[19px] font-extrabold text-gray-900 tracking-tight leading-none mt-0.5">
-                My Goa
-              </h1>
-            </div>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-bold text-[#FF6B4A] tracking-wider uppercase">
+              PERSONAL DASHBOARD
+            </span>
+            <h1 className="text-[19px] font-extrabold text-gray-900 tracking-tight leading-none mt-0.5">
+              My Goa
+            </h1>
           </div>
+        </div>
 
-          {/* Brand wordmark badge */}
-          <div className="flex items-center tracking-[0.2em] text-[11px] font-black text-[#111111]">
-            <span>G</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#177F91] mx-0.5 inline-block" />
-            <span>AMITRA</span>
-          </div>
+        {/* Brand wordmark badge */}
+        <div className="flex items-center tracking-[0.2em] text-[11px] font-black text-[#111111]">
+          <span>G</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#177F91] mx-0.5 inline-block" />
+          <span>AMITRA</span>
         </div>
       </header>
 
       {/* Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 xl:px-14 pt-4 pb-8 min-h-0">
-        <div className="w-full space-y-4">
+      <div className="flex-1 overflow-y-auto px-5 pt-4 pb-8 space-y-4">
         {/* Personalized Welcome Banner */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -465,8 +462,9 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5">
-            <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-gray-100">
+          {/* All Three Elements on One Line on Desktop (Travel Month, Party Size, Primary Interests) */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+            <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-gray-100 flex flex-col justify-center">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                 TRAVEL MONTH
               </span>
@@ -475,7 +473,7 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
               </span>
             </div>
 
-            <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-gray-100">
+            <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-gray-100 flex flex-col justify-center">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                 PARTY SIZE
               </span>
@@ -483,32 +481,32 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
                 {preferences.memberCount} {preferences.memberCount === 1 ? 'Person' : 'People'}
               </span>
             </div>
-          </div>
 
-          <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-gray-100">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
-              PRIMARY INTERESTS
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {(preferences.tourismTypes || []).map((type) => (
-                <span
-                  key={type}
-                  className="px-2.5 py-1 rounded-xl bg-[#FFEAE5] text-[#FF6B4A] text-xs font-bold"
-                >
-                  {type}
-                </span>
-              ))}
+            <div className="p-3 rounded-2xl bg-[#F8FAFC] border border-gray-100 flex flex-col justify-center sm:col-span-2 md:col-span-1">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
+                PRIMARY INTERESTS
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {(preferences.tourismTypes || []).map((type) => (
+                  <span
+                    key={type}
+                    className="px-2.5 py-1 rounded-xl bg-[#FFEAE5] text-[#FF6B4A] text-xs font-bold"
+                  >
+                    {type}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Saved Content Section: Tab Navigation */}
+        {/* Saved Content Section: Tab Navigation (Reduced width & centered on desktop) */}
         <div className="pt-2">
-          <div className="flex items-center gap-2 p-1 bg-gray-200/70 rounded-2xl">
+          <div className="flex items-center gap-2 p-1 bg-gray-200/70 rounded-2xl w-full md:max-w-sm md:mx-auto">
             <button
               type="button"
               onClick={() => setActiveTab('itineraries')}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === 'itineraries'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-800'
@@ -528,7 +526,7 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('saved_places')}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                 activeTab === 'saved_places'
                   ? 'bg-white text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-800'
@@ -773,7 +771,6 @@ export const MyGoaPage: React.FC<MyGoaPageProps> = ({
             )}
           </div>
         )}
-        </div>
       </div>
     </div>
   );
