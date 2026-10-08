@@ -7,7 +7,7 @@ interface OnboardingStepTwoProps {
   travelType: string;
   setTravelType: (type: string) => void;
   onBack: () => void;
-  onFinish: () => void;
+  onContinue: () => void;
 }
 
 const PRESET_OPTIONS = [
@@ -78,7 +78,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
   travelType,
   setTravelType,
   onBack,
-  onFinish,
+  onContinue,
 }) => {
   // Solo is locked to 1, Couple is locked to 2
   const isCountLocked = travelType === 'Solo Traveler' || travelType === 'Couple / Duo';
@@ -87,7 +87,7 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
     <div className="h-[100dvh] max-h-[100dvh] w-full bg-[#F7F7F5] flex flex-col justify-between max-w-xl md:max-w-2xl mx-auto select-none overflow-hidden relative font-sans">
       {/* Scrollable Content Area (Auto-adjusts according to screen size) */}
       <div className="flex-1 overflow-y-auto px-5 sm:px-6 pt-6 pb-6 no-scrollbar">
-        {/* Top Header: Back Button, Logo, 2-Segment Progress Bar */}
+        {/* Top Header: Back Button, Logo, 3-Segment Progress Bar */}
         <header className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Back Button */}
@@ -118,10 +118,11 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
                 <span>AMITRA</span>
               </div>
 
-              {/* Progress Bar (2 segments filled) */}
+              {/* Progress Bar (2 of 3 segments filled) */}
               <div className="flex items-center gap-1.5">
-                <div className="w-11 h-1.5 bg-[#FF6B4A] rounded-full" />
-                <div className="w-11 h-1.5 bg-[#FF6B4A] rounded-full transition-all" />
+                <div className="w-8 h-1.5 bg-[#FF6B4A] rounded-full" />
+                <div className="w-8 h-1.5 bg-[#FF6B4A] rounded-full transition-all" />
+                <div className="w-8 h-1.5 bg-gray-200 rounded-full" />
               </div>
             </div>
           </div>
@@ -272,10 +273,10 @@ export const OnboardingStepTwo: React.FC<OnboardingStepTwoProps> = ({
       <div className="shrink-0 z-20 px-5 sm:px-6 pt-3 pb-[max(1.75rem,env(safe-area-inset-bottom))] bg-[#F7F7F5]/95 backdrop-blur-xl border-t border-gray-200/60 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] flex flex-col items-center">
         <button
           type="button"
-          onClick={onFinish}
+          onClick={onContinue}
           className="w-full max-w-sm sm:max-w-md py-3.5 sm:py-4 rounded-2xl font-bold text-[15.5px] sm:text-[16px] bg-gradient-to-r from-[#FF6B4A] to-[#FF5436] text-white shadow-[0_8px_24px_rgba(255,107,74,0.38)] hover:brightness-105 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>Explore Goa Now</span>
+          <span>Continue to Accessibility (3/3)</span>
           <svg
             className="w-4 h-4"
             viewBox="0 0 16 16"

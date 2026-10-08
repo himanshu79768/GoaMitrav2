@@ -7,6 +7,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { OnboardingStepOne } from './components/OnboardingStepOne';
 import { OnboardingStepTwo } from './components/OnboardingStepTwo';
+import { OnboardingStepThree } from './components/OnboardingStepThree';
 import { HeroSection } from './components/HeroSection';
 import { ModuleGrid } from './components/ModuleGrid';
 import { GAIChatPage } from './components/GAIChatPage';
@@ -19,7 +20,19 @@ import { CouponsPage } from './components/CouponsPage';
 import { EmergencyPage } from './components/EmergencyPage';
 import { MyGoaPage } from './components/MyGoaPage';
 import { UserProfileModal } from './components/UserProfileModal';
-import { UserPreferences, SavedPlaceItem, SavedItineraryItem, DEFAULT_PREFERENCES } from './types/onboarding';
+import { SettingsModal } from './components/SettingsModal';
+import { EyeControlOverlay } from './components/EyeControlOverlay';
+import { LiveCaptionsBar } from './components/LiveCaptionsBar';
+import { VisualAlertBanner } from './components/VisualAlertBanner';
+import {
+  UserPreferences,
+  SavedPlaceItem,
+  SavedItineraryItem,
+  DEFAULT_PREFERENCES,
+  AccessibilitySettings,
+  DEFAULT_ACCESSIBILITY_SETTINGS,
+} from './types/onboarding';
+import { speakText } from './utils/narration';
 import { preloadAllAppImages } from './utils/imagePreloader';
 import { OfflineIndicator } from './components/OfflineIndicator';
 
@@ -36,10 +49,12 @@ const USER_PREFERENCES_KEY = 'goamitra_user_preferences';
 const SAVED_PLACES_KEY = 'goamitra_saved_places';
 const SAVED_ITINERARIES_KEY = 'goamitra_saved_itineraries';
 const UNSEEN_PROFILE_ITEMS_KEY = 'goamitra_unseen_profile_items';
+const ACCESSIBILITY_STORAGE_KEY = 'goamitra_accessibility_settings';
 
 type ScreenType =
   | 'onboarding_step_1'
   | 'onboarding_step_2'
+  | 'onboarding_step_3'
   | 'homepage'
   | 'gai_chat'
   | 'stay'
@@ -186,20 +201,96 @@ export default function App() {
     return [];
   });
 
+  // Settings Modal state
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  // Persistent Accessibility & Disability Settings
+  const [accessibility, setAccessibility] = useState<AccessibilitySettings>(() => {
+    try {
+      const stored = localStorage.getItem(ACCESSIBILITY_STORAGE_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return DEFAULT_ACCESSIBILITY_SETTINGS;
+  });
+
+  const handleUpdateAccessibility = useCallback((partial: Partial<AccessibilitySettings>) => {
+    setAccessibility((prev) => {
+      const updated = { ...prev, ...partial };
+      try {
+        localStorage.setItem(ACCESSIBILITY_STORAGE_KEY, JSON.stringify(updated));
+      } catch (e) {
+        console.error('Failed to save accessibility settings', e);
+      }
+      return updated;
+    });
+  }, []);
+
+  // Live Captions overlay state
+  const [activeCaption, setActiveCaption] = useState<string | null>(null);
+  const captionTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleAnnounceCaption = useCallback((text: string) => {
+    if (captionTimerRef.current) clearTimeout(captionTimerRef.current);
+    setActiveCaption(text);
+    captionTimerRef.current = setTimeout(() => {
+      setActiveCaption(null);
+    }, 4500);
+  }, []);
+
+  // Visual alert banner state (For Deaf / Hard of Hearing)
+  const [activeVisualAlert, setActiveVisualAlert] = useState<{
+    title: string;
+    description?: string;
+    icon?: string;
+  } | null>(null);
+  const visualAlertTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerVisualAlert = useCallback(
+    (alert: { title: string; description?: string; icon?: string }) => {
+      if (visualAlertTimerRef.current) clearTimeout(visualAlertTimerRef.current);
+      setActiveVisualAlert(alert);
+      visualAlertTimerRef.current = setTimeout(() => {
+        setActiveVisualAlert(null);
+      }, 3500);
+    },
+    []
+  );
+
   // Global Toast Notification State
   const [activeToast, setActiveToast] = useState<ToastNotification | null>(null);
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const showToast = useCallback((toast: Omit<ToastNotification, 'id'>) => {
-    if (toastTimeoutRef.current) {
-      clearTimeout(toastTimeoutRef.current);
-    }
-    const id = Date.now().toString();
-    setActiveToast({ ...toast, id });
-    toastTimeoutRef.current = setTimeout(() => {
-      setActiveToast(null);
-    }, 2800);
-  }, []);
+  const showToast = useCallback(
+    (toast: Omit<ToastNotification, 'id'>) => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+      const id = Date.now().toString();
+      setActiveToast({ ...toast, id });
+      toastTimeoutRef.current = setTimeout(() => {
+        setActiveToast(null);
+      }, 2800);
+
+      // Accessibility Integrations:
+      if (accessibility.visualAlerts) {
+        triggerVisualAlert({
+          title: toast.message,
+          description: toast.subMessage,
+          icon: toast.type === 'favorite' ? '❤️' : toast.type === 'remove' ? '🗑️' : '🔔',
+        });
+      }
+      if (accessibility.captions) {
+        handleAnnounceCaption(`${toast.message}${toast.subMessage ? ' · ' + toast.subMessage : ''}`);
+      }
+      if (accessibility.narration) {
+        speakText(
+          `${toast.message}. ${toast.subMessage || ''}`,
+          accessibility.narrationSpeed || 1.0
+        );
+      }
+    },
+    [accessibility, handleAnnounceCaption, triggerVisualAlert]
+  );
 
   // Unseen additions indicator badge state (shows dot on profile icon until user views My Goa)
   const [hasNewProfileItem, setHasNewProfileItem] = useState<boolean>(() => {
@@ -391,10 +482,12 @@ export default function App() {
       localStorage.removeItem(SAVED_PLACES_KEY);
       localStorage.removeItem(SAVED_ITINERARIES_KEY);
       localStorage.removeItem(UNSEEN_PROFILE_ITEMS_KEY);
+      localStorage.removeItem(ACCESSIBILITY_STORAGE_KEY);
     } catch (e) {
       console.error('Failed to remove stored items', e);
     }
     setSavedPreferences(DEFAULT_PREFERENCES);
+    setAccessibility(DEFAULT_ACCESSIBILITY_SETTINGS);
     setName('');
     setSelectedInterests([]);
     setSelectedMonth('');
@@ -435,6 +528,7 @@ export default function App() {
     try {
       localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
       localStorage.setItem(USER_PREFERENCES_KEY, JSON.stringify(finalPreferences));
+      localStorage.setItem(ACCESSIBILITY_STORAGE_KEY, JSON.stringify(accessibility));
     } catch (e) {
       console.error('Failed to save preferences to localStorage', e);
     }
@@ -442,7 +536,10 @@ export default function App() {
     navigateForward('homepage');
   };
 
-  const isOnboarding = currentScreen === 'onboarding_step_1' || currentScreen === 'onboarding_step_2';
+  const isOnboarding =
+    currentScreen === 'onboarding_step_1' ||
+    currentScreen === 'onboarding_step_2' ||
+    currentScreen === 'onboarding_step_3';
 
   const handleOpenChat = (prompt?: string) => {
     // Open full GAI Chat screen
@@ -484,7 +581,15 @@ export default function App() {
   };
 
   return (
-    <main className="w-full min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-start">
+    <main
+      className={`w-full min-h-screen bg-[#F7F7F5] flex flex-col items-center justify-start ${
+        accessibility.highContrast ? 'app-high-contrast' : ''
+      } ${
+        accessibility.contrastTheme === 'soft_calm' || accessibility.disabilityType === 'unsound'
+          ? 'app-soft-calm'
+          : ''
+      } ${accessibility.disabilityType === 'motor' ? 'app-motor-targets' : ''}`}
+    >
       {/* Viewport Container: Fluid full width on mobile, nicely bounded and centered on tablet & desktop */}
       <div className="w-full max-w-full md:max-w-5xl lg:max-w-6xl xl:max-w-7xl h-[100dvh] max-h-[100dvh] bg-[#F7F7F5] relative md:shadow-[0_20px_60px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col">
         {/* Persistent Pre-warmed Homepage (Always Active in Background once onboarded) */}
@@ -495,6 +600,7 @@ export default function App() {
               hasNewProfileItem={hasNewProfileItem}
               onOpenChat={() => handleOpenChat()}
               onOpenMyGoa={() => handleOpenMyGoa()}
+              onOpenSettings={() => setIsSettingsOpen(true)}
               onOpenNameDialog={handleOpenNameDialog}
               onLogout={handleRequestLogout}
             />
@@ -553,6 +659,27 @@ export default function App() {
                 travelType={travelType}
                 setTravelType={setTravelType}
                 onBack={() => navigateBack('onboarding_step_1')}
+                onContinue={() => navigateForward('onboarding_step_3')}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 3: Onboarding Step 3 (Accessibility & Disability) */}
+          {currentScreen === 'onboarding_step_3' && (
+            <motion.div
+              key="step_3"
+              custom={navDirection}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
+            >
+              <OnboardingStepThree
+                name={name.trim() || 'Explorer'}
+                accessibility={accessibility}
+                onUpdateAccessibility={handleUpdateAccessibility}
+                onBack={() => navigateBack('onboarding_step_2')}
                 onFinish={handleFinishOnboarding}
               />
             </motion.div>
@@ -729,6 +856,8 @@ export default function App() {
                 }}
                 onUpdateName={handleUpdateName}
                 onUpdatePreferences={handleUpdatePreferences}
+                accessibility={accessibility}
+                onAnnounceCaption={handleAnnounceCaption}
               />
             </motion.div>
           )}
@@ -1013,6 +1142,47 @@ export default function App() {
             </div>
           )}
         </AnimatePresence>
+
+        {/* Settings & Accessibility Suite Modal */}
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          preferences={savedPreferences}
+          onUpdateName={handleUpdateName}
+          accessibility={accessibility}
+          onUpdateAccessibility={handleUpdateAccessibility}
+          savedPlacesCount={savedPlaces.length}
+          savedItinerariesCount={savedItineraries.length}
+          hasNewProfileItem={hasNewProfileItem}
+          onOpenMyGoa={handleOpenMyGoa}
+          onEditTravelPreferences={handleOpenNameDialog}
+        />
+
+        {/* Eye Control Gaze Tracking & Dwell Click Assistant */}
+        {accessibility.eyeControl && (
+          <EyeControlOverlay
+            dwellTime={accessibility.dwellTime || 1.5}
+            onToggle={() => handleUpdateAccessibility({ eyeControl: false })}
+            onAnnounceCaption={handleAnnounceCaption}
+          />
+        )}
+
+        {/* Live Subtitles & Captions Bar */}
+        {accessibility.captions && (
+          <LiveCaptionsBar
+            captionText={activeCaption}
+            onClear={() => setActiveCaption(null)}
+            onClose={() => handleUpdateAccessibility({ captions: false })}
+          />
+        )}
+
+        {/* Visual Flash Alerts (for Deaf / Hard of Hearing) */}
+        {accessibility.visualAlerts && (
+          <VisualAlertBanner
+            alert={activeVisualAlert}
+            onDismiss={() => setActiveVisualAlert(null)}
+          />
+        )}
       </div>
 
       {/* Offline Mode Banner Indicator */}

@@ -57,10 +57,11 @@ export const OnboardingStepOne: React.FC<OnboardingStepOneProps> = ({
               <span>AMITRA</span>
             </div>
 
-            {/* 2-Segment Progress Bar */}
+            {/* 3-Segment Progress Bar */}
             <div className="flex items-center gap-1.5">
-              <div className="w-11 h-1.5 bg-[#FF6B4A] rounded-full transition-all" />
-              <div className="w-11 h-1.5 bg-gray-200 rounded-full" />
+              <div className="w-8 h-1.5 bg-[#FF6B4A] rounded-full transition-all" />
+              <div className="w-8 h-1.5 bg-gray-200 rounded-full" />
+              <div className="w-8 h-1.5 bg-gray-200 rounded-full" />
             </div>
           </div>
         </header>

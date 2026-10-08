@@ -53,6 +53,27 @@
   }
 }
 
+/* Accessibility High Contrast Mode */
+.app-high-contrast {
+  filter: contrast(1.25);
+}
+
+.app-high-contrast button,
+.app-high-contrast [role="button"] {
+  outline: 2px solid rgba(0, 0, 0, 0.35) !important;
+}
+
+/* Accessibility Soft Calm Mode (Unsound / Cognitive) */
+.app-soft-calm {
+  filter: saturate(0.85);
+}
+
+/* Accessibility Motor Touch Targets */
+.app-motor-targets button,
+.app-motor-targets [role="button"] {
+  min-height: 42px;
+}
+
 /* Slow, soft, elegant non-harsh glass border animation */
 @keyframes softLiquidBorder {
   0% {

@@ -10,7 +10,8 @@ interface HeroSectionProps {
   preferences: UserPreferences;
   onOpenChat: () => void;
   onOpenMyGoa: () => void;
-  onOpenNameDialog: () => void;
+  onOpenSettings: () => void;
+  onOpenNameDialog?: () => void;
   onLogout: () => void;
   hasNewProfileItem?: boolean;
 }
@@ -181,6 +182,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   preferences,
   onOpenChat,
   onOpenMyGoa,
+  onOpenSettings,
   onOpenNameDialog,
   onLogout,
   hasNewProfileItem = false,
@@ -360,46 +362,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     transition={{ duration: 0.15, ease: 'easeOut' }}
                     className="liquid-glass-menu top-12 right-0 z-50 w-44 rounded-2xl p-1 flex flex-col gap-0.5 select-none overflow-hidden"
                   >
-                    {/* Option 1: Name */}
+                    {/* Option 1: Settings */}
                     <button
                       type="button"
                       onClick={() => {
                         setIsMenuOpen(false);
-                        onOpenNameDialog();
-                      }}
-                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
-                    >
-                      <svg className="w-3.5 h-3.5 text-gray-700 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                      </svg>
-                      <span>Name</span>
-                    </button>
-
-                    {/* Option 2: My Goa with Dynamic New Badge */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        onOpenMyGoa();
+                        onOpenSettings();
                       }}
                       className="flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
                     >
                       <div className="flex items-center gap-2">
                         <svg className="w-3.5 h-3.5 text-[#177F91] shrink-0" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                          <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
                         </svg>
-                        <span>My Goa</span>
+                        <span>Settings</span>
                       </div>
                       {hasNewProfileItem && (
-                        <span className="px-1.5 py-0.5 rounded-full bg-[#FF6B4A] text-white text-[9px] font-extrabold uppercase tracking-wide shadow-xs">
-                          NEW
-                        </span>
+                        <span className="w-2 h-2 rounded-full bg-[#FF6B4A]" />
                       )}
                     </button>
 
                     <div className="h-[1px] bg-white/40 my-0.5 z-10" />
 
-                    {/* Option 3: Logout (Red Text) */}
+                    {/* Option 2: Logout (Red Text) */}
                     <button
                       type="button"
                       onClick={() => {

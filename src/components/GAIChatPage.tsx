@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
-import { UserPreferences, SavedItineraryItem, SavedPlaceItem } from '../types/onboarding';
+import { UserPreferences, SavedItineraryItem, SavedPlaceItem, AccessibilitySettings } from '../types/onboarding';
+import { speakText, stopSpeaking } from '../utils/narration';
 import { ALL_DESTINATIONS } from './DestinationsPage';
 import { ACCURATE_VERIFIED_STAYS } from './StayPage';
 import { REAL_RESTAURANTS } from './FoodPage';
@@ -53,6 +54,8 @@ interface GAIChatPageProps {
   ) => void;
   onUpdateName?: (newName: string) => void;
   onUpdatePreferences?: (partial: Partial<UserPreferences>) => void;
+  accessibility?: AccessibilitySettings;
+  onAnnounceCaption?: (text: string) => void;
 }
 
 const QUICK_PROMPTS: { label: string; icon: React.ReactNode; prompt: string }[] = [
@@ -817,6 +820,8 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
   onNavigateScreen,
   onUpdateName,
   onUpdatePreferences,
+  accessibility,
+  onAnnounceCaption,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
@@ -827,6 +832,7 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
     },
   ]);
 
+  const [speakingMsgId, setSpeakingMsgId] = useState<string | null>(null);
   const [latestBotMessageId, setLatestBotMessageId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const inputRef = useRef(input);
@@ -1211,6 +1217,38 @@ export const GAIChatPage: React.FC<GAIChatPageProps> = ({
 - Currently at: ${locationState.placeName} (Lat: ${locationState.lat}, Lng: ${locationState.lng})
 - Note: User is planning their Goa trip from ${locationState.placeName}. Provide distances assuming their arrival at Goa or answer distance from their city to Goa if asked.`;
 
+      const disabilityInstruction = accessibility?.disabilityType === 'deaf'
+        ? `ACCESSIBILITY PROFILE (DEAF / HARD OF HEARING):
+- The user is deaf or hard of hearing. Avoid referencing auditory sounds or asking them to listen.
+- Emphasize rich visual landmarks, explicit written transit directions, signage details, operating hours, and photo-ready viewpoints.`
+        : accessibility?.disabilityType === 'unsound'
+        ? `ACCESSIBILITY PROFILE (COGNITIVE / UNSOUND / LOW STIMULUS):
+- The user requires low-stimulus, calm, reassuring, and gentle guidance.
+- Use simple, straightforward words without jargon. Keep answers reassuring, calm, and uncluttered. Provide 1 to 2 clear steps only to avoid sensory or decision overwhelm.`
+        : accessibility?.disabilityType === 'visual'
+        ? `ACCESSIBILITY PROFILE (VISUAL IMPAIRMENT / LOW VISION):
+- The user has low vision or visual impairment.
+- Provide rich multi-sensory descriptions: describe the ocean breezes, fragrances of Goan spices, church bell tolls, tactile sand sensations, shaded palm grove ambience.
+- Keep structure linear and optimized for screen reading / text-to-speech.`
+        : accessibility?.disabilityType === 'motor'
+        ? `ACCESSIBILITY PROFILE (MOTOR / MOBILITY & EYE CONTROL):
+- The user uses eye control or motor assistance.
+- Keep choices decisive, high-value, and straightforward.`
+        : accessibility?.disabilityType === 'everything'
+        ? `ACCESSIBILITY PROFILE (UNIVERSAL ACCESSIBILITY):
+- Use clear plain language, rich multi-sensory descriptions, and concise decisive formatting.`
+        : '';
+
+      const toneInstruction = accessibility?.gaiResponseTone === 'concise'
+        ? `TONE REQUIREMENT: ULTRA-CONCISE & DIRECT. Answer in 2 short sentences or clear points. Zero fluff.`
+        : accessibility?.gaiResponseTone === 'sensory'
+        ? `TONE REQUIREMENT: DESCRIPTIVE & SENSORY. Evoke vivid sights, aromas of coastal cooking, sea breeze sensations, and heritage architecture.`
+        : accessibility?.gaiResponseTone === 'calm'
+        ? `TONE REQUIREMENT: CALM & GENTLE. Serene, soothing, supportive tone with zero pressure or rush.`
+        : accessibility?.gaiResponseTone === 'plain'
+        ? `TONE REQUIREMENT: PLAIN LANGUAGE. Use everyday simple vocabulary, short sentences, and easy-to-read phrasing.`
+        : `TONE REQUIREMENT: WARM & GOAN LOCAL. Warm Susegad spirit, local charm, welcoming hospitality.`;
+
       const systemInstruction = `You are GAI (Goa Artificial Intelligence), a smart, hyper-local AI travel companion for Goa, India with real-time location grounding and multimodal vision analysis.
 User profile:
 - Name: ${userName}
@@ -1221,6 +1259,9 @@ User profile:
 SITUATIONAL & TIME AWARENESS:
 ${locationPrompt}
 - Current Local Time: ${currentTimeStr} (${timeOfDay})
+
+${disabilityInstruction}
+${toneInstruction}
 
 CRITICAL RESPONSE RULES:
 1. LIGHTNING FAST & CONCISE (AVOID LENGTHY PARAGRAPHS):
@@ -1831,6 +1872,34 @@ CRITICAL RESPONSE RULES:
                   </span>
 
                   <div className="flex items-center gap-1.5 text-gray-400">
+                    {/* Audio Narration / Listen Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (speakingMsgId === msg.id) {
+                          stopSpeaking();
+                          setSpeakingMsgId(null);
+                        } else {
+                          setSpeakingMsgId(msg.id);
+                          if (onAnnounceCaption) {
+                            onAnnounceCaption(`GAI: ${msg.content.slice(0, 75)}...`);
+                          }
+                          speakText(msg.content, accessibility?.narrationSpeed || 1.0, () => {
+                            setSpeakingMsgId(null);
+                          });
+                        }
+                      }}
+                      className={`p-1 rounded-md hover:bg-black/[0.04] transition-all text-xs flex items-center gap-1 cursor-pointer ${
+                        speakingMsgId === msg.id ? 'text-[#FF6B4A] font-bold' : 'hover:text-gray-700'
+                      }`}
+                      title="Listen to response aloud"
+                    >
+                      <span className="text-[10.5px] inline-flex items-center gap-1">
+                        <span>{speakingMsgId === msg.id ? '⏹' : '🔊'}</span>
+                        <span className="hidden sm:inline">{speakingMsgId === msg.id ? 'Stop' : 'Listen'}</span>
+                      </span>
+                    </button>
+
                     {/* Copy Button */}
                     <button
                       type="button"
