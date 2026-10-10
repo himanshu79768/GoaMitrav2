@@ -96,7 +96,7 @@ export const EmergencyPage: React.FC<EmergencyPageProps> = ({
 
         {/* Title */}
         <h1 className="text-[20px] font-black text-[#111111] tracking-tight">
-          Emergency & Safety
+          Help (Emergency)
         </h1>
 
         {/* Right Balance Spacer */}

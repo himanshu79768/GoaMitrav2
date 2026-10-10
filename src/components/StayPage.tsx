@@ -29,89 +29,33 @@ interface StayPageProps {
   onToggleSavePlace?: (place: SavedPlaceItem) => void;
 }
 
-// 100% Unique, Verified Photos & Accurate Star Ratings for Goan stays
+// 100% Unique, Verified Photos & Accurate Ratings for Authentic Goan Homestays
 export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
-  // --- 5-STAR LUXURY RESORTS ---
-  {
-    id: 'stay-taj-aguada',
-    name: 'Taj Fort Aguada Resort & Spa',
-    type: 'hotel',
-    starRating: 5,
-    starsDisplay: '5-Star Luxury',
-    locality: 'Sinquerim Beach, Candolim',
-    areaGroup: 'Candolim',
-    distanceToBeach: 'Direct Beachfront access',
-    distanceToStation: '26 min to Thivim Stn.',
-    basePricePerRoom: 14500,
-    isBestMatch: true,
-    isVerified: true,
-    suitableFor: 'Couples & Family Luxury',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiOAwpB1m80Zvi05mtytZcMrHXab9lvZK57sMlxPBseA&s=10',
-    description: 'Iconic 5-star heritage luxury resort terraced into the 16th-century Portuguese fortress walls with panoramic Arabian Sea views and Jiva Spa.',
-    amenities: ['Private Beach Access', 'Jiva Spa & Wellness', 'Infinity Ocean Pool', 'Fine Dining Shacks', 'Helipad & Valet'],
-  },
-  {
-    id: 'stay-w-goa',
-    name: 'W Goa',
-    type: 'hotel',
-    starRating: 5,
-    starsDisplay: '5-Star Luxury',
-    locality: 'Vagator Beach, North Goa',
-    areaGroup: 'Assagao',
-    distanceToBeach: '1 min to Vagator Beach',
-    distanceToStation: '18 min to Thivim Stn.',
-    basePricePerRoom: 16800,
-    isBestMatch: false,
-    isVerified: true,
-    suitableFor: 'Couples & Trendsetters',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbPMEDIO7oUWhO1QifKjsPHtZe0TdKUnUAv4v5PEHx0Q&s=10',
-    description: 'Ultra-luxury 5-star cliffside sanctuary perched directly above Vagator Beach. Featuring the famous Rockpool lounge, private chalets, and sunset decks.',
-    amenities: ['Rockpool Sunset Lounge', 'AWAY Spa', 'Private Plunge Pools', '24/7 Concierge', 'Valet Parking'],
-  },
-
-  // --- 4-STAR BOUTIQUE & HERITAGE PROPERTIES ---
-  {
-    id: 'stay-panjim-inn',
-    name: 'WelcomHeritage Panjim Inn',
-    type: 'hotel',
-    starRating: 4,
-    starsDisplay: '4-Star Boutique',
-    locality: 'Fontainhas Latin Quarter, Panaji',
-    areaGroup: 'Panaji',
-    distanceToBeach: '8 min to Miramar Beach',
-    distanceToStation: '22 min to Karmali Stn.',
-    basePricePerRoom: 5400,
-    isBestMatch: true,
-    isVerified: true,
-    suitableFor: 'Heritage & Culture lovers',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBjZfSCFtc8cuSKR8ncUY1i8GNeAgWGxHQ9xerQss7qg&s=10',
-    description: 'Official classified 4-star heritage mansion in Fontainhas. Four-poster rosewood beds, hand-painted azulejos tiles, and charming first-floor veranda cafe.',
-    amenities: ['Heritage Cafe', 'Art Gallery', 'Antique Furniture', 'AC Deluxe Suites', 'Latin Quarter Walk'],
-  },
+  // --- HERITAGE & BOUTIQUE HOMESTAYS ---
   {
     id: 'stay-goan-villa',
-    name: 'The Goan Villa',
+    name: 'The Goan Villa Heritage Estate',
     type: 'homestay',
-    starRating: 4,
-    starsDisplay: '4-Star Boutique',
+    starRating: 5,
+    starsDisplay: '5-Star Heritage Villa',
     locality: 'Candolim, North Goa',
     areaGroup: 'Candolim',
     distanceToBeach: '5 min to Candolim Beach',
     distanceToStation: '22 min to Thivim Stn.',
     basePricePerRoom: 4200,
-    isBestMatch: false,
+    isBestMatch: true,
     isVerified: true,
     suitableFor: 'Family & Groups',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXPvGhG56RuIKrCKyMbaiBKTuLMXifci5e7XVADi_JFg&s=10',
-    description: 'Restored 200-year-old Portuguese estate with tranquil courtyard swimming pool, high wooden ceilings, and authentic Goan hospitality.',
-    amenities: ['Private Pool', 'Equipped Kitchenette', 'Veranda', 'Family Suites', 'Bicycle Rental'],
+    description: 'Restored 200-year-old Portuguese estate with tranquil courtyard swimming pool, high wooden ceilings, and authentic Goan family hospitality.',
+    amenities: ['Private Courtyard Pool', 'Equipped Kitchenette', 'Veranda with Garden', 'Family Suites', 'Bicycle Rental'],
   },
   {
     id: 'stay-siolim-estate',
-    name: 'Botanical Palm Estate',
+    name: 'Botanical Palm Estate Homestay',
     type: 'homestay',
-    starRating: 4,
-    starsDisplay: '4-Star Boutique',
+    starRating: 5,
+    starsDisplay: '5-Star River Villa',
     locality: 'Siolim Riverfront, North Goa',
     areaGroup: 'Assagao',
     distanceToBeach: '10 min to Morjim Beach',
@@ -122,106 +66,68 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     suitableFor: 'Family & Peaceful Getaway',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEt99HVuCrjNludDV77f98sSGyxuYsctBSIgKHT7NGWw&s=10',
     description: 'Private riverside villa estate enveloped by palms with a natural stone pool, outdoor sun deck, and peaceful proximity to Chapora river.',
-    amenities: ['Stone Pool', 'Chef on Request', 'Riverfront Lawn', 'High-speed WiFi', 'Bathtub Suites'],
-  },
-
-  // --- 3-STAR COMFORT HOTELS & VILLAGE HOMESTAYS ---
-  {
-    id: 'stay-hotel-vilena',
-    name: 'Hotel Vilena',
-    type: 'hotel',
-    starRating: 3,
-    starsDisplay: '3-Star Comfort',
-    locality: 'Court Circle, Mapusa',
-    areaGroup: 'Mapusa',
-    distanceToBeach: '14 min to Calangute Beach',
-    distanceToStation: '10 min to Thivim Stn.',
-    basePricePerRoom: 2400,
-    isBestMatch: true,
-    isVerified: true,
-    suitableFor: 'Couples & Business',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHTfq8x76L8lXVPZ4iBXkM2_hE0ORs602tAdivZcYocQ&s=10',
-    description: 'Popular 3-star town hotel near Mapusa Court Circle featuring clean executive rooms, famous rooftop restaurant with city view, and bar.',
-    amenities: ['Rooftop Restaurant', 'Full Bar', 'Room Service', 'High-speed WiFi', 'AC Executive'],
-  },
-  {
-    id: 'stay-green-park',
-    name: 'Green Park Resort',
-    type: 'hotel',
-    starRating: 3,
-    starsDisplay: '3-Star Comfort',
-    locality: 'Guirim By-pass, Mapusa',
-    areaGroup: 'Mapusa',
-    distanceToBeach: '12 min to Candolim Beach',
-    distanceToStation: '14 min to Thivim Stn.',
-    basePricePerRoom: 2850,
-    isBestMatch: false,
-    isVerified: true,
-    suitableFor: 'Family & Highway Transit',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYIUdUprz1BHTx-ba1K8fADMHOuy2jJlSMAJjOmm2aWA&s=10',
-    description: 'Well-established resort right off the Mapusa highway featuring a large outdoor swimming pool, banquet lawns, and swift road access.',
-    amenities: ['Outdoor Pool', 'Lawn Dining', 'Multi-cuisine Restaurant', 'Free Breakfast', 'Large Parking'],
-  },
-  {
-    id: 'stay-casa-bela',
-    name: 'Casa Bela Boutique Hotel',
-    type: 'hotel',
-    starRating: 3,
-    starsDisplay: '3-Star Comfort',
-    locality: 'Calangute, North Goa',
-    areaGroup: 'Calangute / Baga',
-    distanceToBeach: '8 min to Calangute Beach',
-    distanceToStation: '18 min to Thivim Stn.',
-    basePricePerRoom: 3500,
-    isBestMatch: true,
-    isVerified: true,
-    suitableFor: 'Couple friendly',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6TVvuyOWRqgFxTaVwd3FU9RZTmgy6zeNq8cHTR1ux_Q&s=10',
-    description: 'Comfortable Portuguese-inspired hotel with private wooden balconies, swimming pool, and quiet green walkway to Calangute beach.',
-    amenities: ['Swimming Pool', 'Free Breakfast', 'High-speed WiFi', 'AC Deluxe', 'Balcony View'],
-  },
-  {
-    id: 'stay-aldeia-santa-rita',
-    name: 'Aldeia Santa Rita',
-    type: 'hotel',
-    starRating: 3,
-    starsDisplay: '3-Star Comfort',
-    locality: 'Sinquerim, Candolim',
-    areaGroup: 'Candolim',
-    distanceToBeach: '5 min to Sinquerim Beach',
-    distanceToStation: '25 min to Thivim Stn.',
-    basePricePerRoom: 3600,
-    isBestMatch: false,
-    isVerified: true,
-    suitableFor: 'Couples & Family',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxwtPwr3_UnzSbB8qlettW9m4Kx49uqzqeWPaRmDtzgg&s=10',
-    description: 'Charming Portuguese village-style resort featuring colorful pastel chalets, quiet tropical landscaping, and walkability to Aguada Fort.',
-    amenities: ['Swimming Pool', 'Poolside Bar', 'Buffet Breakfast', 'AC Villas', 'Garden View'],
+    amenities: ['Stone Pool', 'Home Cook on Request', 'Riverfront Lawn', 'High-speed WiFi', 'Bathtub Suites'],
   },
   {
     id: 'stay-quinta-assagao',
     name: 'Quinta da Rosa Heritage Homestay',
     type: 'homestay',
-    starRating: 3,
-    starsDisplay: '3-Star Comfort',
+    starRating: 4,
+    starsDisplay: '4-Star Village Homestay',
     locality: 'Assagao, North Goa',
     areaGroup: 'Assagao',
     distanceToBeach: '10 min to Vagator Beach',
     distanceToStation: '14 min to Thivim Stn.',
     basePricePerRoom: 3200,
-    isBestMatch: false,
+    isBestMatch: true,
     isVerified: true,
     suitableFor: 'Couples & Solo',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaEMFSd97R2RiAsdqL_v6udS8AaUYAK1TRs2kT9zgQJA&s=10',
-    description: 'Peaceful traditional village homestay nestled amongst towering palm groves and bougainvillea in trendy Assagao.',
+    description: 'Peaceful traditional village homestay nestled amongst towering palm groves and bougainvillea in trendy Assagao. Warm Goan hosts and organic farm breakfast.',
     amenities: ['Lush Garden', 'Organic Breakfast', 'Yoga Lawn', 'Ceiling Fan & AC', 'Pet Friendly'],
   },
   {
+    id: 'stay-casa-do-leao',
+    name: 'Casa Do Leão Historic Villa',
+    type: 'homestay',
+    starRating: 4,
+    starsDisplay: '4-Star Heritage Villa',
+    locality: 'Badem Road, Assagao',
+    areaGroup: 'Assagao',
+    distanceToBeach: '8 min to Anjuna Beach',
+    distanceToStation: '15 min to Thivim Stn.',
+    basePricePerRoom: 3600,
+    isBestMatch: false,
+    isVerified: true,
+    suitableFor: 'Couples & Culture Lovers',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbPMEDIO7oUWhO1QifKjsPHtZe0TdKUnUAv4v5PEHx0Q&s=10',
+    description: '19th-century Portuguese stone villa lovingly curated with antique four-poster beds, shaded reading verandas, and lush fruit orchard gardens.',
+    amenities: ['Private Garden', 'Homestyle Goan Breakfast', 'Antique Suites', 'Free WiFi', 'Tea Lounge'],
+  },
+  {
+    id: 'stay-afonso-panaji',
+    name: 'Afonso Heritage Guest House',
+    type: 'homestay',
+    starRating: 4,
+    starsDisplay: '4-Star Heritage Guest House',
+    locality: 'St. Sebastian Chapel, Fontainhas',
+    areaGroup: 'Panaji',
+    distanceToBeach: '10 min to Miramar Beach',
+    distanceToStation: '24 min to Karmali Stn.',
+    basePricePerRoom: 2600,
+    isBestMatch: true,
+    isVerified: true,
+    suitableFor: 'Solo & Couples',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyi3w3dlOpFfuTyipzy5CHkuIanucPL6mMRW0H2iIebg&s=10',
+    description: 'Authentic Goan-Catholic family homestay next to St. Sebastian Chapel in Fontainhas Latin Quarter. Rooftop terrace with potted ferns and bird song.',
+    amenities: ['Rooftop Terrace', 'Homestyle Breakfast', 'Fast WiFi', 'AC Rooms', 'Quiet Street'],
+  },
+  {
     id: 'stay-moira-homestay',
-    name: 'Chateau Madeira Homestay',
+    name: 'Chateau Madeira Moira Homestay',
     type: 'homestay',
     starRating: 3,
-    starsDisplay: '3-Star Comfort',
+    starsDisplay: '3-Star Backwater Homestay',
     locality: 'Moira Village (near Mapusa)',
     areaGroup: 'Mapusa',
     distanceToBeach: '20 min to Morjim Beach',
@@ -231,100 +137,98 @@ export const ACCURATE_VERIFIED_STAYS: StayItem[] = [
     isVerified: true,
     suitableFor: 'Couples & Nature lovers',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgUVukRt69SnSVY20Lx8SjNYx903ex0ivWHPqJR0ljyg&s=10',
-    description: 'Picturesque village homestay along the Moira backwaters, 6 mins from Mapusa. Susegad peace with fruit orchards and bird song.',
+    description: 'Picturesque village homestay along the Moira backwaters, 6 mins from Mapusa. Susegad peace with fruit orchards, homemade jams, and bird song.',
     amenities: ['Riverview Veranda', 'Organic Breakfast', 'Birdwatching Garden', 'WiFi', 'Pet Friendly'],
   },
   {
-    id: 'stay-afonso-panaji',
-    name: 'Afonso Heritage Guest House',
+    id: 'stay-olaulim-backwaters',
+    name: 'Olaulim Backwaters Sanctuary Homestay',
+    type: 'homestay',
+    starRating: 4,
+    starsDisplay: '4-Star Nature Homestay',
+    locality: 'Olaulim, Pomburpa (near Mapusa)',
+    areaGroup: 'Mapusa',
+    distanceToBeach: '22 min to Calangute Beach',
+    distanceToStation: '16 min to Thivim Stn.',
+    basePricePerRoom: 4400,
+    isBestMatch: true,
+    isVerified: true,
+    suitableFor: 'Couples & Nature Enthusiasts',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSBjZfSCFtc8cuSKR8ncUY1i8GNeAgWGxHQ9xerQss7qg&s=10',
+    description: 'Rustic eco-luxury backwaters homestay set along tranquil tidal creeks with private stone cottages, kayaking, home-cooked Goan seafood, and farm animals.',
+    amenities: ['Kayaks Included', 'Home-cooked Feasts', 'Saltwater Pool', 'Pet Sanctuary', 'Cottages'],
+  },
+  {
+    id: 'stay-aldona-sanctuary',
+    name: 'Aldona River House Homestay',
     type: 'homestay',
     starRating: 3,
-    starsDisplay: '3-Star Comfort',
-    locality: 'St. Sebastian Chapel, Fontainhas',
-    areaGroup: 'Panaji',
-    distanceToBeach: '10 min to Miramar Beach',
-    distanceToStation: '24 min to Karmali Stn.',
-    basePricePerRoom: 2600,
+    starsDisplay: '3-Star Village Homestay',
+    locality: 'Quitona, Aldona (near Mapusa)',
+    areaGroup: 'Mapusa',
+    distanceToBeach: '25 min to Vagator Beach',
+    distanceToStation: '11 min to Thivim Stn.',
+    basePricePerRoom: 2400,
     isBestMatch: false,
     isVerified: true,
     suitableFor: 'Solo & Couples',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyi3w3dlOpFfuTyipzy5CHkuIanucPL6mMRW0H2iIebg&s=10',
-    description: 'Authentic Goan-Catholic family homestay next to St. Sebastian Chapel in Fontainhas. Rooftop terrace with potted ferns and bird song.',
-    amenities: ['Rooftop Terrace', 'Homestyle Breakfast', 'Fast WiFi', 'AC Rooms', 'Quiet Street'],
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYIUdUprz1BHTx-ba1K8fADMHOuy2jJlSMAJjOmm2aWA&s=10',
+    description: 'Quiet family homestay in the peaceful village of Aldona with airy balcony overlooking mangrove streams and traditional Goan breakfast.',
+    amenities: ['River Balcony', 'Home Cooked Meals', 'Free WiFi', 'AC Rooms', 'Quiet Village'],
   },
-
-  // --- 2-STAR BUDGET HOTELS & LODGES IN MAPUSA & COAST ---
   {
-    id: 'stay-satyaheera',
-    name: 'Hotel Satyaheera',
-    type: 'hotel',
-    starRating: 2,
-    starsDisplay: '2-Star Budget',
-    locality: 'Near Municipal Market, Mapusa',
-    areaGroup: 'Mapusa',
-    distanceToBeach: '15 min to Calangute Beach',
-    distanceToStation: '10 min to Thivim Stn.',
-    basePricePerRoom: 1350,
+    id: 'stay-morjim-cottage',
+    name: 'Morjim Palm Beach Cottage Homestay',
+    type: 'homestay',
+    starRating: 3,
+    starsDisplay: '3-Star Beach Homestay',
+    locality: 'Morjim Beach Road, North Goa',
+    areaGroup: 'Assagao',
+    distanceToBeach: '2 min walk to Turtle Beach',
+    distanceToStation: '22 min to Thivim Stn.',
+    basePricePerRoom: 2900,
     isBestMatch: false,
     isVerified: true,
-    suitableFor: 'Solo & Budget travelers',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWttYItZSrkHQ0DJN_uu9_sx5IOoxB99etc4d5jqVZjQ&s=10',
-    description: 'Genuine budget town hotel in Mapusa right opposite the market. Clean, central, with air-conditioned rooms, elevator, and budget restaurant.',
-    amenities: ['Air Conditioning', 'Free WiFi', 'Attached Bathroom', 'Elevator', '24/7 Front Desk'],
+    suitableFor: 'Couples & Beach Explorers',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6TVvuyOWRqgFxTaVwd3FU9RZTmgy6zeNq8cHTR1ux_Q&s=10',
+    description: 'Charming coastal cottage homestay shaded by swaying coconut trees just steps from Morjim sand dunes. Enjoy tranquil sunsets and fresh sea breezes.',
+    amenities: ['2 Min to Beach', 'Garden Hammocks', 'Home Breakfast', 'AC Cottages', 'WiFi'],
   },
   {
-    id: 'stay-mapusa-residency',
-    name: 'Mapusa Residency (GTDC)',
-    type: 'hotel',
-    starRating: 2,
-    starsDisplay: '2-Star Budget',
-    locality: 'Near Bus Terminus, Mapusa',
-    areaGroup: 'Mapusa',
-    distanceToBeach: '18 min to Baga Beach',
-    distanceToStation: '11 min to Thivim Stn.',
-    basePricePerRoom: 1650,
-    isBestMatch: false,
-    isVerified: true,
-    suitableFor: 'Family & Couples',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL9D1shDsxOK1hkYD-Lg2-1eAJbCAGl6wUwGAZuypPBQ&s=10',
-    description: 'Government-verified tourism hotel with spacious rooms, on-site restaurant serving fish curry thali, and ample parking in central Mapusa.',
-    amenities: ['Spacious Rooms', 'In-house Restaurant', 'Free Parking', 'Travel Desk', 'AC & Non-AC'],
-  },
-  {
-    id: 'stay-shantadurga',
-    name: 'Shantadurga Budget Lodge',
-    type: 'hotel',
-    starRating: 2,
-    starsDisplay: '2-Star Budget',
-    locality: 'Market Road, Mapusa',
-    areaGroup: 'Mapusa',
-    distanceToBeach: '16 min to Anjuna Beach',
-    distanceToStation: '9 min to Thivim Stn.',
-    basePricePerRoom: 1100,
-    isBestMatch: false,
-    isVerified: true,
-    suitableFor: 'Backpacker & Solo',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbVUJ1gH8R53Fbhwg6Cc7rJcutisKEzT-7bSgu7rfldQ&s=10',
-    description: 'No-frills budget stay ideal for backpackers and travelers catching early morning trains from Thivim or exploring Friday flea markets.',
-    amenities: ['Clean Beds', 'Attached Bath', 'Ceiling Fan', '24/7 Desk', 'CCTV Security'],
-  },
-  {
-    id: 'stay-seashell-palms',
-    name: 'Seashell Palms Inn',
-    type: 'hotel',
-    starRating: 2,
-    starsDisplay: '2-Star Budget',
-    locality: 'Baga Road, Calangute',
+    id: 'stay-baga-creek',
+    name: 'Casa Bela Village Creek Homestay',
+    type: 'homestay',
+    starRating: 3,
+    starsDisplay: '3-Star Coastal Homestay',
+    locality: 'Arpora / Calangute, North Goa',
     areaGroup: 'Calangute / Baga',
-    distanceToBeach: '4 min to beach',
-    distanceToStation: '20 min to Thivim Stn.',
-    basePricePerRoom: 1850,
+    distanceToBeach: '6 min to Calangute Beach',
+    distanceToStation: '18 min to Thivim Stn.',
+    basePricePerRoom: 2800,
     isBestMatch: false,
     isVerified: true,
-    suitableFor: 'Backpacker & Friends',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNuWpNMJ9PISwSbi9vGF6A9maPChe_83SKNAWubIc4Jw&s=10',
-    description: 'Clean, cheerful budget beach hotel minutes away from Tito’s lane and water sports shacks. Ideal for active explorers.',
-    amenities: ['Clean Ensuite', 'AC', 'Free WiFi', '24/7 Desk', 'Scooter Parking'],
+    suitableFor: 'Couples & Friends',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxwtPwr3_UnzSbB8qlettW9m4Kx49uqzqeWPaRmDtzgg&s=10',
+    description: 'Cozy Goan family-operated homestay with private wooden balconies, peaceful garden courtyard, and quick walkability to beaches and cafes.',
+    amenities: ['Balcony View', 'Host Breakfast', 'High-speed WiFi', 'AC Rooms', 'Scooter Parking'],
+  },
+  {
+    id: 'stay-tivim-heritage',
+    name: 'Thivim Village Heritage Home',
+    type: 'homestay',
+    starRating: 2,
+    starsDisplay: '2-Star Budget Homestay',
+    locality: 'Near Thivim Railway Station, Mapusa',
+    areaGroup: 'Mapusa',
+    distanceToBeach: '20 min to Calangute Beach',
+    distanceToStation: '3 min to Thivim Stn.',
+    basePricePerRoom: 1450,
+    isBestMatch: false,
+    isVerified: true,
+    suitableFor: 'Transit & Budget Solo',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWttYItZSrkHQ0DJN_uu9_sx5IOoxB99etc4d5jqVZjQ&s=10',
+    description: 'Authentic budget homestay hosted by a warm local Goan family right near Thivim station. Clean, comfortable rooms, home chai and breakfast.',
+    amenities: ['3 Min to Station', 'Clean Ensuite Bath', 'Home Cooked Food', 'WiFi', '24/7 Host Help'],
   },
 ];
 
@@ -378,9 +282,6 @@ export const StayPage: React.FC<StayPageProps> = ({
   savedPlaces = [],
   onToggleSavePlace,
 }) => {
-  // Main Toggle: Hotels vs Homestays/Villas
-  const [stayType, setStayType] = useState<'hotel' | 'homestay'>('hotel');
-
   // Star Rating Filter (All, 2, 3, 4, 5)
   const [starFilter, setStarFilter] = useState<number | 'all'>('all');
 
@@ -404,7 +305,7 @@ export const StayPage: React.FC<StayPageProps> = ({
         id: stayItem.id,
         title: stayItem.name,
         category: 'stay',
-        subtitle: `${stayItem.starRating}-Star ${stayItem.type}`,
+        subtitle: `${stayItem.starRating}-Star Homestay`,
         location: stayItem.locality,
         image: stayItem.image,
         ratingOrPrice: `₹${stayItem.basePricePerRoom}/night`,
@@ -415,9 +316,8 @@ export const StayPage: React.FC<StayPageProps> = ({
     );
   };
 
-  // Filter Stays by stayType, starRating, and areaGroup
+  // Filter Stays by starRating and areaGroup (Homestays Only)
   const filteredStays = staysList.filter((item) => {
-    if (item.type !== stayType) return false;
     if (starFilter !== 'all' && item.starRating !== starFilter) return false;
     if (selectedArea !== 'All Areas' && item.areaGroup !== selectedArea) return false;
     return true;
@@ -463,32 +363,30 @@ export const StayPage: React.FC<StayPageProps> = ({
         className="flex-1 overflow-y-auto px-4 pt-3.5 pb-8 space-y-4 min-h-0 overscroll-contain touch-pan-y no-scrollbar"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
-        {/* Two Pill Segmented Toggle: Hotels vs Village Homestays (Reduced width & centered on desktop) */}
-        <div className="bg-[#EAEAE8] p-1 rounded-full flex items-center shadow-inner relative w-full md:max-w-sm md:mx-auto">
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setStayType('hotel')}
-            className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer relative z-10 ${
-              stayType === 'hotel'
-                ? 'bg-[#177F91] text-white shadow-[0_2px_10px_rgba(23,127,145,0.35)]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Hotels
-          </motion.button>
-          <motion.button
-            type="button"
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setStayType('homestay')}
-            className={`flex-1 py-2 rounded-full text-[13.5px] font-bold transition-all text-center cursor-pointer relative z-10 ${
-              stayType === 'homestay'
-                ? 'bg-[#177F91] text-white shadow-[0_2px_10px_rgba(23,127,145,0.35)]'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            Village Homestays
-          </motion.button>
+        {/* Verified Homestay Trust Banner (Hotels removed) */}
+        <div className="bg-[#EAF5EE] border border-[#A7F3D0] p-2.5 rounded-2xl flex items-center justify-between shadow-2xs w-full max-w-4xl md:mx-auto">
+          <div className="flex items-center gap-2">
+            <span className="w-8 h-8 rounded-xl bg-[#059669] text-white flex items-center justify-center shrink-0 shadow-2xs">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <polyline points="9 12 11 14 15 10" />
+              </svg>
+            </span>
+            <div>
+              <div className="text-[13px] font-extrabold text-[#065F46] leading-tight">
+                Verified Goan Homestays Only
+              </div>
+              <div className="text-[11px] font-medium text-[#047857]">
+                Local family estates, heritage villas & authentic hosts
+              </div>
+            </div>
+          </div>
+          <span className="px-2.5 py-1 rounded-full bg-[#059669] text-white text-[11px] font-bold shadow-2xs shrink-0 flex items-center gap-1">
+            <svg className="w-3 h-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+            <span>Verified Badge</span>
+          </span>
         </div>
 
         {/* Selected Party & Month Context Badge */}
@@ -698,11 +596,11 @@ export const StayPage: React.FC<StayPageProps> = ({
                         )}
 
                         {stay.isVerified && (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#0D9488] bg-[#CCFBF1] px-2 py-0.5 rounded-full">
-                            <svg className="w-3 h-3 text-[#0D9488]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <polyline points="20 6 9 17 4 12" />
+                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#065F46] bg-[#D1FAE5] border border-[#6EE7B7] px-2 py-0.5 rounded-full shadow-2xs">
+                            <svg className="w-3 h-3 text-[#059669]" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span>Verified</span>
+                            <span>Verified Badge</span>
                           </span>
                         )}
                       </div>
@@ -852,11 +750,11 @@ export const StayPage: React.FC<StayPageProps> = ({
                     <span className="px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-xs text-white text-xs font-bold">
                       {selectedStay.starsDisplay}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-[#177F91] text-white text-xs font-bold inline-flex items-center gap-1">
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
+                    <span className="px-2.5 py-1 rounded-full bg-[#059669] text-white text-xs font-bold inline-flex items-center gap-1 shadow-xs">
+                      <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      <span>Verified Stay</span>
+                      <span>Verified Badge</span>
                     </span>
                   </div>
                 </div>

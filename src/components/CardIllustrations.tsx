@@ -451,3 +451,49 @@ export const EmergencyIllustration: React.FC<{ className?: string }> = ({ classN
     </g>
   </svg>
 );
+
+export const ProfileIllustration: React.FC<{ className?: string }> = ({ className = '' }) => (
+  <svg
+    viewBox="0 0 160 110"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`pointer-events-none select-none ${className}`}
+    aria-hidden="true"
+  >
+    {/* Soft ground curve in teal */}
+    <path
+      d="M-10 92 C30 88, 80 90, 170 84 L170 115 L-10 115 Z"
+      fill="#0D9488"
+      fillOpacity="0.12"
+    />
+    <path
+      d="M15 98 C60 92, 110 94, 170 90 L170 115 L15 115 Z"
+      fill="#0D9488"
+      fillOpacity="0.2"
+    />
+
+    {/* Traveler Profile Card with Avatar & Impact Pie Graphic */}
+    <g transform="translate(62, 16)">
+      {/* Profile Card Body */}
+      <rect x="6" y="14" width="68" height="58" rx="10" fill="#0D9488" fillOpacity="0.32" />
+      <rect x="6" y="14" width="68" height="58" rx="10" stroke="#0F766E" strokeWidth="1.8" strokeOpacity="0.45" fill="none" />
+
+      {/* User avatar circle badge */}
+      <circle cx="28" cy="35" r="13" fill="#FFFFFF" fillOpacity="0.9" />
+      <circle cx="28" cy="31" r="5" fill="#0D9488" fillOpacity="0.85" />
+      <path d="M19 44 C20 39, 36 39, 37 44 Z" fill="#0D9488" fillOpacity="0.85" />
+
+      {/* Mini Impact Pie Silhouette */}
+      <g transform="translate(56, 35)">
+        <circle cx="0" cy="0" r="11" fill="#FFFFFF" fillOpacity="0.85" />
+        <path d="M0 0 L0 -11 A11 11 0 0 1 10 4 Z" fill="#0D9488" fillOpacity="0.95" />
+        <path d="M0 0 L10 4 A11 11 0 0 1 -7 8 Z" fill="#F59E0B" fillOpacity="0.9" />
+        <path d="M0 0 L-7 8 A11 11 0 0 1 0 -11 Z" fill="#3B82F6" fillOpacity="0.85" />
+      </g>
+
+      {/* Identity lines */}
+      <rect x="14" y="54" width="34" height="4" rx="2" fill="#0F766E" fillOpacity="0.55" />
+      <rect x="14" y="61" width="52" height="3" rx="1.5" fill="#14B8A6" fillOpacity="0.65" />
+    </g>
+  </svg>
+);

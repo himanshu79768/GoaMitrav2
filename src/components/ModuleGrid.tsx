@@ -5,8 +5,8 @@ import {
   DestinationsIllustration,
   FoodIllustration,
   CultureIllustration,
-  CouponsIllustration,
   EmergencyIllustration,
+  ProfileIllustration,
 } from './CardIllustrations';
 
 interface ModuleCardProps {
@@ -16,6 +16,7 @@ interface ModuleCardProps {
   icon: React.ReactNode;
   illustration: React.ReactNode;
   onClick?: () => void;
+  className?: string;
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({
@@ -25,6 +26,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
   icon,
   illustration,
   onClick,
+  className = '',
 }) => {
   return (
     <motion.div
@@ -33,7 +35,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({
       whileTap={{ scale: 0.975 }}
       transition={{ type: 'spring', stiffness: 450, damping: 28 }}
       style={{ backgroundColor: bgColor }}
-      className="relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[140px] sm:min-h-[148px] select-none cursor-pointer group"
+      className={`relative rounded-[24px] p-4 flex flex-col justify-between overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-black/[0.02] min-h-[140px] sm:min-h-[148px] select-none cursor-pointer group ${className}`}
     >
       {/* Background Subtle Thematic Illustration */}
       <div className="absolute right-0 bottom-0 w-[78%] h-[78%] pointer-events-none overflow-hidden opacity-95 group-hover:scale-105 transition-transform duration-300">
@@ -89,8 +91,8 @@ interface ModuleGridProps {
   onOpenDestinations?: () => void;
   onOpenFood?: () => void;
   onOpenCulture?: () => void;
-  onOpenCoupons?: () => void;
-  onOpenEmergency?: () => void;
+  onOpenProfile?: () => void;
+  onOpenHelp?: () => void;
 }
 
 export const ModuleGrid: React.FC<ModuleGridProps> = ({
@@ -98,30 +100,35 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
   onOpenDestinations,
   onOpenFood,
   onOpenCulture,
-  onOpenCoupons,
-  onOpenEmergency,
+  onOpenProfile,
+  onOpenHelp,
 }) => {
   return (
     <div className="px-5 pb-6 w-full">
-      {/* 2-2-2 on Mobile, 3-3 on Laptop & Big Screen (Left Aligned & Stretching to Profile side) */}
+      {/* 2 columns on Mobile (3 rows of 2), 3 columns on Laptop & Big Screen (2 rows of 3) */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-4.5 w-full">
-        {/* 1. Stay Card - Hotel Bed / Orange Color */}
+        {/* 1. Stay Card - Homestays / Orange Color */}
         <ModuleCard
           title="Stay"
-          description={"Hotels, homestays\nand more"}
+          description={"Verified homestays\nwith local hosts"}
           bgColor="#FFF1E5"
           onClick={onOpenStay}
           illustration={<StayIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-8 h-8 flex items-center justify-start text-[#C2410C]">
-              {/* Hotel Bed Icon from reference */}
+              {/* Verified Homestay House / Bed Icon */}
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
               >
-                <path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9a4 4 0 0 0-4-4z" />
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
               </svg>
             </div>
           }
@@ -136,7 +143,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
           illustration={<DestinationsIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-8 h-8 flex items-center justify-start text-[#059669]">
-              {/* Solid Location Map Pin from reference */}
+              {/* Solid Location Map Pin */}
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
@@ -152,13 +159,13 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
         {/* 3. Food Card - Fork & Spoon / Culinary Coral Color */}
         <ModuleCard
           title="Food"
-          description={"Local cuisine,\ncafes and \nmore"}
+          description={"Authentic dishes\n& local food guide"}
           bgColor="#FDECE8"
           onClick={onOpenFood}
           illustration={<FoodIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-8 h-8 flex items-center justify-start text-[#DC2626]">
-              {/* Fork & Spoon from reference */}
+              {/* Fork & Spoon */}
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
@@ -180,7 +187,7 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
           illustration={<CultureIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-8 h-8 flex items-center justify-start text-[#6366F1]">
-              {/* Heritage Monument / Classical Temple from reference */}
+              {/* Heritage Monument / Classical Temple */}
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
@@ -193,45 +200,56 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
           }
         />
 
-        {/* 5. Coupons Card - Discount Price Tag / Warm Amber Color */}
+        {/* 5. Profile Card - MY GOA, Impact Receipt & Settings / Teal Mint Color */}
         <ModuleCard
-          title="Coupons"
-          description={"Deals, offers\nand special discounts"}
-          bgColor="#FEF7E6"
-          onClick={onOpenCoupons}
-          illustration={<CouponsIllustration className="w-full h-full object-cover object-bottom-right" />}
+          title="Profile"
+          description={"MY GOA, settings &\nImpact Receipt"}
+          bgColor="#E6F4F1"
+          onClick={onOpenProfile}
+          illustration={<ProfileIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
-            <div className="w-8 h-8 flex items-center justify-start text-[#D97706]">
-              {/* Price Tag with % from reference */}
+            <div className="w-8 h-8 flex items-center justify-start text-[#0D9488]">
+              {/* User traveler profile icon */}
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
               >
-                <path d="M21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7a2 2 0 0 0 0-2.83zM6.5 8C5.67 8 5 7.33 5 6.5S5.67 5 6.5 5 8 5.67 8 6.5 7.33 8 6.5 7.33 8z" />
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
               </svg>
             </div>
           }
         />
 
-        {/* 6. Emergency Card - Shield / Cross / Red Color */}
+        {/* 6. Help Card - Emergency SOS, Tourist Helplines & Safety / Red Rose Color */}
         <ModuleCard
-          title="Emergency"
-          description={"Help, safety info\nand important contacts"}
+          title="Help"
+          description={"Emergency SOS,\nhelplines & safety"}
           bgColor="#FEECEC"
-          onClick={onOpenEmergency}
+          onClick={onOpenHelp}
           illustration={<EmergencyIllustration className="w-full h-full object-cover object-bottom-right" />}
           icon={
             <div className="w-8 h-8 flex items-center justify-start text-[#E11D48]">
-              {/* Safety Cross Shield from reference */}
+              {/* Shield with Medical Cross */}
               <svg
                 className="w-6 h-6"
                 viewBox="0 0 24 24"
-                fill="currentColor"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 aria-hidden="true"
               >
-                <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3zm3 10h-2v3h-2v-3H8v-2h3V7h2v3h3v2z" />
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M12 8v8" />
+                <path d="M8 12h8" />
               </svg>
             </div>
           }
@@ -240,3 +258,4 @@ export const ModuleGrid: React.FC<ModuleGridProps> = ({
     </div>
   );
 };
+

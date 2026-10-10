@@ -18,12 +18,8 @@ import winterHeroImg from '../assets/images/goa_winter_foggy_hero_1790946476359.
 // Import actual live datasets
 import { ACCURATE_VERIFIED_STAYS } from '../components/StayPage';
 import { ALL_DESTINATIONS } from '../components/DestinationsPage';
-import { REAL_RESTAURANTS, ALL_DISHES } from '../components/FoodPage';
+import { ALL_DISHES } from '../components/FoodPage';
 import { CULTURAL_EVENTS } from '../components/CulturePage';
-import { TRAVEL_VEHICLE_IMAGES } from '../components/TravelPage';
-
-// High-Priority Transit Vehicle Cutout URLs
-const TRAVEL_IMAGES: string[] = Object.values(TRAVEL_VEHICLE_IMAGES);
 
 // Section Hero Banners
 const SECTION_HERO_IMAGES: string[] = [
@@ -53,40 +49,32 @@ const LOCAL_ASSETS: string[] = [
 export function getAllAppImageUrls(): string[] {
   const urls = new Set<string>();
 
-  // 1. High priority travel vehicle images
-  TRAVEL_IMAGES.forEach((src) => {
-    if (src) urls.add(src);
-  });
-
-  // 2. Section Hero Images
+  // 1. Section Hero Images
   SECTION_HERO_IMAGES.forEach((src) => {
     if (src) urls.add(src);
   });
 
-  // 3. Local core assets
+  // 2. Local core assets
   LOCAL_ASSETS.forEach((src) => {
     if (src) urls.add(src);
   });
 
-  // 4. Actual Stay images
+  // 3. Actual Stay images
   ACCURATE_VERIFIED_STAYS.forEach((stay) => {
     if (stay.image) urls.add(stay.image);
   });
 
-  // 5. Actual Destination images
+  // 4. Actual Destination images
   ALL_DESTINATIONS.forEach((dest) => {
     if (dest.image) urls.add(dest.image);
   });
 
-  // 6. Actual Food (Restaurants & Dishes) images
-  REAL_RESTAURANTS.forEach((rest) => {
-    if (rest.image) urls.add(rest.image);
-  });
+  // 5. Actual Food Dishes images
   ALL_DISHES.forEach((dish) => {
     if (dish.image) urls.add(dish.image);
   });
 
-  // 7. Actual Culture events images
+  // 6. Actual Culture events images
   CULTURAL_EVENTS.forEach((evt) => {
     if (evt.image) urls.add(evt.image);
   });
@@ -150,8 +138,8 @@ function preloadSingleImage(src: string, isPriority = false): void {
 export function preloadAllAppImages(): void {
   if (typeof window === 'undefined') return;
 
-  // Tier 1: Immediate critical priority (Travel vehicles, Hero banners, Local assets)
-  const priorityAssets = [...TRAVEL_IMAGES, ...SECTION_HERO_IMAGES, ...LOCAL_ASSETS];
+  // Tier 1: Immediate critical priority (Hero banners, Local assets)
+  const priorityAssets = [...SECTION_HERO_IMAGES, ...LOCAL_ASSETS];
   priorityAssets.forEach((src) => {
     preloadSingleImage(src, true);
   });

@@ -18,6 +18,8 @@ import { FoodPage } from './components/FoodPage';
 import { CulturePage } from './components/CulturePage';
 import { CouponsPage } from './components/CouponsPage';
 import { EmergencyPage } from './components/EmergencyPage';
+import { HelpProfilePage } from './components/HelpProfilePage';
+import { ProfilePage } from './components/ProfilePage';
 import { MyGoaPage } from './components/MyGoaPage';
 import { UserProfileModal } from './components/UserProfileModal';
 import { SettingsModal } from './components/SettingsModal';
@@ -64,7 +66,9 @@ type ScreenType =
   | 'culture'
   | 'coupons'
   | 'emergency'
-  | 'my_goa';
+  | 'help_profile'
+  | 'my_goa'
+  | 'profile';
 
 export default function App() {
   // Preload all app photography and assets immediately on boot
@@ -92,6 +96,9 @@ export default function App() {
   const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
   const [tempNameInput, setTempNameInput] = useState('');
 
+  // User Profile Modal state
+  const [isUserProfileModalOpen, setIsUserProfileModalOpen] = useState(false);
+
   // Logout Confirmation Dialog state
   const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
 
@@ -116,6 +123,11 @@ export default function App() {
       // If Name Change dialog is open, close it
       if (isNameDialogOpen) {
         setIsNameDialogOpen(false);
+      }
+
+      // If User Profile modal is open, close it
+      if (isUserProfileModalOpen) {
+        setIsUserProfileModalOpen(false);
       }
 
       const targetScreen = event.state?.screen as ScreenType | undefined;
@@ -601,6 +613,7 @@ export default function App() {
               onOpenChat={() => handleOpenChat()}
               onOpenMyGoa={() => handleOpenMyGoa()}
               onOpenSettings={() => setIsSettingsOpen(true)}
+              onOpenProfile={() => navigateForward('profile')}
               onOpenNameDialog={handleOpenNameDialog}
               onLogout={handleRequestLogout}
             />
@@ -610,8 +623,8 @@ export default function App() {
               onOpenDestinations={() => navigateForward('destinations')}
               onOpenFood={() => navigateForward('food')}
               onOpenCulture={() => navigateForward('culture')}
-              onOpenCoupons={() => navigateForward('coupons')}
-              onOpenEmergency={() => navigateForward('emergency')}
+              onOpenProfile={() => navigateForward('profile')}
+              onOpenHelp={() => navigateForward('emergency')}
             />
           </div>
         )}
@@ -802,6 +815,57 @@ export default function App() {
             >
               <CouponsPage
                 onBack={() => navigateBack('homepage')}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 8.5: Help & Profile Page */}
+          {currentScreen === 'help_profile' && (
+            <motion.div
+              key="help_profile"
+              custom={navDirection}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
+            >
+              <HelpProfilePage
+                preferences={savedPreferences}
+                onBack={() => navigateBack('homepage')}
+                onOpenEmergency={() => navigateForward('emergency')}
+                onOpenProfile={() => navigateForward('profile')}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 8.7: Profile Page with Impact Receipt, MY GOA & All Settings */}
+          {currentScreen === 'profile' && (
+            <motion.div
+              key="profile"
+              custom={navDirection}
+              variants={pageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="w-full h-[100dvh] max-h-[100dvh] overflow-hidden absolute inset-0 z-20 bg-[#F7F7F5] will-change-transform transform-gpu"
+            >
+              <ProfilePage
+                preferences={savedPreferences}
+                onUpdatePreferences={handleUpdatePreferences}
+                accessibility={accessibility}
+                onUpdateAccessibility={handleUpdateAccessibility}
+                savedPlaces={savedPlaces}
+                savedItineraries={savedItineraries}
+                onRemoveSavedPlace={handleRemoveSavedPlace}
+                onRemoveItinerary={handleRemoveItinerary}
+                onBack={() => navigateBack('homepage')}
+                onOpenMyGoaScreen={(tab) => {
+                  if (tab) setMyGoaInitialTab(tab);
+                  navigateForward('my_goa');
+                }}
+                onLogout={handleRequestLogout}
+                onShowToast={(t) => showToast(t)}
               />
             </motion.div>
           )}
@@ -1142,6 +1206,17 @@ export default function App() {
             </div>
           )}
         </AnimatePresence>
+
+        {/* User Profile Modal */}
+        <UserProfileModal
+          isOpen={isUserProfileModalOpen}
+          onClose={() => setIsUserProfileModalOpen(false)}
+          preferences={savedPreferences}
+          onEditPreferences={() => {
+            setIsUserProfileModalOpen(false);
+            navigateForward('onboarding_step_1');
+          }}
+        />
 
         {/* Settings & Accessibility Suite Modal */}
         <SettingsModal

@@ -5,7 +5,7 @@ import { UserPreferences, SavedItineraryItem, SavedPlaceItem, AccessibilitySetti
 import { speakText, stopSpeaking } from '../utils/narration';
 import { ALL_DESTINATIONS } from './DestinationsPage';
 import { ACCURATE_VERIFIED_STAYS } from './StayPage';
-import { REAL_RESTAURANTS } from './FoodPage';
+import { ALL_DISHES } from './FoodPage';
 
 export interface ExecutedAction {
   type: 'saved_itinerary' | 'navigated' | 'saved_place' | 'updated_name' | 'updated_preferences' | 'removed_itinerary' | 'removed_place';
@@ -161,21 +161,21 @@ function findPlaceByName(query: string): SavedPlaceItem | null {
     };
   }
 
-  // 3. Restaurants & Dining
-  const rest = REAL_RESTAURANTS.find((r) => {
-    const rName = r.name.toLowerCase();
-    return rName.includes(q) || q.includes(rName);
+  // 3. Authentic Goan Dishes & Food
+  const dish = ALL_DISHES.find((d) => {
+    const dName = d.name.toLowerCase();
+    return dName.includes(q) || q.includes(dName);
   });
-  if (rest) {
+  if (dish) {
     return {
-      id: rest.id,
-      title: rest.name,
+      id: dish.id,
+      title: dish.name,
       category: 'food',
-      subtitle: rest.location,
-      location: rest.location,
-      image: rest.image,
-      ratingOrPrice: `${rest.priceCategory} • ${rest.dietaryType === 'veg' ? 'Pure Veg' : 'Seafood & Multi-cuisine'}`,
-      tags: [rest.cuisineStyle === 'goan_authentic' ? 'Authentic Goan' : 'Multi-cuisine'],
+      subtitle: dish.origin,
+      location: dish.origin,
+      image: dish.image,
+      ratingOrPrice: `${dish.dietaryType === 'veg' ? 'Pure Veg' : 'Non-veg'} • ${dish.cuisineStyle === 'goan_authentic' ? 'Goan authentic' : 'Specialty'}`,
+      tags: [dish.matchBadge || 'Authentic Food', dish.dietaryType === 'veg' ? 'Pure Veg' : 'Non-veg'],
       savedAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     };
   }

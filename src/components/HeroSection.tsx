@@ -11,6 +11,7 @@ interface HeroSectionProps {
   onOpenChat: () => void;
   onOpenMyGoa: () => void;
   onOpenSettings: () => void;
+  onOpenProfile?: () => void;
   onOpenNameDialog?: () => void;
   onLogout: () => void;
   hasNewProfileItem?: boolean;
@@ -183,6 +184,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onOpenChat,
   onOpenMyGoa,
   onOpenSettings,
+  onOpenProfile,
   onOpenNameDialog,
   onLogout,
   hasNewProfileItem = false,
@@ -362,7 +364,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     transition={{ duration: 0.15, ease: 'easeOut' }}
                     className="liquid-glass-menu top-12 right-0 z-50 w-44 rounded-2xl p-1 flex flex-col gap-0.5 select-none overflow-hidden"
                   >
-                    {/* Option 1: Settings */}
+                    {/* Option 1: Profile & Impact Receipt */}
+                    {onOpenProfile && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsMenuOpen(false);
+                          onOpenProfile();
+                        }}
+                        className="flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[13px] font-bold text-[#18232D] hover:bg-white/40 active:bg-white/60 transition-colors text-left w-full cursor-pointer z-10"
+                      >
+                        <div className="flex items-center gap-2">
+                          <svg className="w-3.5 h-3.5 text-[#0D9488] shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          </svg>
+                          <span>Profile & Impact</span>
+                        </div>
+                        {hasNewProfileItem && (
+                          <span className="w-2 h-2 rounded-full bg-[#FF6B4A]" />
+                        )}
+                      </button>
+                    )}
+
+                    {/* Option 2: Settings */}
                     <button
                       type="button"
                       onClick={() => {
@@ -377,9 +401,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         </svg>
                         <span>Settings</span>
                       </div>
-                      {hasNewProfileItem && (
-                        <span className="w-2 h-2 rounded-full bg-[#FF6B4A]" />
-                      )}
                     </button>
 
                     <div className="h-[1px] bg-white/40 my-0.5 z-10" />
