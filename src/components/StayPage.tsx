@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserPreferences, SavedPlaceItem } from '../types/onboarding';
+import { StayBooking } from '../types/booking';
+import { StayBookingModal } from './StayBookingModal';
 
 export interface StayItem {
   id: string;
@@ -27,6 +29,8 @@ interface StayPageProps {
   onAskGAI: (initialPrompt?: string) => void;
   savedPlaces?: SavedPlaceItem[];
   onToggleSavePlace?: (place: SavedPlaceItem) => void;
+  onBookingSuccess?: (booking: StayBooking) => void;
+  onOpenProfileImpact?: (booking: StayBooking) => void;
 }
 
 // 100% Unique, Verified Photos & Accurate Ratings for Authentic Goan Homestays
@@ -281,6 +285,8 @@ export const StayPage: React.FC<StayPageProps> = ({
   onAskGAI,
   savedPlaces = [],
   onToggleSavePlace,
+  onBookingSuccess,
+  onOpenProfileImpact,
 }) => {
   // Star Rating Filter (All, 2, 3, 4, 5)
   const [starFilter, setStarFilter] = useState<number | 'all'>('all');
@@ -292,6 +298,7 @@ export const StayPage: React.FC<StayPageProps> = ({
   const [staysList] = useState<StayItem[]>(ACCURATE_VERIFIED_STAYS);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [selectedStay, setSelectedStay] = useState<StayItem | null>(null);
+  const [stayToBook, setStayToBook] = useState<StayItem | null>(null);
 
   const memberCount = preferences.memberCount || 2;
   const travelType = preferences.travelType || 'Couple / Duo';
@@ -682,137 +689,143 @@ export const StayPage: React.FC<StayPageProps> = ({
         </div>
       </div>
 
-      {/* 3. Sleek Modern iOS Style Popup Modal on Desktop / Smooth Sheet on Mobile */}
+      {/* 3. Homestay Full Details Page (Full Screen) */}
       <AnimatePresence>
         {selectedStay && (() => {
           const calculated = calculateStayPrice(selectedStay.basePricePerRoom, memberCount);
           const gstAmount = Math.round(calculated.totalPrice * 0.12);
 
           return (
-            <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center select-none p-0 md:p-4">
-              {/* Ultra-smooth Backdrop */}
-              <motion.div
-                key="stay-sheet-backdrop"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="absolute inset-0 bg-black/55 backdrop-blur-sm"
-                onClick={() => setSelectedStay(null)}
-              />
-
-              {/* Modern iOS Style Popup Card on Desktop / Sheet on Mobile */}
-              <motion.div
-                key="stay-sheet-content"
-                initial={{ y: 24, opacity: 0, scale: 0.96 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                exit={{ y: 24, opacity: 0, scale: 0.96 }}
-                transition={{
-                  duration: 0.24,
-                  ease: [0.22, 1, 0.36, 1], // Apple iOS spring-curve
-                }}
-                className="w-full max-w-lg md:max-w-xl bg-white rounded-t-[32px] md:rounded-[28px] p-5 sm:p-6 shadow-2xl space-y-4 max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative z-10 will-change-transform transform-gpu overscroll-contain border border-black/[0.08]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {/* Drag Handle Bar (mobile) & Close Button Header */}
-                <div className="flex items-center justify-between -mt-1 pb-1">
-                  <div className="w-8" />
-                  <div
-                    onClick={() => setSelectedStay(null)}
-                    className="w-12 h-1.5 bg-gray-300 hover:bg-gray-400 rounded-full cursor-pointer transition-colors md:hidden"
-                  />
-                  <div className="hidden md:block text-[13px] font-extrabold text-gray-400 uppercase tracking-wider">
-                    Property Details
-                  </div>
-                  <motion.button
+            <motion.div
+              key="stay-detail-page"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed inset-0 z-50 bg-[#FDFBF7] flex flex-col overflow-y-auto overscroll-contain text-gray-900 select-none"
+            >
+              {/* Sticky Full-Screen Top Header Bar */}
+              <div className="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-gray-200/80 px-4 py-3 shadow-2xs">
+                <div className="max-w-xl mx-auto flex items-center justify-between">
+                  <button
                     type="button"
-                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setSelectedStay(null)}
+                    className="flex items-center gap-1.5 py-1.5 px-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-black cursor-pointer transition-colors"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="19" y1="12" x2="5" y2="12" />
+                      <polyline points="12 19 5 12 12 5" />
+                    </svg>
+                    <span>Back to Stays</span>
+                  </button>
+
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-extrabold text-emerald-800 uppercase tracking-wide">
+                      Verified Homestay
+                    </span>
+                  </div>
+
+                  <button
+                    type="button"
                     onClick={() => setSelectedStay(null)}
                     className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 cursor-pointer transition-colors"
-                    aria-label="Close modal"
+                    aria-label="Close"
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                       <line x1="18" y1="6" x2="6" y2="18" />
                       <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                  </motion.button>
+                  </button>
                 </div>
+              </div>
 
-                {/* Stay Image with Badges */}
-                <div className="relative h-48 rounded-2xl overflow-hidden shadow-sm bg-gray-100">
+              {/* Main Full-Screen Body Content */}
+              <div className="max-w-xl mx-auto w-full px-4 pt-4 pb-28 flex-1 space-y-4">
+                {/* Stay Hero Image */}
+                <div className="relative h-60 sm:h-72 rounded-3xl overflow-hidden shadow-sm bg-gray-100">
                   <img
                     src={selectedStay.image}
                     alt={selectedStay.name}
                     className="w-full h-full object-cover"
                     loading="eager"
                   />
-                  <div className="absolute top-3 left-3 flex gap-1.5">
-                    <span className="px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-xs text-white text-xs font-bold">
+                  <div className="absolute top-3 left-3 flex gap-2">
+                    <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-xs text-white text-xs font-black shadow-xs">
                       {selectedStay.starsDisplay}
                     </span>
-                    <span className="px-2.5 py-1 rounded-full bg-[#059669] text-white text-xs font-bold inline-flex items-center gap-1 shadow-xs">
+                    <span className="px-3 py-1 rounded-full bg-[#059669] text-white text-xs font-black inline-flex items-center gap-1.5 shadow-md">
                       <svg className="w-3.5 h-3.5 text-white" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                      <span>Verified Badge</span>
+                      <span>Verified Goan Heritage</span>
                     </span>
                   </div>
                 </div>
 
-                {/* Title & Price Header */}
-                <div className="flex items-start justify-between">
-                  <div className="min-w-0 pr-2">
-                    <h3 className="text-[20px] font-black text-gray-900 tracking-tight leading-tight">
-                      {selectedStay.name}
-                    </h3>
-                    <p className="text-sm font-semibold text-gray-500 mt-0.5">
-                      {selectedStay.locality}
-                    </p>
+                {/* Title & Locality & Price Header Card */}
+                <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-2xs space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <h2 className="text-[22px] font-black text-gray-900 tracking-tight leading-tight">
+                        {selectedStay.name}
+                      </h2>
+                      <p className="text-sm font-semibold text-gray-500 mt-0.5 flex items-center gap-1">
+                        <span>📍 {selectedStay.locality}</span>
+                        <span>·</span>
+                        <span>{selectedStay.distanceToBeach}</span>
+                      </p>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <div className="text-[24px] font-black text-emerald-800 tracking-tight">
+                        ₹{calculated.totalPrice.toLocaleString('en-IN')}
+                      </div>
+                      <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                        {calculated.note}
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="text-right shrink-0">
-                    <div className="text-[22px] font-black text-[#FF5436] tracking-tight">
-                      ₹{calculated.totalPrice.toLocaleString('en-IN')}
+                  {/* Dynamic Price Breakdown */}
+                  <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-200/70 text-xs space-y-1.5">
+                    <div className="flex justify-between text-gray-600">
+                      <span>Base rate per room:</span>
+                      <span>₹{selectedStay.basePricePerRoom.toLocaleString('en-IN')} / room / night</span>
                     </div>
-                    <div className="text-[10px] text-gray-400 font-medium">
-                      {calculated.note}
+                    <div className="flex justify-between font-bold text-gray-900">
+                      <span>Total for {memberCount} {memberCount === 1 ? 'Guest' : 'Guests'}:</span>
+                      <span>₹{calculated.totalPrice.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between text-gray-400 pt-1.5 border-t border-gray-200">
+                      <span>Estimated GST (12%):</span>
+                      <span>+₹{gstAmount.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Dynamic Price Breakdown */}
-                <div className="p-3.5 bg-gray-50 rounded-2xl border border-gray-200/70 text-xs space-y-1.5">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Base rate per room:</span>
-                    <span>₹{selectedStay.basePricePerRoom.toLocaleString('en-IN')} / room</span>
-                  </div>
-                  <div className="flex justify-between font-bold text-gray-900">
-                    <span>Total for {memberCount} {memberCount === 1 ? 'Guest' : 'Guests'}:</span>
-                    <span>₹{calculated.totalPrice.toLocaleString('en-IN')}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-400 pt-1 border-t border-gray-200">
-                    <span>Estimated GST (12%):</span>
-                    <span>+₹{gstAmount.toLocaleString('en-IN')}</span>
-                  </div>
+                {/* Description Card */}
+                <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-2xs space-y-2">
+                  <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">
+                    About This Homestay
+                  </h3>
+                  <p className="text-[14px] leading-relaxed text-gray-700 font-medium">
+                    {selectedStay.description}
+                  </p>
                 </div>
-
-                {/* Description */}
-                <p className="text-[13.5px] leading-relaxed text-gray-700">
-                  {selectedStay.description}
-                </p>
 
                 {/* Verified Amenities */}
-                <div>
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                    VERIFIED AMENITIES
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="bg-white rounded-3xl p-5 border border-gray-200/80 shadow-2xs space-y-3">
+                  <h3 className="text-xs font-black text-gray-400 uppercase tracking-wider">
+                    VERIFIED AMENITIES & FACILITIES
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
                     {selectedStay.amenities.map((amenity) => (
                       <span
                         key={amenity}
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-xs font-semibold"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-100 text-xs font-bold"
                       >
-                        <svg className="w-3 h-3 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <svg className="w-3.5 h-3.5 text-[#10B981]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                           <polyline points="20 6 9 17 4 12" />
                         </svg>
                         <span>{amenity}</span>
@@ -821,8 +834,8 @@ export const StayPage: React.FC<StayPageProps> = ({
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-2.5 pt-2 pb-1">
+                {/* Secondary Actions: Map & Ask GAI */}
+                <div className="grid grid-cols-2 gap-2.5">
                   <motion.a
                     whileTap={{ scale: 0.96 }}
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -830,16 +843,13 @@ export const StayPage: React.FC<StayPageProps> = ({
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="py-3.5 px-4 rounded-2xl bg-gray-100 text-gray-900 text-center font-bold text-[13.5px] hover:bg-gray-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-3 px-3 rounded-2xl bg-white border border-gray-200 text-gray-800 text-center font-bold text-[12.5px] hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
                   >
                     <svg className="w-4 h-4 text-[#E05333]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                    <span>View on map</span>
-                    <svg className="w-3 h-3 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M7 17L17 7M17 7H7M17 7V17" />
-                    </svg>
+                    <span>View on Google Map</span>
                   </motion.a>
 
                   <motion.button
@@ -850,18 +860,71 @@ export const StayPage: React.FC<StayPageProps> = ({
                       setSelectedStay(null);
                       onAskGAI(prompt);
                     }}
-                    className="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#177F91] to-[#0E5865] text-white text-center font-bold text-[13.5px] shadow-sm hover:brightness-105 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="py-3 px-3 rounded-2xl bg-teal-50 text-[#177F91] border border-teal-200 text-center font-bold text-[12.5px] hover:bg-teal-100/70 transition-all flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
                   >
-                    <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-4 h-4 text-[#177F91]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
                     </svg>
-                    <span>Ask GAI details</span>
+                    <span>Ask GAI Details</span>
                   </motion.button>
                 </div>
-              </motion.div>
-            </div>
+              </div>
+
+              {/* Fixed Bottom Action Bar with BOOK HOMESTAY NOW (Updated Color!) */}
+              <div className="fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200/90 p-4 shadow-lg">
+                <div className="max-w-xl mx-auto flex items-center justify-between gap-4">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                      Total Payable
+                    </span>
+                    <div className="text-[20px] font-black text-gray-900 leading-tight">
+                      ₹{calculated.totalPrice.toLocaleString('en-IN')}
+                    </div>
+                  </div>
+
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => {
+                      const toBook = selectedStay;
+                      setSelectedStay(null);
+                      setStayToBook(toBook);
+                    }}
+                    className="flex-1 py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#047857] via-[#059669] to-[#0D9488] text-white text-center font-black text-[15px] shadow-lg shadow-emerald-700/25 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>Book Homestay Now</span>
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                      <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
           );
         })()}
+      </AnimatePresence>
+
+      {/* 4. Complete Stay Booking Modal Flow (Details, Dummy Payment, Success & Impact Division) */}
+      <AnimatePresence>
+        {stayToBook && (
+          <StayBookingModal
+            stay={stayToBook}
+            defaultGuestName={preferences.name || 'Goan Explorer'}
+            defaultGuestCount={memberCount}
+            travelMonth={travelMonth}
+            onClose={() => setStayToBook(null)}
+            onBookingSuccess={(booking) => {
+              if (onBookingSuccess) onBookingSuccess(booking);
+            }}
+            onViewImpactReceipt={(booking) => {
+              if (onOpenProfileImpact) {
+                onOpenProfileImpact(booking);
+              }
+            }}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

@@ -715,6 +715,17 @@ export default function App() {
                 onAskGAI={(prompt) => handleOpenChat(prompt)}
                 savedPlaces={savedPlaces}
                 onToggleSavePlace={handleToggleSavePlace}
+                onBookingSuccess={(booking) => {
+                  showToast({
+                    message: `${booking.stayName} booked!`,
+                    subMessage: '₹' + booking.localShare.toLocaleString('en-IN') + ' goes directly to local Goan hosts.',
+                    type: 'success',
+                    icon: 'check',
+                  });
+                }}
+                onOpenProfileImpact={(_booking) => {
+                  navigateForward('profile');
+                }}
               />
             </motion.div>
           )}
@@ -864,6 +875,7 @@ export default function App() {
                   if (tab) setMyGoaInitialTab(tab);
                   navigateForward('my_goa');
                 }}
+                onNavigateToStay={() => navigateForward('stay')}
                 onLogout={handleRequestLogout}
                 onShowToast={(t) => showToast(t)}
               />

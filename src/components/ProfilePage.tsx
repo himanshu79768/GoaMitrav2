@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   UserPreferences,
@@ -9,6 +9,7 @@ import {
   GAIResponseTone,
   getDisabilityDefaults,
 } from '../types/onboarding';
+import { StayBooking, getStoredStayBookings } from '../types/booking';
 
 interface ProfilePageProps {
   preferences: UserPreferences;
@@ -21,6 +22,7 @@ interface ProfilePageProps {
   onRemoveItinerary: (id: string) => void;
   onBack: () => void;
   onOpenMyGoaScreen: (tab?: 'itineraries' | 'saved_places') => void;
+  onNavigateToStay?: () => void;
   onLogout: () => void;
   onShowToast?: (toast: {
     message: string;
@@ -58,7 +60,7 @@ const SAMPLE_BOOKINGS: BookingPreset[] = [
     category: 'Culinary & Culture',
     amount: 2200,
     date: '14 Oct 2026',
-    hostName: 'Savitri & Village Cooks',
+    hostName: 'Savitri Naik (Host Family)',
     location: 'Ponda, Central Goa',
   },
   {
@@ -130,6 +132,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   onRemoveItinerary,
   onBack,
   onOpenMyGoaScreen,
+  onNavigateToStay,
   onLogout,
   onShowToast,
 }) => {
@@ -139,28 +142,47 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(preferences.name);
 
+  // Stay Bookings State (loaded from storage & reactive)
+  const [stayBookings, setStayBookings] = useState<StayBooking[]>(() => getStoredStayBookings());
+
+  useEffect(() => {
+    setStayBookings(getStoredStayBookings());
+  }, [activeTab]);
+
   // Impact Receipt State
-  const [selectedBookingId, setSelectedBookingId] = useState<string>('bk-homestay-majorda');
+  const [selectedBookingId, setSelectedBookingId] = useState<string>(() => {
+    const list = getStoredStayBookings();
+    return list.length > 0 ? list[0].id : '';
+  });
   const [customAmount, setCustomAmount] = useState<number | ''>('');
   const [isCustomMode, setIsCustomMode] = useState(false);
   const [activeDivision, setActiveDivision] = useState<'local' | 'govt' | 'app' | null>('local');
   const [copiedReceipt, setCopiedReceipt] = useState(false);
 
+  // Sync selectedBookingId if bookings change
+  useEffect(() => {
+    if (stayBookings.length > 0 && (!selectedBookingId || !stayBookings.some((b) => b.id === selectedBookingId))) {
+      setSelectedBookingId(stayBookings[0].id);
+    }
+  }, [stayBookings]);
+
   // Selected Booking Calculation
-  const currentBooking = SAMPLE_BOOKINGS.find((b) => b.id === selectedBookingId) || SAMPLE_BOOKINGS[0];
-  const bookingTotal = isCustomMode
-    ? typeof customAmount === 'number' && customAmount > 0
-      ? customAmount
-      : 5000
-    : currentBooking.amount;
+  const currentBooking = stayBookings.find((b) => b.id === selectedBookingId) || stayBookings[0] || null;
+  const bookingTotal = currentBooking
+    ? isCustomMode
+      ? typeof customAmount === 'number' && customAmount > 0
+        ? customAmount
+        : currentBooking.totalAmount
+      : currentBooking.totalAmount
+    : 0;
 
   // Breakdown percentages:
   // Local Community: 78%
   // Goa Govt / Heritage Fund: 14%
   // GoaMitra App Ops: 8%
-  const localShare = Math.round(bookingTotal * 0.78);
-  const govtShare = Math.round(bookingTotal * 0.14);
-  const appShare = bookingTotal - localShare - govtShare;
+  const localShare = currentBooking ? currentBooking.localShare || Math.round(bookingTotal * 0.78) : 0;
+  const govtShare = currentBooking ? currentBooking.govtShare || Math.round(bookingTotal * 0.14) : 0;
+  const appShare = currentBooking ? currentBooking.appShare || (bookingTotal - localShare - govtShare) : 0;
 
   const handleSaveName = () => {
     if (nameInput.trim()) {
@@ -392,382 +414,455 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <div className="absolute -top-6 right-20 w-24 h-24 rounded-full bg-teal-400/10 pointer-events-none" />
             </div>
 
-            {/* Select Booking or Custom Amount */}
-            <div className="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-xs space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-[13px] font-bold text-gray-800">
-                  Select Booking to Inspect
-                </label>
+            {/* Condition: Show Pie Chart ONLY when user books a stay */}
+            {stayBookings.length === 0 ? (
+              /* EMPTY STATE: Prompt user to book a homestay */
+              <div className="bg-white rounded-3xl border border-gray-200/90 p-6 shadow-xs text-center space-y-4">
+                <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200/80 mx-auto flex items-center justify-center text-3xl shadow-2xs">
+                  🏡
+                </div>
+                <div>
+                  <h4 className="text-[17px] font-black text-gray-900 tracking-tight">
+                    No Stay Booked Yet
+                  </h4>
+                  <p className="text-[12.5px] text-gray-500 max-w-sm mx-auto mt-1 leading-relaxed">
+                    The Impact Division pie chart is generated automatically when you complete a stay booking. Book any verified Goan homestay to see exactly where your money goes!
+                  </p>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-left text-xs space-y-2 max-w-sm mx-auto">
+                  <div className="font-bold text-gray-700 flex items-center gap-1.5">
+                    <span>💡</span>
+                    <span>How Your Money Will Be Divided:</span>
+                  </div>
+                  <div className="flex items-center justify-between text-emerald-800 font-semibold">
+                    <span>• Local Host Family (incl. 10% Dev Fund):</span>
+                    <span className="font-bold">78%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-amber-800 font-semibold">
+                    <span>• GTDC & Heritage Conservation:</span>
+                    <span className="font-bold">14%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-teal-800 font-semibold">
+                    <span>• GoaMitra Safety & 24/7 SOS Ops:</span>
+                    <span className="font-bold">8%</span>
+                  </div>
+                </div>
+
                 <button
                   type="button"
-                  onClick={() => setIsCustomMode(!isCustomMode)}
-                  className="text-[12px] font-bold text-emerald-700 hover:text-emerald-800 underline cursor-pointer"
+                  onClick={() => {
+                    if (onNavigateToStay) {
+                      onNavigateToStay();
+                    } else {
+                      onBack();
+                    }
+                  }}
+                  className="w-full max-w-xs py-3 px-4 rounded-2xl bg-gradient-to-r from-[#FF5436] to-[#E03F22] text-white font-extrabold text-sm shadow-md hover:brightness-105 transition-all cursor-pointer inline-flex items-center justify-center gap-2"
                 >
-                  {isCustomMode ? 'Use Preset Booking' : 'Calculate Custom Amount'}
+                  <span>Explore & Book Verified Stays</span>
+                  <span>→</span>
                 </button>
               </div>
-
-              {isCustomMode ? (
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-gray-500">
-                      ₹
-                    </span>
-                    <input
-                      type="number"
-                      placeholder="Enter amount (e.g. 5000)"
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value ? Number(e.target.value) : '')}
-                      className="w-full pl-8 pr-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-sm font-bold text-gray-900 focus:outline-hidden focus:border-emerald-500"
-                    />
-                  </div>
-                  <span className="text-xs text-gray-500 font-medium">INR</span>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {SAMPLE_BOOKINGS.map((b) => {
-                    const isSelected = b.id === selectedBookingId;
-                    return (
+            ) : (
+              /* ACTIVE STATE: User has booked stay -> Show Pie Chart & Full Breakdown */
+              <>
+                {/* Select Stay Booking */}
+                <div className="bg-white rounded-2xl border border-gray-200/80 p-4 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <label className="text-[13px] font-bold text-gray-800">
+                        Your Booked Stays ({stayBookings.length})
+                      </label>
+                      <p className="text-[11px] text-gray-500">
+                        Select a homestay booking to view the impact division
+                      </p>
+                    </div>
+                    {onNavigateToStay && (
                       <button
-                        key={b.id}
                         type="button"
-                        onClick={() => setSelectedBookingId(b.id)}
-                        className={`text-left p-2.5 rounded-xl border transition-all cursor-pointer ${
-                          isSelected
-                            ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/20 shadow-2xs'
-                            : 'bg-gray-50/60 border-gray-200 hover:bg-gray-100/70 text-gray-700'
-                        }`}
+                        onClick={onNavigateToStay}
+                        className="text-[11.5px] font-bold text-[#FF5436] hover:underline cursor-pointer"
                       >
-                        <div className="flex items-start justify-between">
-                          <span className="text-[10.5px] font-bold text-emerald-800 bg-emerald-100/70 px-1.5 py-0.2 rounded">
-                            {b.category}
-                          </span>
-                          <span className="text-[13px] font-black text-gray-900">
-                            ₹{b.amount.toLocaleString('en-IN')}
-                          </span>
-                        </div>
-                        <h4 className="text-[12px] font-bold text-gray-900 mt-1 line-clamp-1">
-                          {b.title}
-                        </h4>
-                        <p className="text-[10.5px] text-gray-500">
-                          {b.hostName} · {b.location}
-                        </p>
+                        + Book Another
                       </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Visual Pie Chart / Donut Chart Card */}
-            <div className="bg-white rounded-3xl border border-gray-200/80 p-5 shadow-xs">
-              <div className="text-center mb-4">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                  Where Your Money Went
-                </span>
-                <h4 className="text-[18px] font-black text-gray-900 mt-0.5">
-                  Total Division: ₹{bookingTotal.toLocaleString('en-IN')}
-                </h4>
-              </div>
-
-              {/* Responsive SVG Donut Chart */}
-              <div className="flex flex-col items-center justify-center my-2">
-                <div className="relative w-52 h-52">
-                  <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                    {/* Background track circle */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="transparent"
-                      stroke="#F3F4F6"
-                      strokeWidth="14"
-                    />
-
-                    {/* Slice 1: Local Community (78%) -> Dasharray 196.0 out of 251.3 */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="transparent"
-                      stroke="#059669"
-                      strokeWidth={activeDivision === 'local' ? '17' : '14'}
-                      strokeDasharray={`${251.3 * 0.78} 251.3`}
-                      strokeDashoffset="0"
-                      className="cursor-pointer transition-all duration-300 hover:opacity-90"
-                      onClick={() => setActiveDivision('local')}
-                    />
-
-                    {/* Slice 2: Goa Govt / Heritage (14%) */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="transparent"
-                      stroke="#D97706"
-                      strokeWidth={activeDivision === 'govt' ? '17' : '14'}
-                      strokeDasharray={`${251.3 * 0.14} 251.3`}
-                      strokeDashoffset={`${-251.3 * 0.78}`}
-                      className="cursor-pointer transition-all duration-300 hover:opacity-90"
-                      onClick={() => setActiveDivision('govt')}
-                    />
-
-                    {/* Slice 3: GoaMitra App Ops (8%) */}
-                    <circle
-                      cx="50"
-                      cy="50"
-                      r="40"
-                      fill="transparent"
-                      stroke="#0F766E"
-                      strokeWidth={activeDivision === 'app' ? '17' : '14'}
-                      strokeDasharray={`${251.3 * 0.08} 251.3`}
-                      strokeDashoffset={`${-251.3 * (0.78 + 0.14)}`}
-                      className="cursor-pointer transition-all duration-300 hover:opacity-90"
-                      onClick={() => setActiveDivision('app')}
-                    />
-                  </svg>
-
-                  {/* Donut Center Label */}
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-                    <span className="text-[11px] font-bold text-gray-500 uppercase">
-                      Local First
-                    </span>
-                    <span className="text-[24px] font-black text-emerald-800 leading-none">
-                      78%
-                    </span>
-                    <span className="text-[10px] text-gray-500 font-semibold mt-0.5">
-                      Direct to Locals
-                    </span>
+                    )}
                   </div>
-                </div>
 
-                {/* Interactive Legend with click triggers */}
-                <div className="grid grid-cols-3 gap-2 w-full mt-4 pt-3 border-t border-gray-100">
-                  <button
-                    type="button"
-                    onClick={() => setActiveDivision('local')}
-                    className={`p-2 rounded-xl text-center border transition-all cursor-pointer ${
-                      activeDivision === 'local'
-                        ? 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-300/30'
-                        : 'bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#059669]" />
-                      <span className="text-[11px] font-bold text-gray-900">Local (78%)</span>
-                    </div>
-                    <p className="text-[13px] font-black text-emerald-800 mt-0.5">
-                      ₹{localShare.toLocaleString('en-IN')}
-                    </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveDivision('govt')}
-                    className={`p-2 rounded-xl text-center border transition-all cursor-pointer ${
-                      activeDivision === 'govt'
-                        ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-300/30'
-                        : 'bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
-                      <span className="text-[11px] font-bold text-gray-900">Govt (14%)</span>
-                    </div>
-                    <p className="text-[13px] font-black text-amber-800 mt-0.5">
-                      ₹{govtShare.toLocaleString('en-IN')}
-                    </p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setActiveDivision('app')}
-                    className={`p-2 rounded-xl text-center border transition-all cursor-pointer ${
-                      activeDivision === 'app'
-                        ? 'bg-teal-50 border-teal-400 ring-2 ring-teal-300/30'
-                        : 'bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center justify-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#0F766E]" />
-                      <span className="text-[11px] font-bold text-gray-900">App (8%)</span>
-                    </div>
-                    <p className="text-[13px] font-black text-teal-800 mt-0.5">
-                      ₹{appShare.toLocaleString('en-IN')}
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Active Division Detailed Breakdown Box */}
-              <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-200">
-                {activeDivision === 'local' && (
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-[#059669]" />
-                        <h5 className="text-[14px] font-bold text-gray-900">
-                          Local Community Division (78%)
-                        </h5>
-                      </div>
-                      <span className="text-[14px] font-black text-emerald-800">
-                        ₹{localShare.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <p className="text-[12px] text-gray-600 leading-relaxed">
-                      Goes straight into the host family bank account, village culinary staff, local fisherfolk, and village artisans with zero foreign corporate extraction.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-gray-700">
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🏡 Host Family: ₹{Math.round(localShare * 0.75).toLocaleString('en-IN')}
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        👨‍🍳 Cooks & Staff: ₹{Math.round(localShare * 0.15).toLocaleString('en-IN')}
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🧺 Village Farmers: ₹{Math.round(localShare * 0.1).toLocaleString('en-IN')}
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200 text-emerald-800 font-bold">
-                        🌿 100% Fair Living Wage
-                      </div>
-                    </div>
+                    {stayBookings.map((b) => {
+                      const isSelected = b.id === (currentBooking ? currentBooking.id : '');
+                      return (
+                        <button
+                          key={b.id}
+                          type="button"
+                          onClick={() => setSelectedBookingId(b.id)}
+                          className={`w-full text-left p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                            isSelected
+                              ? 'bg-emerald-50/70 border-emerald-400 ring-2 ring-emerald-400/20 shadow-xs'
+                              : 'bg-gray-50/60 border-gray-200 hover:bg-gray-100/70 text-gray-700'
+                          }`}
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <img
+                              src={b.stayImage}
+                              alt={b.stayName}
+                              className="w-12 h-12 rounded-xl object-cover shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[10px] font-bold text-emerald-800 bg-emerald-100/70 px-1.5 py-0.2 rounded">
+                                  {b.id}
+                                </span>
+                                <span className="text-[11px] text-gray-500">
+                                  {b.durationNights} {b.durationNights === 1 ? 'Night' : 'Nights'}
+                                </span>
+                              </div>
+                              <h4 className="text-[13px] font-bold text-gray-900 mt-0.5 truncate">
+                                {b.stayName}
+                              </h4>
+                              <p className="text-[10.5px] text-gray-500 truncate">
+                                Guest: {b.guestName} · {b.bookedAt}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0">
+                            <span className="text-[14px] font-black text-gray-900">
+                              ₹{b.totalAmount.toLocaleString('en-IN')}
+                            </span>
+                            <div className="text-[10px] text-emerald-700 font-bold">
+                              Paid & Confirmed
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
+                </div>
+
+                {/* Visual Pie Chart / Donut Chart Card */}
+                {currentBooking && (
+                  <>
+                    <div className="bg-white rounded-3xl border border-gray-200/80 p-5 shadow-xs">
+                      <div className="text-center mb-4">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                          Where Your Money Went
+                        </span>
+                        <h4 className="text-[18px] font-black text-gray-900 mt-0.5">
+                          Total Division: ₹{currentBooking.totalAmount.toLocaleString('en-IN')}
+                        </h4>
+                        <p className="text-[11.5px] text-emerald-700 font-semibold mt-0.5">
+                          {currentBooking.stayName} · {currentBooking.durationNights} Nights
+                        </p>
+                      </div>
+
+                      {/* Responsive SVG Donut Chart */}
+                      <div className="flex flex-col items-center justify-center my-2">
+                        <div className="relative w-52 h-52">
+                          <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                            {/* Background track circle */}
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="40"
+                              fill="transparent"
+                              stroke="#F3F4F6"
+                              strokeWidth="14"
+                            />
+
+                            {/* Slice 1: Local Community (78%) -> Dasharray 196.0 out of 251.3 */}
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="40"
+                              fill="transparent"
+                              stroke="#059669"
+                              strokeWidth={activeDivision === 'local' ? '17' : '14'}
+                              strokeDasharray={`${251.3 * 0.78} 251.3`}
+                              strokeDashoffset="0"
+                              className="cursor-pointer transition-all duration-300 hover:opacity-90"
+                              onClick={() => setActiveDivision('local')}
+                            />
+
+                            {/* Slice 2: Goa Govt / Heritage (14%) */}
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="40"
+                              fill="transparent"
+                              stroke="#D97706"
+                              strokeWidth={activeDivision === 'govt' ? '17' : '14'}
+                              strokeDasharray={`${251.3 * 0.14} 251.3`}
+                              strokeDashoffset={`${-251.3 * 0.78}`}
+                              className="cursor-pointer transition-all duration-300 hover:opacity-90"
+                              onClick={() => setActiveDivision('govt')}
+                            />
+
+                            {/* Slice 3: GoaMitra App Ops (8%) */}
+                            <circle
+                              cx="50"
+                              cy="50"
+                              r="40"
+                              fill="transparent"
+                              stroke="#0F766E"
+                              strokeWidth={activeDivision === 'app' ? '17' : '14'}
+                              strokeDasharray={`${251.3 * 0.08} 251.3`}
+                              strokeDashoffset={`${-251.3 * (0.78 + 0.14)}`}
+                              className="cursor-pointer transition-all duration-300 hover:opacity-90"
+                              onClick={() => setActiveDivision('app')}
+                            />
+                          </svg>
+
+                          {/* Donut Center Label */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                            <span className="text-[11px] font-bold text-gray-500 uppercase">
+                              Local First
+                            </span>
+                            <span className="text-[24px] font-black text-emerald-800 leading-none">
+                              78%
+                            </span>
+                            <span className="text-[10px] text-gray-500 font-semibold mt-0.5">
+                              Direct to Locals
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Interactive Legend with click triggers */}
+                        <div className="grid grid-cols-3 gap-2 w-full mt-4 pt-3 border-t border-gray-100">
+                          <button
+                            type="button"
+                            onClick={() => setActiveDivision('local')}
+                            className={`p-2 rounded-xl text-center border transition-all cursor-pointer ${
+                              activeDivision === 'local'
+                                ? 'bg-emerald-50 border-emerald-400 ring-2 ring-emerald-300/30'
+                                : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#059669]" />
+                              <span className="text-[11px] font-bold text-gray-900">Local (78%)</span>
+                            </div>
+                            <p className="text-[13px] font-black text-emerald-800 mt-0.5">
+                              ₹{localShare.toLocaleString('en-IN')}
+                            </p>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setActiveDivision('govt')}
+                            className={`p-2 rounded-xl text-center border transition-all cursor-pointer ${
+                              activeDivision === 'govt'
+                                ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-300/30'
+                                : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" />
+                              <span className="text-[11px] font-bold text-gray-900">Govt (14%)</span>
+                            </div>
+                            <p className="text-[13px] font-black text-amber-800 mt-0.5">
+                              ₹{govtShare.toLocaleString('en-IN')}
+                            </p>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setActiveDivision('app')}
+                            className={`p-2 rounded-xl text-center border transition-all cursor-pointer ${
+                              activeDivision === 'app'
+                                ? 'bg-teal-50 border-teal-400 ring-2 ring-teal-300/30'
+                                : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center justify-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-[#0F766E]" />
+                              <span className="text-[11px] font-bold text-gray-900">App (8%)</span>
+                            </div>
+                            <p className="text-[13px] font-black text-teal-800 mt-0.5">
+                              ₹{appShare.toLocaleString('en-IN')}
+                            </p>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Active Division Detailed Breakdown Box */}
+                      <div className="mt-4 p-4 rounded-2xl bg-gray-50 border border-gray-200">
+                        {activeDivision === 'local' && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-[#059669]" />
+                                <h5 className="text-[14px] font-bold text-gray-900">
+                                  Local Community Division (78%)
+                                </h5>
+                              </div>
+                              <span className="text-[14px] font-black text-emerald-800">
+                                ₹{localShare.toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                            <p className="text-[12px] text-gray-600 leading-relaxed">
+                              Entire local community division goes directly to {currentBooking.stayName}'s host family, with 10% in the host amount reserved for the village development fund.
+                            </p>
+                            <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-gray-700">
+                              <div className="p-2.5 rounded-xl bg-white border border-gray-200 shadow-xs">
+                                <div className="text-[10px] text-gray-500 font-medium">Direct to Host</div>
+                                <div className="text-[12px] font-bold text-gray-900 mt-0.5">
+                                  🏡 Host Family: ₹{Math.round(localShare * 0.9).toLocaleString('en-IN')}
+                                </div>
+                              </div>
+                              <div className="p-2.5 rounded-xl bg-white border border-gray-200 shadow-xs">
+                                <div className="text-[10px] text-emerald-600 font-medium">In Host Amount</div>
+                                <div className="text-[12px] font-bold text-emerald-800 mt-0.5">
+                                  🏛️ Development Fund (10%): ₹{Math.round(localShare * 0.1).toLocaleString('en-IN')}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {activeDivision === 'govt' && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-[#D97706]" />
+                                <h5 className="text-[14px] font-bold text-gray-900">
+                                  Govt Tourism & Conservation (14%)
+                                </h5>
+                              </div>
+                              <span className="text-[14px] font-black text-amber-800">
+                                ₹{govtShare.toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                            <p className="text-[12px] text-gray-600 leading-relaxed">
+                              Contributes to Goa Tourism Development Corporation (GTDC) statutory eco-cess, coastal beach cleaning drives, and preservation of UNESCO heritage monuments.
+                            </p>
+                            <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-gray-700">
+                              <div className="p-2 rounded-lg bg-white border border-gray-200">
+                                🏖️ Beach Cleanliness: ₹{Math.round(govtShare * 0.45).toLocaleString('en-IN')}
+                              </div>
+                              <div className="p-2 rounded-lg bg-white border border-gray-200">
+                                🏛️ Heritage Restoration: ₹{Math.round(govtShare * 0.35).toLocaleString('en-IN')}
+                              </div>
+                              <div className="p-2 rounded-lg bg-white border border-gray-200">
+                                🌳 Goa Forestry Fund: ₹{Math.round(govtShare * 0.2).toLocaleString('en-IN')}
+                              </div>
+                              <div className="p-2 rounded-lg bg-white border border-gray-200 text-amber-800 font-bold">
+                                📜 Official Panchayati Tax
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {activeDivision === 'app' && (
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="w-3 h-3 rounded-full bg-[#0F766E]" />
+                                <h5 className="text-[14px] font-bold text-gray-900">
+                                  GoaMitra App & Operations (8%)
+                                </h5>
+                              </div>
+                              <span className="text-[14px] font-black text-teal-800">
+                                ₹{appShare.toLocaleString('en-IN')}
+                              </span>
+                            </div>
+                            <p className="text-[12px] text-gray-600 leading-relaxed">
+                              Maintains transparent platform servers, 24x7 Goa Police & Tourist SOS dispatch lines, and in-person homestay verification audits.
+                            </p>
+                            <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-gray-700">
+                              <div className="p-2 rounded-lg bg-white border border-gray-200">
+                                🚨 24x7 SOS Dispatch
+                              </div>
+                              <div className="p-2 rounded-lg bg-white border border-gray-200">
+                                🛡️ In-Person Safety Audits
+                              </div>
+                              <div className="p-2 rounded-lg bg-white border border-gray-200">
+                                🌐 Multilingual App Host
+                              </div>
+                              <div className="p-2 rounded-lg bg-white border border-gray-200 text-teal-800 font-bold">
+                                ⚡ 0% Hidden Surcharges
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Official Impact Receipt Card */}
+                    <div className="bg-white rounded-3xl border border-dashed border-gray-300 p-5 shadow-xs relative">
+                      <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                        <div>
+                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
+                            Official Impact Receipt
+                          </span>
+                          <h4 className="text-[15px] font-black text-gray-900 mt-1">
+                            #GM-GOA-{currentBooking.id.toUpperCase().slice(0, 10)}
+                          </h4>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-[11px] text-gray-400 font-medium">Issue Date</span>
+                          <p className="text-[12px] font-bold text-gray-800">{currentBooking.bookedAt}</p>
+                        </div>
+                      </div>
+
+                      {/* Line item receipt */}
+                      <div className="py-3 space-y-2 border-b border-gray-100 text-xs">
+                        <div className="flex justify-between font-bold text-gray-800">
+                          <span>{currentBooking.stayName} ({currentBooking.durationNights} Nights)</span>
+                          <span>₹{currentBooking.totalAmount.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-500 text-[11px]">
+                          <span>Guest: {currentBooking.guestName}</span>
+                          <span>{currentBooking.paymentMethodTitle}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-500 text-[11px]">
+                          <span>Direct to Local Host & Village</span>
+                          <span className="text-emerald-700 font-semibold">₹{localShare.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-500 text-[11px]">
+                          <span>GTDC & Heritage Preservation Fund</span>
+                          <span className="text-amber-700 font-semibold">₹{govtShare.toLocaleString('en-IN')}</span>
+                        </div>
+                        <div className="flex justify-between text-gray-500 text-[11px]">
+                          <span>GoaMitra Operations & SOS Safety</span>
+                          <span className="text-teal-700 font-semibold">₹{appShare.toLocaleString('en-IN')}</span>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 flex items-center justify-between">
+                        <div>
+                          <p className="text-[10.5px] text-gray-500">Estimated Carbon Offset</p>
+                          <p className="text-[12px] font-bold text-emerald-800">🌱 14.8 kg CO₂ via Homestay vs Resort</p>
+                        </div>
+
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.96 }}
+                          onClick={handleCopyReceipt}
+                          className="px-3.5 py-1.5 bg-[#177F91] text-white rounded-xl text-xs font-bold shadow-2xs hover:bg-[#136675] transition-colors flex items-center gap-1.5 cursor-pointer"
+                        >
+                          {copiedReceipt ? (
+                            <>
+                              <span>✓</span>
+                              <span>Copied</span>
+                            </>
+                          ) : (
+                            <>
+                              <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                              </svg>
+                              <span>Share Receipt</span>
+                            </>
+                          )}
+                        </motion.button>
+                      </div>
+                    </div>
+                  </>
                 )}
-
-                {activeDivision === 'govt' && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-[#D97706]" />
-                        <h5 className="text-[14px] font-bold text-gray-900">
-                          Govt Tourism & Conservation (14%)
-                        </h5>
-                      </div>
-                      <span className="text-[14px] font-black text-amber-800">
-                        ₹{govtShare.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <p className="text-[12px] text-gray-600 leading-relaxed">
-                      Contributes to Goa Tourism Development Corporation (GTDC) statutory eco-cess, coastal beach cleaning drives, and preservation of UNESCO heritage churches in Old Goa.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-gray-700">
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🏖️ Beach Cleanliness: ₹{Math.round(govtShare * 0.45).toLocaleString('en-IN')}
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🏛️ Heritage Restoration: ₹{Math.round(govtShare * 0.35).toLocaleString('en-IN')}
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🌳 Goa Forestry Fund: ₹{Math.round(govtShare * 0.2).toLocaleString('en-IN')}
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200 text-amber-800 font-bold">
-                        📜 Official Panchayati Tax
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeDivision === 'app' && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-[#0F766E]" />
-                        <h5 className="text-[14px] font-bold text-gray-900">
-                          GoaMitra App & Operations (8%)
-                        </h5>
-                      </div>
-                      <span className="text-[14px] font-black text-teal-800">
-                        ₹{appShare.toLocaleString('en-IN')}
-                      </span>
-                    </div>
-                    <p className="text-[12px] text-gray-600 leading-relaxed">
-                      Maintains transparent platform servers, 24x7 Goa Police & Tourist SOS dispatch lines, in-person host quality & safety audits, and multi-lingual accessibility tools.
-                    </p>
-                    <div className="grid grid-cols-2 gap-2 pt-1 text-[11px] font-semibold text-gray-700">
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🚨 24x7 SOS Dispatch
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🛡️ In-Person Safety Audits
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200">
-                        🌐 Multilingual App Host
-                      </div>
-                      <div className="p-2 rounded-lg bg-white border border-gray-200 text-teal-800 font-bold">
-                        ⚡ 0% Hidden Surcharges
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Official Impact Receipt Card */}
-            <div className="bg-white rounded-3xl border border-dashed border-gray-300 p-5 shadow-xs relative">
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full">
-                    Official Impact Receipt
-                  </span>
-                  <h4 className="text-[15px] font-black text-gray-900 mt-1">
-                    #GM-GOA-{currentBooking.id.toUpperCase().slice(0, 10)}
-                  </h4>
-                </div>
-                <div className="text-right">
-                  <span className="text-[11px] text-gray-400 font-medium">Issue Date</span>
-                  <p className="text-[12px] font-bold text-gray-800">{currentBooking.date}</p>
-                </div>
-              </div>
-
-              {/* Line item receipt */}
-              <div className="py-3 space-y-2 border-b border-gray-100 text-xs">
-                <div className="flex justify-between font-bold text-gray-800">
-                  <span>{currentBooking.title}</span>
-                  <span>₹{bookingTotal.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between text-gray-500 text-[11px]">
-                  <span>Direct to Local Host & Village</span>
-                  <span className="text-emerald-700 font-semibold">₹{localShare.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between text-gray-500 text-[11px]">
-                  <span>GTDC & Heritage Preservation Fund</span>
-                  <span className="text-amber-700 font-semibold">₹{govtShare.toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex justify-between text-gray-500 text-[11px]">
-                  <span>GoaMitra Operations & SOS Safety</span>
-                  <span className="text-teal-700 font-semibold">₹{appShare.toLocaleString('en-IN')}</span>
-                </div>
-              </div>
-
-              <div className="pt-3 flex items-center justify-between">
-                <div>
-                  <p className="text-[10.5px] text-gray-500">Estimated Carbon Offset</p>
-                  <p className="text-[12px] font-bold text-emerald-800">🌱 14.8 kg CO₂ via Homestay vs Resort</p>
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.96 }}
-                  onClick={handleCopyReceipt}
-                  className="px-3.5 py-1.5 bg-[#177F91] text-white rounded-xl text-xs font-bold shadow-2xs hover:bg-[#136675] transition-colors flex items-center gap-1.5 cursor-pointer"
-                >
-                  {copiedReceipt ? (
-                    <>
-                      <span>✓</span>
-                      <span>Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                      <span>Share Receipt</span>
-                    </>
-                  )}
-                </motion.button>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         )}
 
